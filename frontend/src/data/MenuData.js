@@ -1,26 +1,27 @@
 import { BiUserCircle, BiMovie } from "react-icons/bi";
-import { AiOutlineHome} from "react-icons/ai";
+import { AiOutlineHome, AiOutlineBars } from "react-icons/ai";
 
 const MenuData = [
+
     {
-        title: "หน้าแรก",
-        path: "/home",
-        heardertitle:"หน้าแรก",
+        title: "Home",
+        path: "/",
+        heardertitle: "Home",
         icon: <AiOutlineHome />
     },
 
     {
-        title: "สมาชิก",
-        heardertitle:"สมาชิก",
-        path: "/user",
+        title: "Profile",
+        heardertitle: "Profile",
+        path: "/profile",
         icon: <BiUserCircle />
     },
     {
-        title: "ภาพยนต์",
-        heardertitle:"รายการภาพยนต์",
+        title: "Movielist",
+        heardertitle: "Movielist",
         path: "/movie",
         icon: <BiMovie />
     },
-  
+
 ]
 export default MenuData;

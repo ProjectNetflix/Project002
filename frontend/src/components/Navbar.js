@@ -17,7 +17,6 @@ const Navbar = () => {
                         <Link to="#" className="menu-bar">
                             <FaBars onClick={toggleMenu} />
                         </Link>
-                        
 
                     </div>
                 </div>

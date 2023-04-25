@@ -8,8 +8,8 @@ import Login from './components/Login'
 import SignUp from './components/Signup'
 import Movie from './components/Movie'
 import Home from './components/Home'
-import User from './components/User'
-import Firstpage from './components/Firstpage'
+import Profile from './components/Profile'
+
 
 function App() {
 
@@ -19,13 +19,11 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
-          <Route path="/home" component={Home}/>
-          <Route path="/" component={Firstpage} exact />
-          <Route path="/user" component={User} />
+          <Route path="/" component={Home} exact />
+          <Route path="/profile" component={Profile} />
           <Route path="/movie" component={Movie} />
 
         </Switch>
-
       </div>
     </Router>
   );
