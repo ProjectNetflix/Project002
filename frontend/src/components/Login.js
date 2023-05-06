@@ -1,41 +1,98 @@
 import React, { Component } from 'react'
 import './style.css'
 
-const Login = () => {
-  return (
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
-    <div className='card-form'>
-      {/* <div>
-        <img align="left" width="50%" height="100%" src="https://upload.wikimedia.org/wikipedia/commons/7/73/BTS_during_a_White_House_press_conference_May_31%2C_2022_%28cropped%29.jpg" />
-      </div> */}
+const MySwal = withReactContent(Swal)
 
-      <div>
-          <h1 className='home-header'>
-            Welcome To JoyFlix
-          </h1>
-      </div>
-      
-      <form className='container-login'>
-        <h3>Sign In</h3>
-        <div className="mb-3">
-          <label>Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            placeholder="Enter email"
-          />
+export default class Login extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      password: "",
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(e) {
+    e.preventDefault();
+    const { email, password } = this.state;
+    console.log(email, password);
+
+    fetch("http://localhost:5000/login", {
+      method: "POST",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userRegister");
+        if (data.status === "ok") {
+          MySwal.fire({
+            html: <strong>successful</strong>,
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1000
+          })
+          //alert("login successful");
+          window.localStorage.setItem("token", data.data);
+          window.localStorage.setItem("userId", data.userId);
+          window.localStorage.setItem("loggedIn", true);
+          window.location.href = "./";
+        } else {
+          MySwal.fire({
+            html: <strong>{data.status}</strong>,
+            icon: 'error'
+          })
+            //alert(data.status);
+        }
+      });
+  }
+  render() {
+    return (
+
+
+      <div className="signin-form-container">
+        <div className='home-header'>
+        <h1>
+          Welcome To JoyFlix
+        </h1>
         </div>
+      <form className="container-login" onSubmit={this.handleSubmit}>
+        <div className="signin-form-content">
+          <h3 className="signin-form-title">Sign In</h3>
+          <div className="form-group mt-3">
+            <label>Email</label>
+            <input
+              type="email" required
+              className="form-control mt-1"
+              placeholder="Enter email"
+              onChange={(e) => this.setState({ email: e.target.value })}
+            />
+          </div>
 
-        <div className="mb-3">
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Enter password"
-          />
-        </div>
 
-        <div className="mb-3">
+          <div className="form-group mt-3">
+            <label>Password</label>
+            <input
+              type="password" required
+              className="form-control mt-1"
+              placeholder="Enter password"
+              onChange={(e) => this.setState({ password: e.target.value })}
+            />
+          </div>
+
+          <div className="mb-3">
           <div className="custom-control custom-checkbox">
             <input
               type="checkbox"
@@ -48,27 +105,27 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="d-grid">
-          <button type="submit" className="btn btn-primary">
-            Sign In
-          </button>
-        </div>
+          {/* <p className="forgot-password text-right mt-3">
+             <a href="/resetpass">Forgot Password</a>
+          </p> */}
 
-        <div>
-          <p className="signup text-left">
-            Create Account <a href="/signup">Sign Up</a>
+          <div >
+            <button type="submit" className="btn btn-primary">
+              Sing In
+            </button>
+          </div>
+
+          <p className= "forgot-password text-right">
+            Have not an account yet? <a href="/signup">Sign Up</a>
           </p>
-
-          <p className="forgot-password text-right">
-            Forgot <a href="#">Password?</a>
-          </p>
+          
         </div>
-
       </form>
     </div>
-  )
 
+
+
+    );
+  }
 }
 
-
-export default Login;
