@@ -98,7 +98,7 @@ span {
 }
 
 .container-login {
-    color: white;
+    color: black;
     width: 96%;
     max-width: 500px;
     /* margin:120px 100px 0 auto; */
@@ -113,7 +113,7 @@ span {
 
 .container-signup {
 
-    color: white;
+    color: black;
     width: 96%;
     max-width: 500px;
     margin: 100px auto;
