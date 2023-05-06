@@ -38,23 +38,12 @@ export default class Login extends Component {
       .then((data) => {
         console.log(data, "userRegister");
         if (data.status === "ok") {
-          MySwal.fire({
-            html: <strong>successful</strong>,
-            icon: 'success',
-            showConfirmButton: false,
-            timer: 1000
-          })
-          //alert("login successful");
           window.localStorage.setItem("token", data.data);
           window.localStorage.setItem("userId", data.userId);
           window.localStorage.setItem("loggedIn", true);
           window.location.href = "./";
         } else {
-          MySwal.fire({
-            html: <strong>{data.status}</strong>,
-            icon: 'error'
-          })
-            //alert(data.status);
+          alert(data.status);
         }
       });
   }

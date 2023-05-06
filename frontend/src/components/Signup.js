@@ -52,11 +52,7 @@ export default class SignUp extends Component {
           alert("signup successful");
           window.location.href = "./login";
         } else {
-          MySwal.fire({
-            html: <strong>{data.status}</strong>,
-            icon: 'error'
-          })
-            //alert(data.status);
+          alert(data.status);
         }
         /*alert("Signup Successful");
         window.location.href = "./login";*/
