@@ -1,25 +1,24 @@
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
 import './style.css'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
 const MySwal = withReactContent(Swal)
 
-export default class SignUp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fname: "",
-      lname: "",
-      email: "",
-      password: "",
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  handleSubmit(e) {
+const SignUp = () => {
+
+  const [fname, setFname] = useState('');
+  const [lname, setLname] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+
     e.preventDefault();
-    const { fname, lname, email, password } = this.state;
-    console.log( fname, lname, email, password);
+
+    //const { fname, lname, email, password } = this.state;
+    console.log(fname, lname, email, password);
+
     fetch("http://localhost:5000/signup", {
       method: "POST",
       crossDomain: true,
@@ -47,37 +46,31 @@ export default class SignUp extends Component {
             showConfirmButton: false,
             timer: 1000
           })
-          
 
           alert("signup successful");
-          window.location.href = "./login";
+          window.location.href = "./signin";
         } else {
           alert(data.status);
         }
-        /*alert("Signup Successful");
-        window.location.href = "./login";*/
-
-
-
       });
   }
-  render() {
-    return (
-      <div className="container-signup">
 
-          <form className="signup-form" onSubmit={this.handleSubmit}>
+  return (
+    <div className="container-signup">
+
+      <form className="signup-form" onSubmit={handleSubmit}>
         <div className="signup-form-content">
           <h1 className="signup-form-title">Sign Up</h1>
-            
+
           <div className="form-group mt-3">
             <label>First name</label>
             <input
               type="text" required
               className="form-control mt-1"
               placeholder="First name"
-              onChange={(e) => this.setState({ fname: e.target.value })}            />
+              onChange={(e) => (setFname(e.target.value))}
+            />
           </div>
-          
 
           <div className="form-group mt-3">
             <label>Last name</label>
@@ -85,7 +78,8 @@ export default class SignUp extends Component {
               type="text" required
               className="form-control mt-1"
               placeholder="Last name"
-              onChange={(e) => this.setState({ lname: e.target.value })}            />
+              onChange={(e) => (setLname(e.target.value))}
+            />
           </div>
 
           <div className="form-group mt-3">
@@ -94,7 +88,8 @@ export default class SignUp extends Component {
               type="email" required
               className="form-control mt-1"
               placeholder="Enter email"
-              onChange={(e) => this.setState({ email: e.target.value })}            />
+              onChange={(e) => (setEmail(e.target.value))}
+            />
           </div>
 
           <div className="form-group mt-3">
@@ -103,7 +98,8 @@ export default class SignUp extends Component {
               type="password" required
               className="form-control mt-1"
               placeholder="Enter password"
-              onChange={(e) => this.setState({ password: e.target.value })}            />
+              onChange={(e) => (setPassword(e.target.value))}
+            />
           </div>
 
           <div className="submit mt-3">
@@ -113,12 +109,13 @@ export default class SignUp extends Component {
           </div>
 
           <div className="forgot-password text-right">
-              Already registered? <a href="/login">Sign In</a>
+            Already registered? <a href="/signin">Sign In</a>
           </div>
 
         </div>
       </form>
     </div>
-    );
-  }
+  );
 }
+
+export default SignUp;

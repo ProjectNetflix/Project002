@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import Navbar from "./Navbar"
 import { AiFillGithub, AiFillHeart } from "react-icons/ai";
 import './style.css'
-import Topbar from "./topbar";
+import Navbar from "./Navbar";
 
 
 const Movie = () => {
@@ -35,7 +34,7 @@ const Movie = () => {
 
     return (
         <div>
-            <Topbar />
+            <Navbar />
             <div className="container">
                 <br />
                 <h1>รายการภาพยนต์</h1>

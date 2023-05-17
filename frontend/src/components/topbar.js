@@ -1,26 +1,57 @@
 import "./topbar.css";
-import {AiOutlineBars, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineBars, AiOutlineSearch } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { BsFillPersonFill, BsFillChatDotsFill } from "react-icons/bs";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import { FaBars, FaTimes } from "react-icons/fa";
-import { useState } from "react";
+// import { FaBars, FaTimes } from "react-icons/fa";
+import { useState, useEffect } from "react";
 import MenuData from "../data/MenuData";
 import './style.css'
 
 export default function Topbar() {
-    //const { user } = useContext(AuthContext);
-    const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+
     const [showMenu, setShowMenu] = useState(false)
     const toggleMenu = () => setShowMenu(!showMenu)
+
+    const [userData, setUserData] = useState({});
+
+    useEffect(() => {
+        fetch("http://localhost:5000/userData", {
+            method: "POST",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+                token: window.localStorage.getItem("token"),
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data, "userData");
+                if (data.data === "token expired") {
+                    alert("Token expired sign in again");
+                    window.localStorage.clear();
+                    window.location.href = "./signin";
+                } else {
+                    setUserData(data.data);
+                }
+            });
+    }, []);
+
+    const logOut = () => {
+        window.localStorage.clear();
+        window.location.href = "/signin";
+    };
+
 
     return (
         <div >
 
             <div className="topbarContainer">
-
                 <div className="topbarLeft">
-
                     <nav className={showMenu ? "nav-menu active" : "nav-menu"}>
                         <ul className="nav-menu-item" onClick={toggleMenu}>
                             <li className="navbar-toggle">
@@ -35,6 +66,7 @@ export default function Topbar() {
                                     </li>
                                 )
                             })}
+
                         </ul>
                     </nav>
 
@@ -44,6 +76,7 @@ export default function Topbar() {
                     <Link to="/" style={{ textDecoration: "none" }}>
                         <span className="logo">JM Blog Master</span>
                     </Link>
+
 
                 </div>
                 <div className="topbarCenter">
@@ -56,10 +89,12 @@ export default function Topbar() {
                     </div>
                 </div>
 
+                <button type="submit" onClick={logOut} className="btn btn-primary">Log out</button>
+
                 <div className="topbarRight">
 
                     <div className="topbarLinks">
-                        <span className="topbarLink">Narudee</span>
+                        <span className="topbarLink">{userData.fname}</span>
                     </div>
 
                     <div className="topbarIcons">

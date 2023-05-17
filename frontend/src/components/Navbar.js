@@ -1,45 +1,90 @@
-import { Link } from "react-router-dom"
-import { FaBars, FaTimes } from "react-icons/fa";
-import { useState } from "react";
+import "./topbar.css";
+import { BiMovie } from "react-icons/bi";
+import { Link } from "react-router-dom";
+import { BsFillPersonFill, BsFillChatDotsFill } from "react-icons/bs";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import { AiOutlineHome } from "react-icons/ai";
+import { FaRegUser, FaTimes } from "react-icons/fa";
+import { useState, useEffect } from "react";
 import MenuData from "../data/MenuData";
-import './style.css'
+import './Navbar.css'
+import { IconContext } from "react-icons";
 
-const Navbar = () => {
+
+export default function Navbar() {
 
     const [showMenu, setShowMenu] = useState(false)
     const toggleMenu = () => setShowMenu(!showMenu)
 
+    const [userData, setUserData] = useState({});
+
+    useEffect(() => {
+        fetch("http://localhost:5000/userData", {
+            method: "POST",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+                token: window.localStorage.getItem("token"),
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data, "userData");
+                if (data.data === "token expired") {
+                    alert("Token expired signin again");
+                    window.localStorage.clear();
+                    window.location.href = "./signin";
+                } else {
+                    setUserData(data.data);
+                }
+            });
+    }, []);
+
+    const logOut = () => {
+        window.localStorage.clear();
+        window.location.href = "/signin";
+    };
+
     return (
-        <div>
-            <aside>
-                <div className="navbar">
-                    <div className="navbar-toggle">
-                        <Link to="#" className="menu-bar">
-                            <FaBars onClick={toggleMenu} />
-                        </Link>
 
-                    </div>
-                </div>
-                <nav className={showMenu ? "nav-menu active" : "nav-menu"}>
-                    <ul className="nav-menu-item" onClick={toggleMenu}>
-                        <li className="navbar-toggle">
-                            <Link to="#" className="menu-bar">
-                                <FaTimes />
-                            </Link>
+        <div class="p-3 bg-dark text-white">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 bg-bs-body-bg">
+
+                        <li>
+                            <a href="/" class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <AiOutlineHome /></IconContext.Provider> </a>
+                            <a href="/" class="nav-link px-2 text-white">Home</a>
                         </li>
-                        {MenuData.map((menu, index) => {
-                            return (
-                                <li className="menu-text" key={index}>
-                                    <Link to={menu.path}> {menu.icon} <span>{menu.title}</span></Link>
-                                </li>
-                            )
-                        })}
+
+                        <li>
+                            <a href='/profile' class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <FaRegUser /></IconContext.Provider> </a>
+                            <a href="/profile" class="nav-link px-2 text-white">Profile</a>
+                        </li>
+
+                        <li>
+                            <a href='/movie' class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <BiMovie /></IconContext.Provider> </a>
+                            <a href="/movie" class="nav-link px-2 text-white">Movie</a>
+                        </li>
+
                     </ul>
-                </nav>
-            </aside>
-        </div>
 
+                    <form class=" align-items-center  px-4 col-12 col-lg mb-3 mb-lg-0 me-lg-2 ">
+                        <input class="form-control form-control-dark" placeholder="Search..." label="Search" />
+                    </form>
+
+                    <a href='/profile' class="nav-link px-2 me-lg-5  d-flex justify-content-center text-white">  {userData.fname}  {userData.lname} </a>
+
+                    <div class="text-end">
+                        <button type="button" class="btn btn-outline-primary " onClick={logOut}>Sign Out</button>
+                    </div>
+
+                </div>
+            </div>
+        </div >
     )
-
 }
-export default Navbar;

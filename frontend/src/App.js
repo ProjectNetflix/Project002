@@ -4,27 +4,29 @@ import './App.css'
 
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
-import Login from './components/Login'
+import SignIn from './components/SignIn'
 import SignUp from './components/Signup'
 import Movie from './components/Movie'
 import Home from './components/Home'
-import Profile from './components/Profile'
+import Profile from './components/Profile1'
 
 
 function App() {
 
-  return (
-    <Router>
-      <div>
-        <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={SignUp} />
-          <Route path="/" component={Home} exact />
-          <Route path="/profile" component={Profile} />
-          <Route path="/movie" component={Movie} />
+  const isLoggedIn = window.localStorage.getItem("loggedIn");
 
-        </Switch>
-      </div>
+  return (
+
+    <Router>
+      <Switch>
+        <Route path="/signin" component={isLoggedIn === "false" ? Home : SignIn } />
+        <Route path="/signup" component={SignUp} />
+        <Route path="/" component={Home} exact />
+        <Route path="/profile" component={Profile} />
+        <Route path="/movie" component={Movie} />
+
+      </Switch>
+
     </Router>
   );
 
