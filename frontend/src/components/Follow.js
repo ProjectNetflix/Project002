@@ -73,7 +73,7 @@ const Follow = () => {
             }),
         };
 
-        fetch("http://localhost:5000/646a04e953b89b2dddd928db/follow", requestOptionsPost)  //id user following
+        fetch("http://localhost:5000/646a04e953b89b2dddd928db/follow", requestOptionsPost)  //id user
             .then((response) => response.json())
             .then((res) => {
                 if (res.data) {
