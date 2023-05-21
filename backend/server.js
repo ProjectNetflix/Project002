@@ -103,6 +103,47 @@ app.post("/userData", async (req, res) => {
   } catch (error) { }
 });
 
+//-----follow & unfollow---------------
+app.put("/:id/follow", async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await UserInfo.findById(req.params.id);
+      const currentUser = await UserInfo.findById(req.body.userId);
+      if (!user.follower.includes(req.body.userId)) {
+        await user.updateOne({ $push: { follower: req.body.userId } });
+        await currentUser.updateOne({ $push: { following: req.params.id } });
+        res.status(200).json("กำลังติดตาม");
+      } else {
+        res.status(403).json("ติดตามอยู่แล้ว");
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  } else {
+    res.status(403).json("ติดตามตัวเองไม่ได้");
+  }
+});
+
+app.put("/:id/unfollow", async (req, res) => {
+    if (req.body.userId !== req.params.id) {
+      try {
+        const user = await UserInfo.findById(req.params.id);
+        const currentUser = await UserInfo.findById(req.body.userId);
+        if (user.follower.includes(req.body.userId)) {
+          await user.updateOne({ $pull: { follower: req.body.userId } });
+          await currentUser.updateOne({ $pull: { following: req.params.id } });
+          res.status(200).json("เลิกติดตามแล้ว");
+        } else {
+          res.status(403).json("คุณไม่ได้ติดตาม");
+        }
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    } else {
+      res.status(403).json("คุณไม่สามารถยกเลิกการติดตามตัวคุณเอง");
+    }
+  });
+
 app.listen(5000, () => {
   console.log("Server Started");
 });
