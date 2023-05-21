@@ -18,19 +18,23 @@ export default function Navbar() {
 
     const [userData, setUserData] = useState({});
 
-    useEffect(() => {
-        fetch("http://localhost:5000/userData", {
-            method: "POST",
-            crossDomain: true,
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "Access-Control-Allow-Origin": "*",
-            },
-            body: JSON.stringify({
-                token: window.localStorage.getItem("token"),
-            }),
-        })
+    const requestOptions = {
+        method: "POST",
+        crossDomain: true,
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify({
+            token: window.localStorage.getItem("token"),
+            // userId: window.localStorage.getItem("userId"),
+        }),
+    };
+
+    const getUser = async () => {
+        let uid = localStorage.getItem("userid");
+        fetch(`http://localhost:5000/userData`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
                 console.log(data, "userData");
@@ -42,7 +46,13 @@ export default function Navbar() {
                     setUserData(data.data);
                 }
             });
+    };
+
+
+    useEffect(() => {
+        getUser();
     }, []);
+
 
     const logOut = () => {
         window.localStorage.clear();
@@ -51,40 +61,39 @@ export default function Navbar() {
 
     return (
 
-        <div class="p-3 bg-dark text-white">
-            <div class="container">
-                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 bg-bs-body-bg">
 
-                        <li>
-                            <a href="/" class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <AiOutlineHome /></IconContext.Provider> </a>
-                            <a href="/" class="nav-link px-2 text-white">Home</a>
-                        </li>
+        <div className="p-2 bg-dark text-white">
+            <div className="container">
+                <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 
-                        <li>
-                            <a href='/profile' class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <FaRegUser /></IconContext.Provider> </a>
-                            <a href="/profile" class="nav-link px-2 text-white">Profile</a>
-                        </li>
+                    <ul className="nav col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
 
-                        <li>
-                            <a href='/movie' class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <BiMovie /></IconContext.Provider> </a>
-                            <a href="/movie" class="nav-link px-2 text-white">Movie</a>
-                        </li>
+                        {MenuData.map((menu, index) => {
+
+                            return (
+                                <li key={index}>
+                                    <a href={menu.path} className="nav-link text-white px-2 "> <IconContext.Provider value={{ color: "white", size: '30px' }}> {menu.icon}</IconContext.Provider> </a>
+                                    <a href={menu.path} className="nav-link text-white px-2">{menu.title}</a>
+                                </li>
+                            )
+
+                        })}
 
                     </ul>
 
-                    <form class=" align-items-center  px-4 col-12 col-lg mb-3 mb-lg-0 me-lg-2 ">
-                        <input class="form-control form-control-dark" placeholder="Search..." label="Search" />
+                    <form className=" align-items-center col-12 col-lg px-3">
+                        <input className="form-control form-control-dark " placeholder="Search..." label="Search" />
                     </form>
 
-                    <a href='/profile' class="nav-link px-2 me-lg-5  d-flex justify-content-center text-white">  {userData.fname}  {userData.lname} </a>
+                    <a href='/profile' className="nav-link px-3  d-flex justify-content-center text-white">  {userData.fname}  {userData.lname} </a>
 
-                    <div class="text-end">
-                        <button type="button" class="btn btn-outline-primary " onClick={logOut}>Sign Out</button>
+                    <div className="">
+                        <button type="button" className="btn btn-outline-primary" onClick={logOut}>Sign Out</button>
                     </div>
 
                 </div>
             </div>
         </div >
+
     )
 }

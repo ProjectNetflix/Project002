@@ -1,5 +1,5 @@
-import { BiUserCircle, BiMovie } from "react-icons/bi";
-import { AiOutlineHome, AiOutlineBars } from "react-icons/ai";
+import { BiMovie,BiCameraMovie } from "react-icons/bi";
+import { AiOutlineHome ,AiOutlineUsergroupAdd, AiOutlineUser} from "react-icons/ai";
 
 const MenuData = [
 
@@ -14,13 +14,19 @@ const MenuData = [
         title: "Profile",
         heardertitle: "Profile",
         path: "/profile",
-        icon: <BiUserCircle />
+        icon: <AiOutlineUser />
     },
     {
         title: "Movielist",
         heardertitle: "Movielist",
         path: "/movie",
-        icon: <BiMovie />
+        icon: <BiCameraMovie />
+    },
+    {
+        title: "Follow",
+        heardertitle: "follow",
+        path: "/follow",
+        icon: <AiOutlineUsergroupAdd />
     },
 
 ]

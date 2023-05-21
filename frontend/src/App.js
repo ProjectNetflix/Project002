@@ -9,6 +9,7 @@ import SignUp from './components/Signup'
 import Movie from './components/Movie'
 import Home from './components/Home'
 import Profile from './components/Profile'
+import Follow from './components/Follow'
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/" component={Home} exact />
         <Route path="/profile" component={Profile} />
         <Route path="/movie" component={Movie} />
+        <Route path="/follow" component={Follow} />
 
       </Switch>
 

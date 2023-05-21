@@ -92,7 +92,7 @@ const SignIn = () => {
           </div>
 
           <button type="submit" className="btn btn-primary">
-            Sing In
+            Sign In
           </button>
 
 

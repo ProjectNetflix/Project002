@@ -1,11 +1,24 @@
-import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
-//import './Navbar.css'
-//import './Profile.css'
+// import Navbar from "./Navbar1"
+import Navbar from "./Navbar"
+import './style.css'
+import { useState, useEffect } from "react"
 
-const Profile = () => {
+
+const Follow = () => {
+
 
     const [userData, setUserData] = useState({});
+    const [follow, setFollow] = useState({});
+    const [userId, setUserId] = useState("6469098157d8118db25535e3"); // id user login
+    const [students, setStudents] = useState({});
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const convertType = (data) => {
+        let val = typeof data === "string" ? parseInt(data) : data;
+        return val;
+    };
 
     const requestOptions = {
         method: "POST",
@@ -22,7 +35,7 @@ const Profile = () => {
     };
 
     const getUser = async () => {
-        let uid = localStorage.getItem("userid");
+        let uid = localStorage.getItem("userId");
         fetch(`http://localhost:5000/userData`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
@@ -33,6 +46,8 @@ const Profile = () => {
                     window.location.href = "./signin";
                 } else {
                     setUserData(data.data);
+                    setUserId(uid);
+                    console.log(uid);
                 }
             });
     };
@@ -40,6 +55,40 @@ const Profile = () => {
     useEffect(() => {
         getUser();
     }, []);
+
+    function submit() {
+
+        console.log(userId)
+
+        const requestOptionsPost = {
+            method: "PUT",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            }
+            , body: JSON.stringify({
+                userId,
+            }),
+        };
+
+        fetch("http://localhost:5000/646a04e953b89b2dddd928db/follow", requestOptionsPost)  //id user following
+            .then((response) => response.json())
+            .then((res) => {
+                if (res.data) {
+                    alert("follow")
+                    console.log("บันทึกได้")
+                    setSuccess(true);
+                    setErrorMessage("")
+
+                } else {
+                    console.log(res.error)
+                    setError(true);
+                    setErrorMessage(res.error)
+                }
+            });
+    }
 
     return (
         <div>
@@ -50,13 +99,13 @@ const Profile = () => {
 
                         <img src="https://pbs.twimg.com/media/FBdflFiVkAMsmK2?format=jpg&name=small" className="rounded-circle " width={100} height={100} />
 
-                        <h4 className="" >{userData.fname} {userData.lname}</h4>
+                        <h4 className="" >{userData.fname}</h4>
                         <span >Followers  8000 </span>
                         <span >Playlist  4</span>
                         <span >Favlist Movie 0</span>
+                        <span >{userId}</span>
                         <br />
-                        <button className="btn btn-outline-primary m-3">Edit Profile</button>
-                        <button className="btn btn-outline-secondary m-3">Create Playlist</button>
+                        <button className="btn btn-outline-primary m-3 " onClick={submit}>Follow</button>
 
                     </div>
                 </div>
@@ -72,7 +121,7 @@ const Profile = () => {
                                 <p className="card-text">คนคูล ๆ อย่างเราต้องดูหนังรักๆ</p>
                                 {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
                             </div>
-                            <button className="btn btn-primary m-3">Edit Playlist</button>
+                            <button className="btn btn-primary m-3">Fav List</button>
 
                         </div>
                     </div>
@@ -86,7 +135,7 @@ const Profile = () => {
                                 <p className="card-text">หนังชีวิต</p>
                                 {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
                             </div>
-                            <button className="btn btn-primary m-3">Edit Playlist</button>
+                            <button className="btn btn-primary m-3">Fav List</button>
 
                         </div>
 
@@ -100,7 +149,7 @@ const Profile = () => {
                                 <p className="card-text"> มาดูอนิเมะด้วยกันสิจ้ะ</p>
                                 {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
                             </div>
-                            <button className="btn btn-primary m-3">Edit Playlist</button>
+                            <button className="btn btn-primary m-3">Fav List</button>
 
                         </div>
                     </div>
@@ -113,15 +162,19 @@ const Profile = () => {
                                 <p className="card-text">เป็นติ่งอย่างเราๆ ต้องดูซีรี่ส์เกาหลี</p>
                                 {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
                             </div>
-                            <button className="btn btn-primary m-3">Edit Playlist</button>
+                            <button className="btn btn-primary m-3">Fav List</button>
 
                         </div>
                     </div>
 
                 </div>
             </div>
-        </div>
 
-    );
+        </div >
+    )
+
 }
-export default Profile;
+
+export default Follow;
+
+
