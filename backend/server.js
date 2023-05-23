@@ -103,6 +103,35 @@ app.post("/userData", async (req, res) => {
   } catch (error) { }
 });
 
+
+app.get("/getAllUser", async (req, res) => {
+  try {
+    const allUser = await UserInfo.find({});
+    res.send({ status: "ok", data: allUser });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/friends/:userId", async (req, res) => {
+  try {
+    const user = await UserInfo.findById(req.params.userId);
+    const friends = await Promise.all(
+      user.following.map((friendId) => {
+        return UserInfo.findById(friendId);
+      })
+    );
+    let friendList = [];
+    friends.map((friend) => {
+      const { _id, fname, profilePicture } = friend;
+      friendList.push({ _id, fname, profilePicture });
+    });
+    res.status(200).json(friendList)
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 //-----follow & unfollow---------------
 app.put("/:id/follow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
