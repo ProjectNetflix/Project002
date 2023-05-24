@@ -103,13 +103,22 @@ app.post("/userData", async (req, res) => {
   } catch (error) { }
 });
 
-
-app.get("/getAllUser", async (req, res) => {
+app.get("/allusers", async (req, res) => {
   try {
-    const allUser = await UserInfo.find({});
+    const allUser = (await UserInfo.find({}));
     res.send({ status: "ok", data: allUser });
   } catch (error) {
     console.log(error);
+  }
+});
+
+app.get("/find/:id", async (req, res) => {
+  try {
+    const user = await UserInfo.findById(req.params.id);
+    const { password, ...info } = user._doc;
+    res.status(200).json(info);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
