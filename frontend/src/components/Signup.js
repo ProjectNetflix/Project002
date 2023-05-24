@@ -41,16 +41,24 @@ const SignUp = () => {
 
           // console.log(data)
           MySwal.fire({
-            html: <strong>successful</strong>,
+            text: 'Success',
             icon: 'success',
             showConfirmButton: false,
-            timer: 1000
+            timer: 2000
           })
 
           alert("signup successful");
           window.location.href = "./signin";
         } else {
-          alert(data.status);
+
+          MySwal.fire({
+            text: data.status,
+            icon: 'error',
+            showConfirmButton: true,
+            //timer: 2000
+          })
+
+          // alert(data.status);
         }
       });
   }

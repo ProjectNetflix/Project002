@@ -23,7 +23,7 @@
     height: 80px;
     justify-content: flex-start;
     align-items: left;
-    
+
 }
 
 .navbar-toggle {
@@ -165,7 +165,7 @@ span {
 }
 
 .card-description {
-    margin: 100px 0 0 0 ;
+    margin: 100px 0 0 0;
     padding: 1px;
     text-align: left;
     font-weight: bold;
@@ -276,15 +276,25 @@ html,
     margin-top: 100px;
 }
 
-.user-container{
+.user-container {
     text-align: center;
 }
 
-.profile{
+.profile {
     text-align: left;
     font-size: 20px;
 }
 
 .homepage {
     text-align: center;
+}
+
+.swal2-success-line-tip,
+.swal2-success-line-long {
+    font-size: 16px !important;
+}
+
+.swal2-x-mark-line-right,
+.swal2-x-mark-line-left {
+    font-size: 16px !important;
 }

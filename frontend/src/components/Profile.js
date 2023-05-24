@@ -44,6 +44,7 @@ const Profile = () => {
     return (
         <div>
             <Navbar />
+
             <div className=" container">
                 <div className="row-12 ">
                     <div className="col align-items-center p-3">
@@ -51,7 +52,7 @@ const Profile = () => {
                         <img src="https://pbs.twimg.com/media/FBdflFiVkAMsmK2?format=jpg&name=small" className="rounded-circle " width={100} height={100} />
 
                         <h4 className="" >{userData.fname} {userData.lname}</h4>
-                        <span >Followers  8000 </span>
+                        <span >Followers {userData.follower} </span>
                         <span >Playlist  4</span>
                         <span >Favlist Movie 0</span>
                         <br />
@@ -120,6 +121,10 @@ const Profile = () => {
 
                 </div>
             </div>
+
+
+
+
         </div>
 
     );

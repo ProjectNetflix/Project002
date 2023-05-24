@@ -32,12 +32,26 @@ const SignIn = () => {
       .then((data) => {
         console.log(data, "userRegister");
         if (data.status === "ok") {
+
+          MySwal.fire({
+            icon: 'success',
+            text: 'Success',
+            showConfirmButton: true,
+           // timer: 2500
+          })
+
           window.localStorage.setItem("token", data.data);
           window.localStorage.setItem("userId", data.userId);
           window.localStorage.setItem("loggedIn", true);
           window.location.href = "./";
+
         } else {
-          alert(data.status);
+          MySwal.fire({
+            icon: "error",
+            text: data.status,
+            showConfirmButton: true,
+          })
+          //alert(data.status);
         }
       });
   }

@@ -13,10 +13,27 @@ import { IconContext } from "react-icons";
 
 export default function Navbar() {
 
-    const [showMenu, setShowMenu] = useState(false)
-    const toggleMenu = () => setShowMenu(!showMenu)
+    const [userData, setUserData] = useState([]);
 
-    const [userData, setUserData] = useState({});
+    const [word, setWord] = useState("")
+    const [dataFilter] = useState(["lname", "fname"])
+    const [rearch, setRearch] = useState([]);
+
+    const searchFollow = (rearch) => {
+        return rearch.filter((item) => {
+            return dataFilter.some((filter) => {
+                if (item[filter]) {//check ค่าว่าง
+                    return item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
+                }
+            })
+        })
+    }
+
+    const handleChange = (e) => {
+        e.preventDefault();
+
+        setWord(e.target.value);
+    };
 
     const requestOptions = {
         method: "POST",
@@ -28,11 +45,35 @@ export default function Navbar() {
         },
         body: JSON.stringify({
             token: window.localStorage.getItem("token"),
-            // userId: window.localStorage.getItem("userId"),
         }),
     };
 
     const getUser = async () => {
+
+        const requestOptions = {
+            method: "GET",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+        };
+
+        fetch(`http://localhost:5000/allusers`, requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data, "userData");
+                if (data.status === "ok") {
+                    console.log(data.data)
+                    setRearch(data.data);
+                } else {
+                    alert("Token expired signin again");
+                }
+            });
+    };
+
+    const getUserData = async () => {
         let uid = localStorage.getItem("userid");
         fetch(`http://localhost:5000/userData`, requestOptions)
             .then((res) => res.json())
@@ -48,19 +89,22 @@ export default function Navbar() {
             });
     };
 
-
     useEffect(() => {
+        getUserData();
         getUser();
     }, []);
 
-
+    const sendID = (e) => {
+        console.log(e);
+        //window.localStorage.setItem("followId", e);
+        //window.location.href = "/signin";
+    }
     const logOut = () => {
         window.localStorage.clear();
         window.location.href = "/signin";
     };
 
     return (
-
 
         <div className="p-2 bg-dark text-white">
             <div className="container">
@@ -82,7 +126,15 @@ export default function Navbar() {
                     </ul>
 
                     <form className=" align-items-center col-12 col-lg px-3">
-                        <input className="form-control form-control-dark " placeholder="Search..." label="Search" />
+                        <input className="form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
+                        <div className="list-group" onChange={handleChange}>
+                            {searchFollow(rearch).map((item, index) => {
+                                return (
+                                    <a className="list-group-item list-group-item-action" key={index}  > {item._id} {item.fname}  {item.lname}</a>
+                                )
+                            })}
+
+                        </div>
                     </form>
 
                     <a href='/profile' className="nav-link px-3  d-flex justify-content-center text-white">  {userData.fname}  {userData.lname} </a>

@@ -10,10 +10,26 @@ const Follow = () => {
     const [userData, setUserData] = useState({});
     const [follow, setFollow] = useState({});
     const [userId, setUserId] = useState("6469098157d8118db25535e3"); // id user login
-    const [students, setStudents] = useState({});
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
+
+    const [word, setWord] = useState("")
+    const [dataFilter] = useState(["lname", "fname", "fname lname"])
+    const [rearch, setRearch] = useState([]);
+
+    const searchFollow = (rearch) => {
+        return rearch.filter((item) => {
+            return dataFilter.some((filter) => {
+                if (item[filter]) {//check ค่าว่าง
+                    //console.log(item[filter]);
+                    return item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
+                }
+            })
+        })
+    }
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        setWord(e.target.value);
+    };
 
     const convertType = (data) => {
         let val = typeof data === "string" ? parseInt(data) : data;
@@ -35,6 +51,31 @@ const Follow = () => {
     };
 
     const getUser = async () => {
+
+        const requestOptions = {
+            method: "GET",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+        };
+
+        fetch(`http://localhost:5000/allusers`, requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data, "userData");
+                if (data.status === "ok") {
+                    console.log(data.data)
+                    setRearch(data.data);
+                } else {
+                    alert("Token expired signin again");
+                }
+            });
+    };
+
+    const getUserData = async () => {
         let uid = localStorage.getItem("userId");
         fetch(`http://localhost:5000/userData`, requestOptions)
             .then((res) => res.json())
@@ -53,6 +94,7 @@ const Follow = () => {
     };
 
     useEffect(() => {
+        getUserData();
         getUser();
     }, []);
 
@@ -79,13 +121,11 @@ const Follow = () => {
                 if (res.data) {
                     alert("follow")
                     console.log("บันทึกได้")
-                    setSuccess(true);
-                    setErrorMessage("")
+
 
                 } else {
                     console.log(res.error)
-                    setError(true);
-                    setErrorMessage(res.error)
+
                 }
             });
     }
@@ -94,20 +134,28 @@ const Follow = () => {
         <div>
             <Navbar />
             <div className=" container">
+
                 <div className="row-12 ">
                     <div className="col align-items-center p-3">
 
                         <img src="https://pbs.twimg.com/media/FBdflFiVkAMsmK2?format=jpg&name=small" className="rounded-circle " width={100} height={100} />
 
-                        <h4 className="" >{userData.fname}</h4>
-                        <span >Followers  8000 </span>
+                        <h4 className="" >{userData.fname} {userData.lname}</h4>
+                        <span >Followers {userData.follower} </span>
                         <span >Playlist  4</span>
                         <span >Favlist Movie 0</span>
-                        <span >{userId}</span>
-                        <br />
                         <button className="btn btn-outline-primary m-3 " onClick={submit}>Follow</button>
 
                     </div>
+                </div>
+
+                <div className="list-group" onChange={handleChange}>
+                    {searchFollow(rearch).map((item, index) => {
+                        return (
+                            <a href="/follow" className="list-group-item list-group-item-action" key={index} >{item._id}  {item.fname}  {item.lname}</a>
+                        )
+                    })}
+
                 </div>
 
                 <h3 className="align-items-left"> My Playlist Movie </h3>
