@@ -2,7 +2,7 @@
 import Navbar from "./Navbar"
 import './style.css'
 import { useState, useffect } from "react"
-import searchBar from "./Searchbar"
+import SearchBar from "./Searchbar1"
 
 const Home = () => {
 
@@ -12,7 +12,7 @@ const Home = () => {
     return (
         <div>
             <Navbar />
-
+            <SearchBar/>
         </div>
     )
 

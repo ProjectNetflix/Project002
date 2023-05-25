@@ -68,28 +68,13 @@ export default function Navbar() {
                                 )
 
                             })}
-
-                            {/* <li>
-                            <a href="/" class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <AiOutlineHome /></IconContext.Provider> </a>
-                            <a href="/" class="nav-link px-2 text-white">Home</a>
-                        </li>
-
-                        <li>
-                            <a href='/profile' class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <FaRegUser /></IconContext.Provider> </a>
-                            <a href="/profile" class="nav-link px-2 text-white">Profile</a>
-                        </li>
-
-                        <li>
-                            <a href='/movie' class="nav-link px-2 text-white"> <IconContext.Provider value={{ color: "white", size: '25px' }}> <BiMovie /></IconContext.Provider> </a>
-                            <a href="/movie" class="nav-link px-2 text-white">Movie</a>
-                        </li> */}
-
-
+                      
                         </ul>
 
                         {/* <form class=" align-items-center col-12 col-lg px-3">
                         <input class="form-control form-control-dark " placeholder="Search..." label="Search" />
                     </form> */}
+
 
                         <a href='/profile' class="nav-link px-3  d-flex justify-content-center text-white">  {userData.fname}  {userData.lname} </a>
 

@@ -23,3 +23,8 @@
     justify-content: left;
 
 }
+
+.search-bar{
+    z-index: 1;
+    position: relative;
+}

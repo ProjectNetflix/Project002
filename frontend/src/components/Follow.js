@@ -149,15 +149,6 @@ const Follow = () => {
                     </div>
                 </div>
 
-                <div className="list-group" onChange={handleChange}>
-                    {searchFollow(rearch).map((item, index) => {
-                        return (
-                            <a href="/follow" className="list-group-item list-group-item-action" key={index} >{item._id}  {item.fname}  {item.lname}</a>
-                        )
-                    })}
-
-                </div>
-
                 <h3 className="align-items-left"> My Playlist Movie </h3>
                 <div className="row ">
 

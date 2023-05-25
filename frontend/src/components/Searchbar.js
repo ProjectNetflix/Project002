@@ -1,77 +1,73 @@
-// import React, { useState } from 'react'
+import React, { useState , useEffect} from 'react';
 
-// const searchBar = () => {
+const FloatingSearchBar = () => {
+    const [isSearchOpen, setIsSearchOpen] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [word, setWord] = useState("")
+    const [dataFilter] = useState(["lname", "fname"])
+    const [rearch, setRearch] = useState([]);
 
-//     const [searchInput, setSearchInput] = useState("");
+    const searchFollow = (rearch) => {
+        return rearch.filter((item) => {
+            return dataFilter.some((filter) => {
+                if (item[filter]) {//check ค่าว่าง
+                    return item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
+                }
+            })
+        })
+    }
 
-//     const countries = [
+    const handleChange = (e) => {
+        e.preventDefault();
+        setWord(e.target.value);
+    };
 
-//         { name: "Belgium", continent: "Europe" },
-//         { name: "India", continent: "Asia" },
-//         { name: "Bolivia", continent: "South America" },
-//         { name: "Ghana", continent: "Africa" },
-//         { name: "Japan", continent: "Asia" },
-//         { name: "Canada", continent: "North America" },
-//         { name: "New Zealand", continent: "Australasia" },
-//         { name: "Italy", continent: "Europe" },
-//         { name: "South Africa", continent: "Africa" },
-//         { name: "China", continent: "Asia" },
-//         { name: "Paraguay", continent: "South America" },
-//         { name: "Usa", continent: "North America" },
-//         { name: "France", continent: "Europe" },
-//         { name: "Botswana", continent: "Africa" },
-//         { name: "Spain", continent: "Europe" },
-//         { name: "Senegal", continent: "Africa" },
-//         { name: "Brazil", continent: "South America" },
-//         { name: "Denmark", continent: "Europe" },
-//         { name: "Mexico", continent: "South America" },
-//         { name: "Australia", continent: "Australasia" },
-//         { name: "Tanzania", continent: "Africa" },
-//         { name: "Bangladesh", continent: "Asia" },
-//         { name: "Portugal", continent: "Europe" },
-//         { name: "Pakistan", continent: "Asia" },
+    const getUser = async () => {
 
-//     ];
+        const requestOptions = {
+            method: "GET",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+        };
 
-//     const handleChange = (e) => {
-//         e.preventDefault();
-//         setSearchInput(e.target.value);
-//     };
+        fetch(`http://localhost:5000/allusers`, requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data, "userData");
+                if (data.status === "ok") {
+                    console.log(data.data)
+                    setRearch(data.data);
+                } else {
+                    alert("Token expired signin again");
+                }
+            });
+    };
 
-//     if (searchInput.length > 0) {
-//         countries.filter((country) => {
-//             return country.name.match(searchInput);
-//         });
-//     }
+    useEffect(() => {
+        getUser();
+    }, []);
 
-//     return <div>
+    return (
+        <div>
+            {isSearchOpen && (
+                <form className=" align-items-center col-12 col-lg px-3">
+                        <input className="form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
+                        <div className="list-group" onChange={handleChange}>
+                            {searchFollow(rearch).map((item, index) => {
+                                return (
+                                    <a className="list-group-item list-group-item-action" key={index}  > {item._id} {item.fname}  {item.lname}</a>
+                                )
+                            })}
 
-//         <input
-//             type="search"
-//             placeholder="Search here"
-//             onChange={handleChange}
-//             value={searchInput} />
+                        </div>
+                </form>
+            )}
+        </div>
+    );
+};
 
-//         <div>
-//             <span>
-//                 <th>Country</th>
-//                 <th>Continent</th>
-//             </span>
-
-//             {countries.map((country, index) => {
-
-//                 <div>
-//                     <span>
-//                         <li>{country.name}</li>
-//                         <li>{country.continent}</li>
-//                     </span>
-//                 </div>
-
-//             })}
-//         </div>
-//     </div>
-
-
-// };
-
-// export default searchBar;
+export default FloatingSearchBar;
