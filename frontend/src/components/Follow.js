@@ -2,14 +2,20 @@
 import Navbar from "./Navbar"
 import './style.css'
 import { useState, useEffect } from "react"
+import axios from 'axios';
 
 
 const Follow = () => {
 
 
     const [userData, setUserData] = useState({});
+    const [followers, setFollowers] = useState([]);
+    const [following, setFollowing] = useState([]);
+  
     const [follow, setFollow] = useState({});
-    const [userId, setUserId] = useState("6469098157d8118db25535e3"); // id user login
+    const [userId, setUserId] = useState(""); // id user login
+    
+    const [users, setUsers] = useState([]);
 
     const [word, setWord] = useState("")
     const [dataFilter] = useState(["lname", "fname", "fname lname"])
@@ -35,7 +41,7 @@ const Follow = () => {
         let val = typeof data === "string" ? parseInt(data) : data;
         return val;
     };
-
+   
     const requestOptions = {
         method: "POST",
         crossDomain: true,
@@ -98,6 +104,57 @@ const Follow = () => {
         getUser();
     }, []);
 
+    
+
+    useEffect(() => {
+        const fetchFollowers = async () => {
+          try {
+            const response = await axios.get(`http://localhost:5000/find/${userId}`);
+            setFollowers(response.data.follower);
+            setFollowing(response.data.following);
+            console.log("res data",response.data)
+          } catch (error) {
+            console.error(error);
+          }
+        };
+    
+        fetchFollowers();
+    }, [userId]);
+
+    const handleFollow = (userId) => {
+        // ส่งคำขอติดตามผ่าน API
+        axios
+          .put(`http://localhost:5000/${userId}/follow`)
+          .then((response) => {
+            // อัปเดตข้อมูล User ที่ติดตามแล้ว
+            const updatedUsers = users.map((user) => {
+              if (user._id === userId) {
+                return { ...user, isFollowing: true };
+              }
+              return user;
+            });
+            setUsers(updatedUsers);
+          })
+          .catch((error) => console.error(error));
+      };
+    
+      const handleUnfollow = (userId) => {
+        // ส่งคำขอยกเลิกติดตามผ่าน API
+        axios
+          .put(`http://localhost:5000/${userId}/unfollow`)
+          .then((response) => {
+            // อัปเดตข้อมูล User ที่ยกเลิกติดตาม
+            const updatedUsers = users.map((user) => {
+              if (user._id === userId) {
+                return { ...user, isFollowing: false };
+              }
+              return user;
+            });
+            setUsers(updatedUsers);
+          })
+          .catch((error) => console.error(error));
+      };
+
     function submit() {
 
         console.log(userId)
@@ -135,20 +192,44 @@ const Follow = () => {
             <Navbar />
             <div className=" container">
 
+                    {users.map((user) => (
+                        <div key={user._id}>
+                        <img src={user.profilePicture} alt="Profile" />
+                        <h4>{user.fullName}</h4>
+                        <span>Followers: {user.followers.length}</span>
+                        <span>Following: {user.following.length}</span>
+
+                        {user.isFollowing ? (
+                            <button onClick={() => handleUnfollow(user._id)}>Unfollow</button>
+                        ) : (
+                            <button onClick={() => handleFollow(user._id)}>Follow</button>
+                        )}
+                        </div>
+                    ))}
+
                 <div className="row-12 ">
                     <div className="col align-items-center p-3">
 
                         <img src="https://pbs.twimg.com/media/FBdflFiVkAMsmK2?format=jpg&name=small" className="rounded-circle " width={100} height={100} />
 
-                        <h4 className="" >{userData.fname} {userData.lname}</h4>
-                        <span >Followers {userData.follower} </span>
-                        <span >Playlist  4</span>
+                        <h4 className="" >{userId.fname} {userId.lname}</h4>
+                        <span >Followers {followers.length} </span>
+                        <span >Following {following.length} </span>
+                        {/* <span >Playlist  4</span>
                         <span >Favlist Movie 0</span>
+                        <span >uid {userData._id}</span> */}
+                        {/* <UserTable users={users} onFollow={handleFollow} onUnfollow={handleUnfollow} />                      */}
+
                         <button className="btn btn-outline-primary m-3 " onClick={submit}>Follow</button>
 
                     </div>
                 </div>
 
+<<<<<<< HEAD
+=======
+               
+
+>>>>>>> fc2c22d33cdbe5e906eba25090e20f4f4bd32914
                 <h3 className="align-items-left"> My Playlist Movie </h3>
                 <div className="row ">
 

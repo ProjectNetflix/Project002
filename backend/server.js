@@ -182,6 +182,68 @@ app.put("/:id/unfollow", async (req, res) => {
     }
   });
 
+  app.post('/search-users',(req,res)=>{
+    let userPattern = new RegExp("^"+req.body.query)
+    UserInfo.find({fname:{$regex:userPattern}})
+    .select("_id fname")
+    .then(user=>{
+        res.json({user})
+    }).catch(err=>{
+        console.log(err)
+    })
+
+})
+
+//---------
+require("./playlist");
+const PlaylistInfo = mongoose.model("PlaylistInfo")
+
+// app.get('/', async (req, res) => {
+//   try {
+//     const playlists = await PlaylistInfo.find();
+//     res.status(200).json(playlists);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server Error' });
+//   }
+// });
+// GET /api/playlists
+app.get('/playlists', async (req, res) => {
+  try {
+    const playlists = await PlaylistInfo.find().populate('user', 'fname');
+    res.json(playlists);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+//POST /api/playlists
+app.post('/createPlaylist', async (req, res) => {
+  const { user,title,desc, movie } = req.body;
+  // const { name, songs, userId } = req.body;
+
+  try {
+    const user = await UserInfo.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const playlist = new Playlist({  title,desc,movie, user: user._id });
+    await playlist.save();
+
+    // Add the playlist ID to the user's playlists array
+    user.playlists.push(playlist._id);
+    await user.save();
+
+    res.status(200).json(playlist);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
 app.listen(5000, () => {
   console.log("Server Started");
 });
