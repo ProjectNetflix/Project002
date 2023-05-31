@@ -1,7 +1,8 @@
-import React, { useEffect, useState, Link } from 'react';
+import React, { useState, useEffect } from "react";
+import "./searchbar.css";
 
-const SearchBar = () => {
 
+function SearchBar({ placeholder, data }) {
   const [word, setWord] = useState("")
   const [dataFilter] = useState(["lname", "fname"])
   const [rearch, setRearch] = useState([]);
@@ -18,7 +19,21 @@ const SearchBar = () => {
 
   const handleChange = (e) => {
     e.preventDefault();
+
     setWord(e.target.value);
+  };
+
+  const requestOptions = {
+    method: "POST",
+    crossDomain: true,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify({
+      token: window.localStorage.getItem("token"),
+    }),
   };
 
   const getUser = async () => {
@@ -50,21 +65,19 @@ const SearchBar = () => {
     getUser();
   }, []);
 
-
   return (
-    <div className='z-3 rounded-3'>
-      <input className="form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
-      <div className=" align-items-center col-12 px-3">
-        <div className="list-group z-3" >
-          {searchFollow(rearch).map((item, index) => {
-            return (
-              <Link to={`/${item.fname}`} className="list-group-item list-group-item-action z-5 " key={index}  > {item.fname}  {item.lname}</Link>
-            )
-          })}
-        </div>
+
+    <form className=" align-items-center col-12 col-lg px-3">
+      <input className=" form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
+      <div className="position-absolute list-group" onChange={handleChange}>
+        {word.length != 0 && searchFollow(rearch).map((item, index) => {
+          return (
+            <a className="list-group-item list-group-item-action" key={index}  > {item._id} {item.fname}  {item.lname}</a>
+          )
+        })}
       </div>
-    </div>
-  )
-};
+    </form>
+  );
+}
 
 export default SearchBar;

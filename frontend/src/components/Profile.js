@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 
 const Profile = () => {
 
+    const [playlist, setPlaylist] = useState([]);
     const [userData, setUserData] = useState({});
 
     const requestOptions = {
@@ -20,6 +21,31 @@ const Profile = () => {
             // userId: window.localStorage.getItem("userId"),
         }),
     };
+
+    const getPlaylist = async () => {
+
+        const requestOptions = {
+            method: "GET",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            }
+        };
+        fetch(`http://localhost:5000/playlists`,requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data != null) {
+                    //alert("OK");
+                    console.log(data, "Playlist User");
+                    setPlaylist(data);
+                } else {
+                    alert(data.status);
+                }
+            });
+
+    }
 
     const getUser = async () => {
         let uid = localStorage.getItem("userid");
@@ -39,6 +65,7 @@ const Profile = () => {
 
     useEffect(() => {
         getUser();
+        getPlaylist();
     }, []);
 
     return (
@@ -57,17 +84,49 @@ const Profile = () => {
                         <span >Favlist Movie 0</span>
                         <br />
                         <button className="btn btn-outline-primary m-3">Edit Profile</button>
-                        <button className="btn btn-outline-secondary m-3">Create Playlist</button>
+                        <button className="btn btn-outline-secondary m-3"><a href="/playlist"> Create Playlist </a></button>
 
                     </div>
                 </div>
 
                 <h3 className="align-items-left"> My Playlist Movie </h3>
+
                 <div className="row ">
+
+                    {playlist.map((item) => {
+                        <div className="col">
+                            <div className="card h-100">
+                                <img src="https://a.storyblok.com/f/112937/568x464/88ccff84c5/10_most_romantic_cities_hero-1.jpg/m/620x0/filters:quality(70)/" className="card-img-top w-100 h-100" />
+                                <div className="card-body">
+                                    <h5 className="card-title">{item.title}</h5>
+                                    <p className="card-text">{item.desc}</p>
+                                </div>
+                                <button className="btn btn-primary m-3">Edit Playlist</button>
+                            </div>
+                        </div>
+                    })}
+                </div>
+
+                <div className="row ">
+
+                    {/* {playlist.map((item) => {
+                        <div className="col">
+                            <div className="card h-100">
+                                <img src="https://a.storyblok.com/f/112937/568x464/88ccff84c5/10_most_romantic_cities_hero-1.jpg/m/620x0/filters:quality(70)/" className="card-img-top w-100 h-100" />
+
+                                <div className="card-body">
+                                    <h5 className="card-title">{item.title}</h5>
+                                    <p className="card-text">{item.desc}</p>
+                                </div>
+                                <button className="btn btn-primary m-3">Edit Playlist</button>
+                            </div>
+                        </div>
+                    })} */}
 
                     <div className="col">
                         <div className="card h-100">
                             <img src="https://a.storyblok.com/f/112937/568x464/88ccff84c5/10_most_romantic_cities_hero-1.jpg/m/620x0/filters:quality(70)/" className="card-img-top w-100 h-100" />
+
                             <div className="card-body">
                                 <h5 className="card-title">Romantic</h5>
                                 <p className="card-text">คนคูล ๆ อย่างเราต้องดูหนังรักๆ</p>
@@ -119,7 +178,10 @@ const Profile = () => {
                         </div>
                     </div>
 
+
                 </div>
+
+
             </div>
 
 

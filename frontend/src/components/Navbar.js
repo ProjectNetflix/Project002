@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import MenuData from "../data/MenuData";
 import './Navbar.css'
 import { IconContext } from "react-icons";
-
+import SearchBar from "./Searchbar1";
 
 export default function Navbar() {
 
@@ -125,8 +125,8 @@ export default function Navbar() {
 
                     </ul>
 
-                    <form className=" align-items-center col-12 col-lg px-3">
-                        <input className="form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
+                    {/* <form className=" align-items-center col-12 col-lg px-3">
+                        <input className=" position-absolute form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
                         <div className="list-group" onChange={handleChange}>
                             {searchFollow(rearch).map((item, index) => {
                                 return (
@@ -134,6 +134,17 @@ export default function Navbar() {
                                 )
                             })}
 
+                        </div>
+                    </form> */}
+
+                    <form className="grid align-items-center col-4 px-3">
+                        <input className=" form-control  " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
+                        <div className="list-group position-absolute " onChange={handleChange}>
+                            {word.length != 0 && searchFollow(rearch).map((item, index) => {
+                                return (
+                                    <a className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</a>
+                                )
+                            })}
                         </div>
                     </form>
 

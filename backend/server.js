@@ -224,7 +224,7 @@ app.post('/createPlaylist', async (req, res) => {
   // const { name, songs, userId } = req.body;
 
   try {
-    const user = await UserInfo.findById(userId);
+    const user = await UserInfo.findById(user);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -243,7 +243,7 @@ app.post('/createPlaylist', async (req, res) => {
   }
 });
 
-
 app.listen(5000, () => {
   console.log("Server Started");
 });
+

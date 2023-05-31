@@ -10,6 +10,7 @@ import Movie from './components/Movie'
 import Home from './components/Home'
 import Profile from './components/Profile'
 import Follow from './components/Follow'
+import Playlist from './components/Playlist'
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/profile" component={Profile} />
         <Route path="/movie" component={Movie} />
         <Route path="/follow" component={Follow} />
+        <Route path="/playlist" component={Playlist} />
 
       </Switch>
 

@@ -1,14 +1,14 @@
 .search-bar {
     position: relative;
-    margin-bottom: 20px;
+    display: flex;
+    z-index: 105;
 }
 
-.search-bar input {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
+.search-bar-input{
+    z-index: 5;
 }
 
-.search-bar input:focus {
-    outline: none;
+.search-bar-result{
+    position: absolute;
+    z-index: 101;
 }
