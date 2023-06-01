@@ -1,15 +1,8 @@
 import "./topbar.css";
-import { BiMovie } from "react-icons/bi";
-import { Link } from "react-router-dom";
-import { BsFillPersonFill, BsFillChatDotsFill } from "react-icons/bs";
-import { IoIosNotificationsOutline } from "react-icons/io";
-import { AiOutlineHome } from "react-icons/ai";
-import { FaRegUser, FaTimes } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import MenuData from "../data/MenuData";
 import './Navbar.css'
 import { IconContext } from "react-icons";
-import SearchBar from "./Searchbar1";
 
 export default function Navbar() {
 
@@ -94,11 +87,6 @@ export default function Navbar() {
         getUser();
     }, []);
 
-    const sendID = (e) => {
-        console.log(e);
-        //window.localStorage.setItem("followId", e);
-        //window.location.href = "/signin";
-    }
     const logOut = () => {
         window.localStorage.clear();
         window.location.href = "/signin";
@@ -124,18 +112,6 @@ export default function Navbar() {
                         })}
 
                     </ul>
-
-                    {/* <form className=" align-items-center col-12 col-lg px-3">
-                        <input className=" position-absolute form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
-                        <div className="list-group" onChange={handleChange}>
-                            {searchFollow(rearch).map((item, index) => {
-                                return (
-                                    <a className="list-group-item list-group-item-action" key={index}  > {item._id} {item.fname}  {item.lname}</a>
-                                )
-                            })}
-
-                        </div>
-                    </form> */}
 
                     <form className="grid align-items-center col-4 px-3">
                         <input className=" form-control  " placeholder="Search..." label="Search" onChange={handleChange} value={word} />

@@ -208,6 +208,7 @@ const PlaylistInfo = mongoose.model("PlaylistInfo")
 //   }
 // });
 // GET /api/playlists
+
 app.get('/playlists', async (req, res) => {
   try {
     const playlists = await PlaylistInfo.find().populate('user', 'fname');
@@ -220,16 +221,16 @@ app.get('/playlists', async (req, res) => {
 
 //POST /api/playlists
 app.post('/createPlaylist', async (req, res) => {
-  const { user,title,desc, movie } = req.body;
+  const { userId,title,desc, movie } = req.body;
   // const { name, songs, userId } = req.body;
 
   try {
-    const user = await UserInfo.findById(user);
+    const user = await UserInfo.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const playlist = new Playlist({  title,desc,movie, user: user._id });
+    const playlist = new PlaylistInfo({  title,desc,movie, user: user._id });
     await playlist.save();
 
     // Add the playlist ID to the user's playlists array
