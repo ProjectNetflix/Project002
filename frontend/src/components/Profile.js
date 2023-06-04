@@ -107,7 +107,7 @@ const Profile = () => {
               <div className="col" key={item._id}>
                 <div className="card h-100">
                   <img
-                    src="https://a.storyblok.com/f/112937/568x464/88ccff84c5/10_most_romantic_cities_hero-1.jpg/m/620x0/filters:quality(70)/"
+                    src={`http://localhost:5000/${item.imageUrl}`}
                     className="card-img-top w-100 h-100"
                     alt="Playlist Image"
                   />

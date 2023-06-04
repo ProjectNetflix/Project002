@@ -8,12 +8,15 @@ const bcrypt = require("bcryptjs");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
 const multer = require('multer');
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 
 const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 const mongoUrl = "mongodb+srv://Maprang6224:3gfksnMxGlIVQ6uq@project-workshop.isbh5gk.mongodb.net/?retryWrites=true&w=majority"
+
 
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
@@ -25,6 +28,34 @@ mongoose.connect(mongoUrl, {
 
 
 require("./userDetails");
+require("./playlist");
+
+
+// กำหนดตำแหน่งเก็บไฟล์ให้ multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.mimetype.split('/')[1]);
+  }
+});
+// ตรวจสอบประเภทไฟล์ที่อัปโหลดเฉพาะ .jpg, .jpeg, และ .png
+const fileFilter = (req, file, cb) => {
+  if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+    return cb(new Error('Only image files are allowed!'), false);
+  }
+  cb(null, true);
+};
+
+// สร้าง middleware สำหรับการอัปโหลดไฟล์
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter
+});
+
+
 
 const UserInfo = mongoose.model("UserInfo");
 app.post("/signup", async (req, res) => {
@@ -218,9 +249,9 @@ app.get('/playlists', async (req, res) => {
 });
 
 //POST /api/playlists สร้าง playlist 
-app.post('/createPlaylist', async (req, res) => {
-  const { userId,title,desc, movie } = req.body;
-  // const { name, songs, userId } = req.body;
+app.post('/createPlaylist', upload.single('image'), async (req, res) => {
+  const { userId, title, desc, movie} = req.body;
+  const imageURL = req.file.path.replace(/\\/g, '/');
 
   try {
     const user = await UserInfo.findById(userId);
@@ -228,7 +259,14 @@ app.post('/createPlaylist', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const playlist = new PlaylistInfo({  title,desc,movie, user: user._id });
+    const playlist = new PlaylistInfo({
+      title,
+      desc,
+      movie,
+      user: user._id,
+      imageUrl: imageURL // เพิ่มส่วนนี้เพื่อเก็บที่อยู่ของรูปภาพ
+    });
+
     await playlist.save();
 
     // Add the playlist ID to the user's playlists array
@@ -241,6 +279,7 @@ app.post('/createPlaylist', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
 
 app.get('/playlists-user/:id', async (req, res) => {
   try {

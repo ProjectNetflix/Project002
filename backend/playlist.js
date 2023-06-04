@@ -4,6 +4,10 @@ const PlaylistsSchema = new mongoose.Schema(
         
         title: String,
         desc: String,
+        imageUrl: { 
+            type:String,
+            required: true,
+        },
         movie:{
             type:Array,
             default:[],
