@@ -3,23 +3,33 @@ import { useState, useEffect } from "react";
 import MenuData from "../data/MenuData";
 import './Navbar.css'
 import { IconContext } from "react-icons";
+import Follow from "./Follow";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
 
     const [userData, setUserData] = useState([]);
-
     const [word, setWord] = useState("")
     const [dataFilter] = useState(["lname", "fname"])
-    const [rearch, setRearch] = useState([]);
+    const [search, setSearch] = useState([]);
 
-    const searchFollow = (rearch) => {
-        return rearch.filter((item) => {
+    const handleSearch = (searchResult) => {
+        console.log(searchResult);
+        Follow(searchResult);
+        window.location.reload();
+    };
+
+    const searchFollow = (search) => {
+        return search.filter((item) => {
             return dataFilter.some((filter) => {
                 if (item[filter]) {//check ค่าว่าง
                     return item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
                 }
             })
         })
+        // เรียกใช้งานฟังก์ชัน onSearch เพื่อส่งผลลัพธ์การค้นหา
+        // onSearch(results);
+        // return results;
     }
 
     const handleChange = (e) => {
@@ -59,7 +69,7 @@ export default function Navbar() {
                 console.log(data, "userData");
                 if (data.status === "ok") {
                     console.log(data.data)
-                    setRearch(data.data);
+                    setSearch(data.data);
                 } else {
                     alert("Token expired signin again");
                 }
@@ -85,6 +95,7 @@ export default function Navbar() {
     useEffect(() => {
         getUserData();
         getUser();
+
     }, []);
 
     const logOut = () => {
@@ -113,12 +124,12 @@ export default function Navbar() {
 
                     </ul>
 
-                    <form className="grid align-items-center col-4 px-3">
+                    <form className="grid align-items-center col-4 px-3" >
                         <input className=" form-control  " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
-                        <div className="list-group position-absolute " onChange={handleChange}>
-                            {word.length != 0 && searchFollow(rearch).map((item, index) => {
+                        <div className="list-group position-absolute " onChange={handleChange} >
+                            {word.length != 0 && searchFollow(search).map((item, index) => {
                                 return (
-                                    <a className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</a>
+                                    <Link to={{ pathname: "/follow", state: { userid: item._id }, }} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
                                 )
                             })}
                         </div>

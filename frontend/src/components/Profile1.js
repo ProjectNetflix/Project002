@@ -42,15 +42,15 @@ const Profile = () => {
   const getUser = async () => {
     let uid = localStorage.getItem("userId");
     const requestOptions = {
-        method: "GET",
-        crossDomain: true,
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      };
+      method: "GET",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
     fetch(`http://localhost:5000/userData/${uid}`, requestOptions)
       .then((res) => res.json())
       .then((data) => {

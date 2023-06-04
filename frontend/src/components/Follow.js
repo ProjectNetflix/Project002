@@ -2,56 +2,122 @@
 import Navbar from "./Navbar"
 import './style.css'
 import { useState, useEffect } from "react"
+import { useLocation } from "react-router-dom";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
 
 
 const Follow = () => {
 
+    console.log();
+    const [follower, setFollower] = useState([]);
+    const [following, setFollowing] = useState([]);
+    const location = useLocation();
+    const { userid } = location.state;
+    const [playlist, setPlaylist] = useState([]);
+    const [follow, setFollow] = useState([]);
+    const [isFollowed, setIsFollowed] = useState(false);
 
-    const [userData, setUserData] = useState({});
-    const [follow, setFollow] = useState({});
-    const [userId, setUserId] = useState("6469098157d8118db25535e3"); // id user login
+    const handleFollowToggle = () => {
+        //setIsFollowed((prevStatus) => !prevStatus);
+        const requestOptionsPost = {
+            method: "PUT",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+            }
+            , body: JSON.stringify({
+                userId: localStorage.getItem("userId"),
+            }),
+        };
 
-    const [word, setWord] = useState("")
-    const [dataFilter] = useState(["lname", "fname", "fname lname"])
-    const [rearch, setRearch] = useState([]);
+        if (isFollowed) {
+            // ดำเนินการ Unfollow ที่นี่
+            // เช่นเรียก API ส่งคำขอยกเลิกติดตามผู้ใช้
 
-    const searchFollow = (rearch) => {
-        return rearch.filter((item) => {
-            return dataFilter.some((filter) => {
-                if (item[filter]) {//check ค่าว่าง
-                    //console.log(item[filter]);
-                    return item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
-                }
+            fetch(`http://localhost:5000/${userid}/unfollow`, requestOptionsPost)  //id user
+                .then((response) => response.json())
+                .then((res) => {
+                    if (res.data) {
+                        alert("follow")
+                        console.log("บันทึกได้")
+
+                    } else {
+                        console.log(res.error)
+
+                    }
+                });
+            MySwal.fire({
+                icon: "success",
+                text: "UnFollow Success",
+                showConfirmButton: true,
             })
-        })
-    }
+            console.log("Unfollow");
+            // ตั้งค่าสถานะการติดตามเป็น false
+            setIsFollowed(false);
 
-    const handleChange = (e) => {
-        e.preventDefault();
-        setWord(e.target.value);
-    };
+        } else {
 
-    const convertType = (data) => {
-        let val = typeof data === "string" ? parseInt(data) : data;
-        return val;
+            fetch(`http://localhost:5000/${userid}/follow`, requestOptionsPost)  //id user
+                .then((response) => response.json())
+                .then((res) => {
+                    if (res.data) {
+                        alert("follow")
+                        console.log("บันทึกได้")
+
+                    } else {
+                        console.log(res.error)
+
+                    }
+                });
+            MySwal.fire({
+                icon: "success",
+                text: "Follow Success",
+                showConfirmButton: true,
+            })
+            console.log("Unfollow");
+
+            // ดำเนินการ Follow ที่นี่
+            // เช่นเรียก API ส่งคำขอติดตามผู้ใช้
+            console.log("Follow");
+            // ตั้งค่าสถานะการติดตามเป็น true
+            setIsFollowed(true);
+        }
     };
 
     const requestOptions = {
-        method: "POST",
+        method: "GET",
         crossDomain: true,
         headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
             "Access-Control-Allow-Origin": "*",
         },
-        body: JSON.stringify({
-            token: window.localStorage.getItem("token"),
-            // userId: window.localStorage.getItem("userId"),
-        }),
     };
 
-    const getUser = async () => {
+    const getFollowData = async () => {
+        fetch(`http://localhost:5000/userData/${userid}`, requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data, "follow");
+                if (data) {
+                    //alert("Token expired signin again");
+                    setFollow(data.data);
+                    setFollower(data.data.follower);
+                    setFollowing(data.data.following);
+                    console.log(data.data.fname)
+                    // window.location.reload();
+                } else {
+                    alert("data not found")
+                }
+            });
+    };
 
+    const getPlaylist = async () => {
         const requestOptions = {
             method: "GET",
             crossDomain: true,
@@ -59,48 +125,33 @@ const Follow = () => {
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "Access-Control-Allow-Origin": "*",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         };
 
-        fetch(`http://localhost:5000/allusers`, requestOptions)
+        fetch(`http://localhost:5000/playlists-user/${userid}`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
-                console.log(data, "userData");
-                if (data.status === "ok") {
-                    console.log(data.data)
-                    setRearch(data.data);
+                if (data) {
+                    console.log(data, "Playlist User");
+                    setPlaylist(data);
                 } else {
-                    alert("Token expired signin again");
+                    alert(data.status);
                 }
-            });
-    };
-
-    const getUserData = async () => {
-        let uid = localStorage.getItem("userId");
-        fetch(`http://localhost:5000/userData`, requestOptions)
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data, "userData");
-                if (data.data === "token expired") {
-                    alert("Token expired signin again");
-                    window.localStorage.clear();
-                    window.location.href = "./signin";
-                } else {
-                    setUserData(data.data);
-                    setUserId(uid);
-                    console.log(uid);
-                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
             });
     };
 
     useEffect(() => {
-        getUserData();
-        getUser();
+        getFollowData();
+        getPlaylist();
+
     }, []);
 
     function submit() {
-
-        console.log(userId)
 
         const requestOptionsPost = {
             method: "PUT",
@@ -111,17 +162,16 @@ const Follow = () => {
                 "Access-Control-Allow-Origin": "*",
             }
             , body: JSON.stringify({
-                userId,
+                userId: localStorage.getItem("userId"),
             }),
         };
 
-        fetch("http://localhost:5000/646a04e953b89b2dddd928db/follow", requestOptionsPost)  //id user
+        fetch(`http://localhost:5000/${userid}/unfollow`, requestOptionsPost)  //id user
             .then((response) => response.json())
             .then((res) => {
                 if (res.data) {
                     alert("follow")
                     console.log("บันทึกได้")
-
 
                 } else {
                     console.log(res.error)
@@ -135,80 +185,47 @@ const Follow = () => {
             <Navbar />
             <div className=" container">
 
-                <div className="row-12 ">
+                <div className="row-12 " >
                     <div className="col align-items-center p-3">
 
                         <img src="https://pbs.twimg.com/media/FBdflFiVkAMsmK2?format=jpg&name=small" className="rounded-circle " width={100} height={100} />
 
-                        <h4 className="" >{userData.fname} {userData.lname}</h4>
-                        <span >Followers {userData.follower} </span>
-                        <span >Playlist  4</span>
+                        <h4 >{follow.fname} {follow.lname}</h4>
+                        <span >Following {following.length} </span>
+                        <span >Followers {follower.length} </span>
+                        <span >Playlist  {playlist.length}</span>
                         <span >Favlist Movie 0</span>
-                        <button className="btn btn-outline-primary m-3 " onClick={submit}>Follow</button>
-
+                        {/* <button className="btn btn-outline-primary m-3 " onClick={submit}>Follow</button> */}
+                        {isFollowed ? (
+                            <button className="btn btn-outline-primary m-3 " onClick={handleFollowToggle}>Unfollow</button>
+                        ) : (
+                            <button className="btn btn-outline-primary m-3 " onClick={handleFollowToggle}>Follow</button>
+                        )}
                     </div>
                 </div>
 
                 <h3 className="align-items-left"> My Playlist Movie </h3>
-                <div className="row ">
-
-                    <div className="col">
-                        <div className="card h-100">
-                            <img src="https://a.storyblok.com/f/112937/568x464/88ccff84c5/10_most_romantic_cities_hero-1.jpg/m/620x0/filters:quality(70)/" className="card-img-top w-100 h-100" />
-                            <div className="card-body">
-                                <h5 className="card-title">Romantic</h5>
-                                <p className="card-text">คนคูล ๆ อย่างเราต้องดูหนังรักๆ</p>
-                                {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
+                <div className="row">
+                    {playlist.map((item) => {
+                        return (
+                            <div className="col" key={item._id}>
+                                <div className="card h-100">
+                                    <img
+                                        src="https://a.storyblok.com/f/112937/568x464/88ccff84c5/10_most_romantic_cities_hero-1.jpg/m/620x0/filters:quality(70)/"
+                                        className="card-img-top w-100 h-100"
+                                        alt="Playlist Image"
+                                    />
+                                    <div className="card-body">
+                                        <h5 className="card-title">{item.title}</h5>
+                                        <p className="card-text">{item.desc}</p>
+                                    </div>
+                                    <button className="btn btn-primary m-3 w-50">Edit Playlist</button>
+                                </div>
                             </div>
-                            <button className="btn btn-primary m-3">Fav List</button>
-
-                        </div>
-                    </div>
-
-                    <div className="col ">
-
-                        <div className="card h-100">
-                            <img src="https://www.allkpop.com/upload/2022/01/content/041255/1641318944-cryingactress-cover.png" className="card-img-top w-100 h-100" />
-                            <div className="card-body">
-                                <h5 className="card-title">Drama</h5>
-                                <p className="card-text">หนังชีวิต</p>
-                                {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
-                            </div>
-                            <button className="btn btn-primary m-3">Fav List</button>
-
-                        </div>
-
-                    </div>
-
-                    <div className="col">
-                        <div className="card h-100">
-                            <img src="https://staticg.sportskeeda.com/editor/2022/01/9441c-16419200856280-1920.jpg" className="card-img-top w-100 h-100" />
-                            <div className="card-body">
-                                <h5 className="card-title">Anime</h5>
-                                <p className="card-text"> มาดูอนิเมะด้วยกันสิจ้ะ</p>
-                                {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
-                            </div>
-                            <button className="btn btn-primary m-3">Fav List</button>
-
-                        </div>
-                    </div>
-
-                    <div className="col">
-                        <div className="card h-100 ">
-                            <img src="https://res.klook.com/image/upload/q_85/c_fill,w_1360/v1641311503/blog/fvuixvhbbjfaas28r2aa.webp" className="card-img-top w-100 h-100" />
-                            <div className="card-body">
-                                <h5 className="card-title">K-Series</h5>
-                                <p className="card-text">เป็นติ่งอย่างเราๆ ต้องดูซีรี่ส์เกาหลี</p>
-                                {/* <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p> */}
-                            </div>
-                            <button className="btn btn-primary m-3">Fav List</button>
-
-                        </div>
-                    </div>
-
+                        );
+                    })}
                 </div>
             </div>
-
         </div >
     )
 

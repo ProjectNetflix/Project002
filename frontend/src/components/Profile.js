@@ -4,7 +4,9 @@ import Playlist from "./Playlist";
 
 const Profile = () => {
   const [playlist, setPlaylist] = useState([]);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState([]);
+  const [follower, setFollower] = useState([]);
+  const [following, setFollowing] = useState([]);
   const [showpopup, setshowpopup] = useState(false);
 
   const toggleMenu = (e) => {
@@ -42,15 +44,15 @@ const Profile = () => {
   const getUser = async () => {
     let uid = localStorage.getItem("userId");
     const requestOptions = {
-        method: "GET",
-        crossDomain: true,
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      };
+      method: "GET",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
     fetch(`http://localhost:5000/userData/${uid}`, requestOptions)
       .then((res) => res.json())
       .then((data) => {
@@ -61,6 +63,9 @@ const Profile = () => {
           window.location.href = "./signin";
         } else {
           setUserData(data.data);
+          setFollower(data.data.follower);
+          setFollowing(data.data.following);
+
         }
       });
   };
@@ -84,7 +89,8 @@ const Profile = () => {
               height={100}
             />
             <h4 className=""> {userData.fname} {userData.lname} </h4>
-            <span>Followers {userData.follower} </span>
+            <span>Follow {following.length} </span>
+            <span>Followers {follower.length} </span>
             <span>Playlist {playlist.length}</span>
             <span>Favlist Movie 0</span>
             <br />

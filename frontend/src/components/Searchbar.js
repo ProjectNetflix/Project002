@@ -1,14 +1,13 @@
-import React, { useState , useEffect} from 'react';
+import { useState, useEffect } from "react";
 
-const FloatingSearchBar = () => {
-    const [isSearchOpen, setIsSearchOpen] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+const SearchBar = ({ onSearch }) => {
+
     const [word, setWord] = useState("")
     const [dataFilter] = useState(["lname", "fname"])
-    const [rearch, setRearch] = useState([]);
+    const [search, setSearch] = useState([]);
 
-    const searchFollow = (rearch) => {
-        return rearch.filter((item) => {
+    const searchFollow = (search) => {
+        return search.filter((item) => {
             return dataFilter.some((filter) => {
                 if (item[filter]) {//check ค่าว่าง
                     return item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
@@ -17,9 +16,21 @@ const FloatingSearchBar = () => {
         })
     }
 
-    const handleChange = (e) => {
+    const handleChangeWord = (e) => {
         e.preventDefault();
+
         setWord(e.target.value);
+    };
+
+    const [userId, setUserId] = useState('');
+
+    const handleChange = (event) => {
+        setUserId(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        onSearch(userId);
     };
 
     const getUser = async () => {
@@ -40,7 +51,7 @@ const FloatingSearchBar = () => {
                 console.log(data, "userData");
                 if (data.status === "ok") {
                     console.log(data.data)
-                    setRearch(data.data);
+                    setSearch(data.data);
                 } else {
                     alert("Token expired signin again");
                 }
@@ -51,23 +62,21 @@ const FloatingSearchBar = () => {
         getUser();
     }, []);
 
+
     return (
-        <div>
-            {isSearchOpen && (
-                <form className=" align-items-center col-12 col-lg px-3">
-                        <input className="form-control form-control-dark " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
-                        <div className="list-group" onChange={handleChange}>
-                            {searchFollow(rearch).map((item, index) => {
-                                return (
-                                    <a className="list-group-item list-group-item-action" key={index}  > {item._id} {item.fname}  {item.lname}</a>
-                                )
-                            })}
 
-                        </div>
-                </form>
-            )}
+        <div >
+            <form className="grid align-items-center col-4 px-3">
+                <input className=" form-control  " placeholder="Search..." label="Search" onChange={handleChangeWord} value={word} />
+                <div className="list-group position-absolute " onChange={handleChange}>
+                    {word.length != 0 && searchFollow(search).map((item, index) => {
+                        return (
+                            <a className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</a>
+                        )
+                    })}
+                </div>
+            </form>
         </div>
-    );
-};
-
-export default FloatingSearchBar;
+    )
+}
+export default SearchBar;
