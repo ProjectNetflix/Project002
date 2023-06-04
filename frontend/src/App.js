@@ -9,6 +9,7 @@ import SignUp from './components/Signup'
 import Movie from './components/Movie'
 import Home from './components/Home'
 import Profile from './components/Profile'
+// import Profile from './components/Profile1'
 import Follow from './components/Follow'
 import Playlist from './components/Playlist'
 

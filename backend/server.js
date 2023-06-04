@@ -103,6 +103,15 @@ app.post("/userData", async (req, res) => {
   } catch (error) { }
 });
 
+app.get('/userData/:id', async (req, res) => {
+  try {
+      const user = await UserInfo.findById(req.params.id);
+      res.send({ status: 'ok', data: user });
+  } catch (error) {
+      res.send({ status: 'error', data: error });
+  }
+});
+
 app.get("/allusers", async (req, res) => {
   try {
     const allUser = (await UserInfo.find({}));
@@ -198,17 +207,6 @@ app.put("/:id/unfollow", async (req, res) => {
 require("./playlist");
 const PlaylistInfo = mongoose.model("PlaylistInfo")
 
-// app.get('/', async (req, res) => {
-//   try {
-//     const playlists = await PlaylistInfo.find();
-//     res.status(200).json(playlists);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Server Error' });
-//   }
-// });
-// GET /api/playlists
-
 app.get('/playlists', async (req, res) => {
   try {
     const playlists = await PlaylistInfo.find().populate('user', 'fname');
@@ -219,7 +217,7 @@ app.get('/playlists', async (req, res) => {
   }
 });
 
-//POST /api/playlists
+//POST /api/playlists สร้าง playlist 
 app.post('/createPlaylist', async (req, res) => {
   const { userId,title,desc, movie } = req.body;
   // const { name, songs, userId } = req.body;
@@ -241,6 +239,15 @@ app.post('/createPlaylist', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+app.get('/playlists-user/:id', async (req, res) => {
+  try {
+    const playlists = await PlaylistInfo.find({ user: req.params.id }).populate('user');
+    res.json(playlists);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
