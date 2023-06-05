@@ -290,6 +290,31 @@ app.get('/playlists-user/:id', async (req, res) => {
   }
 });
 
+// PUT /api/playlists/:id อัปเดต playlist ที่ถูกสร้างแล้ว
+app.put('/updatePlaylist/:id', upload.single('image'), async (req, res) => {
+  const { title, desc, movie } = req.body;
+  const imageURL = req.file ? req.file.path.replace(/\\/g, '/') : null;
+
+  try {
+    const playlist = await PlaylistInfo.findById(req.params.id);
+    if (!playlist) {
+      return res.status(404).json({ message: 'ไม่พบเพลย์ลิสต์' });
+    }
+
+    playlist.title = title || playlist.title;
+    playlist.desc = desc || playlist.desc;
+    playlist.movie = movie || playlist.movie;
+    playlist.imageUrl = imageURL || playlist.imageUrl;
+
+    await playlist.save();
+
+    res.status(200).json(playlist);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'ข้อผิดพลาดของเซิร์ฟเวอร์' });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server Started");
 });
