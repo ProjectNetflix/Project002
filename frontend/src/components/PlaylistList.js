@@ -11,6 +11,7 @@ const PlaylistList = () => {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
 
+
   const getPlaylist = async () => {
     const requestOptions = {
       method: "GET",
@@ -84,52 +85,48 @@ const PlaylistList = () => {
     }
   };
 
+  const [currentPlaylistId, setCurrentPlaylistId] = useState();
+
+  const setCurrentPlaylist = (playlistId) => {
+    setCurrentPlaylistId(playlistId);
+  };
+
   const EditPlaylist = (e, playlistId) => {
     e.preventDefault();
     console.log(playlistId)
     const userId = window.localStorage.getItem("userId");
     console.log(title, desc, userId, pic, playlistId);
 
-    if (title === "") {
-      MySwal.fire({
-        text: "Please enter data",
-        icon: 'error',
-        showConfirmButton: true,
+    const formData = new FormData();
+    formData.append('image', pic);
+    formData.append('title', title);
+    formData.append('desc', desc);
+
+
+    fetch(`http://localhost:5000/updatePlaylist/${playlistId}`, {
+      method: "PUT",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "Playlist");
+        if (data) {
+          MySwal.fire({
+            text: 'Edit Success',
+            icon: 'success',
+            showConfirmButton: true,
+          });
+
+          // window.location.reload();
+        } else {
+          MySwal.fire({
+            text: "Error",
+            icon: 'error',
+            showConfirmButton: true,
+          });
+        }
       });
-    } else {
-      const formData = new FormData();
-      formData.append('image', pic);
-      formData.append('title', title);
-      formData.append('desc', desc);
-      formData.append('userId', userId);
-
-      // fetch("http://localhost:5000/createPlaylist", {
-      //   method: "POST",
-      //   body: formData,
-      // })
-      //   .then((res) => res.json())
-      //   .then((data) => {
-      //     console.log(data, "Playlist");
-      //     if (data) {
-      //       MySwal.fire({
-      //         text: 'Edit Success',
-      //         icon: 'success',
-      //         showConfirmButton: true,
-      //       });
-      //       setDesc("");
-      //       setTitle("");
-      //       // window.location.reload();
-      //     } else {
-      //       MySwal.fire({
-      //         text: "Error",
-      //         icon: 'error',
-      //         showConfirmButton: true,
-      //       });
-      //     }
-      //   });
-    }
   };
-
 
   useEffect(() => {
     getPlaylist();
@@ -208,12 +205,10 @@ const PlaylistList = () => {
                   <h5 className="card-title">{item.title}</h5>
                   <p className="card-text">{item.desc}</p>
                 </div>
-                <button className="btn btn-outline-secondary m-3" data-bs-toggle="modal" data-bs-target="#EditPlaylist" onClick={(e) => EditPlaylist(e, item._id)}>Edit Playlist</button>
+                <button className="btn btn-outline-secondary m-3" data-bs-toggle="modal" data-bs-target="#EditPlaylist" onClick={() => setCurrentPlaylist(item._id)} >Edit Playlist</button>
               </div>
             </div>
           );
-
-
         })}
 
         <div className="modal fade" id="EditPlaylist" tabIndex="-1" aria-labelledby="PlaylistModalLabel" aria-hidden="true">
@@ -262,7 +257,7 @@ const PlaylistList = () => {
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" className="btn btn-primary" onClick={EditPlaylist} >Save</button>
+                <button type="submit" className="btn btn-primary" onClick={(e) => EditPlaylist(e, currentPlaylistId)}>Save</button>
               </div>
 
             </div>
