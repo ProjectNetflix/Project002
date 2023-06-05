@@ -86,8 +86,11 @@ const PlaylistList = () => {
 
   const EditPlaylist = (e) => {
     e.preventDefault();
-    const userId = window.localStorage.getItem("userId");
-    console.log(title, desc, userId, pic);
+    const id = "647dc2c974bdd02473639867"; //id ของ playlist ที่จะอัพเดตเเก้ไขข้อมูล 
+    //คือไอดีของ user test1a@g.com 123456789 - playlist: test edit
+    
+    const playlistId = window.localStorage.getItem("playlistId");
+    console.log(title, desc, pic,playlistId);
 
     if (title === "") {
       MySwal.fire({
@@ -100,32 +103,31 @@ const PlaylistList = () => {
       formData.append('image', pic);
       formData.append('title', title);
       formData.append('desc', desc);
-      formData.append('userId', userId);
+      // formData.append('userId', userId);
 
-      // fetch("http://localhost:5000/createPlaylist", {
-      //   method: "POST",
-      //   body: formData,
-      // })
-      //   .then((res) => res.json())
-      //   .then((data) => {
-      //     console.log(data, "Playlist");
-      //     if (data) {
-      //       MySwal.fire({
-      //         text: 'Edit Success',
-      //         icon: 'success',
-      //         showConfirmButton: true,
-      //       });
-      //       setDesc("");
-      //       setTitle("");
-      //       // window.location.reload();
-      //     } else {
-      //       MySwal.fire({
-      //         text: "Error",
-      //         icon: 'error',
-      //         showConfirmButton: true,
-      //       });
-      //     }
-      //   });
+      fetch(`http://localhost:5000/updatePlaylist/${id}`, {
+        method: "PUT",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data, "Playlist");
+          if (data) {
+            MySwal.fire({
+              text: 'Edit Success',
+              icon: 'success',
+              showConfirmButton: true,
+            });
+            
+            // window.location.reload();
+          } else {
+            MySwal.fire({
+              text: "Error",
+              icon: 'error',
+              showConfirmButton: true,
+            });
+          }
+        });
     }
   };
 
