@@ -195,16 +195,17 @@ const Follow = () => {
                         <span >Followers {follower.length} </span>
                         <span >Playlist  {playlist.length}</span>
                         <span >Favlist Movie 0</span>
-                        {/* <button className="btn btn-outline-primary m-3 " onClick={submit}>Follow</button> */}
-                        {isFollowed ? (
-                            <button className="btn btn-outline-primary m-3 " onClick={handleFollowToggle}>Unfollow</button>
-                        ) : (
-                            <button className="btn btn-outline-primary m-3 " onClick={handleFollowToggle}>Follow</button>
-                        )}
                     </div>
+
+                    {isFollowed ? (
+                        <button className="btn btn-outline-primary mb-3 " onClick={handleFollowToggle}>Unfollow</button>
+                    ) : (
+                        <button className="btn btn-outline-primary mb-3 " onClick={handleFollowToggle}>Follow</button>
+                    )}
+
                 </div>
 
-                <h3 className="align-items-left"> My Playlist Movie </h3>
+                <h3> {follow.fname} {follow.lname}'s Playlist Movie </h3>
                 <div className="row card-group">
                     {playlist.map((item) => {
                         return (

@@ -1,10 +1,14 @@
 import "./topbar.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Link } from "react";
 import MenuData from "../data/MenuData";
 import './Navbar.css'
 import { IconContext } from "react-icons";
 import Follow from "./Follow";
-import { Link } from "react-router-dom";
+
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
 
 export default function Navbar() {
 
@@ -100,7 +104,16 @@ export default function Navbar() {
 
     const logOut = () => {
         window.localStorage.clear();
+        MySwal.fire({
+            icon: "success",
+            text: "Sign Out success",
+            showConfirmButton: true,
+
+        })
+
         window.location.href = "/signin";
+
+
     };
 
     return (

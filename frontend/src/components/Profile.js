@@ -3,43 +3,25 @@ import Navbar from "./Navbar";
 import PlaylistList from "./PlaylistList";
 
 const Profile = () => {
+  const [pic, setPic] = useState();
+  const [fname, setFname] = useState();
+  const [lname, setLname] = useState();
   const [playlist, setPlaylist] = useState([]);
   const [userData, setUserData] = useState([]);
   const [follower, setFollower] = useState([]);
   const [following, setFollowing] = useState([]);
   const [showpopup, setshowpopup] = useState(false);
 
-  const toggleMenu = (e) => {
-    setshowpopup(!e);
-    <PlaylistList />;
-  };
+  const EditUserData = (e) => {
 
-  const getPlaylist = async () => {
-    const requestOptions = {
-      method: "GET",
-      crossDomain: true,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-Origin": "*",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    };
-    fetch(`http://localhost:5000/playlists-user/${localStorage.getItem("userId")}`, requestOptions)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          console.log(data, "Playlist User");
-          setPlaylist(data);
-        } else {
-          alert(data.status);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
-      });
-  };
+    let uid = localStorage.getItem("userId");
+    const formData = new FormData();
+    formData.append('image', pic);
+    formData.append('lname', lname);
+    formData.append('fname', fname);
+    formData.append('userId', uid);
+
+  }
 
   const getUser = async () => {
     let uid = localStorage.getItem("userId");
@@ -72,7 +54,6 @@ const Profile = () => {
 
   useEffect(() => {
     getUser();
-    getPlaylist();
   }, []);
 
   return (
@@ -93,10 +74,68 @@ const Profile = () => {
             <span>Followers {follower.length} </span>
             <span>Playlist {playlist.length}</span>
             <span>Favlist Movie 0</span>
-            <br />
-            <button className="btn btn-outline-primary m-3">Edit Profile</button>
-            <PlaylistList />
+            <div>
+              <button className="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#EditUser" >Edit Profile</button>
+              <PlaylistList /> 
+            </div>
+
+
           </div>
+
+
+
+          <div className="modal fade" id="EditUser" tabIndex="-1" aria-labelledby="UserModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+              <div className="modal-content">
+
+                <div className="modal-header">
+                  <h5 className="modal-title" id="UserModalLabel">Edit Profile</h5>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div className="modal-body">
+                  <form className="container w-100 h-50">
+                    <div className="form-content ">
+                      <div className="form-group mt-2">
+                        <label>Picture</label>
+                        <input
+                          type="file"
+                          className="form-control mt-1"
+                          placeholder="Search..."
+                          onChange={(e) => setPic(e.target.files[0])}
+                        />
+                      </div>
+
+                      <div className="form-group mt-2">
+                        <label>First Name</label>
+                        <input
+                          type="text"
+                          className="form-control mt-1"
+                          onChange={(e) => setLname(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="form-group mt-2">
+                        <label>Last Name</label>
+                        <input
+                          type="textarea"
+                          className="form-control mt-1"
+                          onChange={(e) => setLname(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" className="btn btn-primary" onClick={EditUserData} >Save</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

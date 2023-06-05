@@ -60,9 +60,7 @@ const SignIn = () => {
 
     <div className="signin-form-container">
       <div className='home-header'>
-        <h1>
-          Welcome To JoyFlix
-        </h1>
+        <h1> Welcome </h1>
       </div>
 
       <form className="container-login" onSubmit={handleSubmit}>
