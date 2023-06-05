@@ -1,4 +1,4 @@
-import { BiMovie,BiCameraMovie } from "react-icons/bi";
+import { BiCameraMovie } from "react-icons/bi";
 import { AiOutlineHome ,AiOutlineUsergroupAdd, AiOutlineUser} from "react-icons/ai";
 
 const MenuData = [

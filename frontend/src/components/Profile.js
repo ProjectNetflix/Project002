@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import Playlist from "./Playlist";
+import PlaylistList from "./PlaylistList";
 
 const Profile = () => {
   const [playlist, setPlaylist] = useState([]);
@@ -11,7 +11,7 @@ const Profile = () => {
 
   const toggleMenu = (e) => {
     setshowpopup(!e);
-    <Playlist />;
+    <PlaylistList />;
   };
 
   const getPlaylist = async () => {
@@ -95,31 +95,8 @@ const Profile = () => {
             <span>Favlist Movie 0</span>
             <br />
             <button className="btn btn-outline-primary m-3">Edit Profile</button>
-            <Playlist />
+            <PlaylistList />
           </div>
-        </div>
-
-        <h3 className="align-items-left"> My Playlist Movie </h3>
-
-        <div className="row">
-          {playlist.map((item) => {
-            return (
-              <div className="col" key={item._id}>
-                <div className="card h-100">
-                  <img
-                    src={`http://localhost:5000/${item.imageUrl}`}
-                    className="card-img-top w-100 h-100"
-                    alt="Playlist Image"
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{item.title}</h5>
-                    <p className="card-text">{item.desc}</p>
-                  </div>
-                  <button className="btn btn-primary m-3 w-50">Edit Playlist</button>
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
     </div>

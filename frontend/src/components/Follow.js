@@ -1,6 +1,6 @@
 // import Navbar from "./Navbar1"
 import Navbar from "./Navbar"
-import './style.css'
+import './Follow.css'
 import { useState, useEffect } from "react"
 import { useLocation } from "react-router-dom";
 import Swal from 'sweetalert2'
@@ -205,21 +205,21 @@ const Follow = () => {
                 </div>
 
                 <h3 className="align-items-left"> My Playlist Movie </h3>
-                <div className="row">
+                <div className="row card-group">
                     {playlist.map((item) => {
                         return (
                             <div className="col" key={item._id}>
                                 <div className="card h-100">
-                                    <img
-                                        src="https://a.storyblok.com/f/112937/568x464/88ccff84c5/10_most_romantic_cities_hero-1.jpg/m/620x0/filters:quality(70)/"
-                                        className="card-img-top w-100 h-100"
-                                        alt="Playlist Image"
-                                    />
                                     <div className="card-body">
+                                        <img
+                                            src={`http://localhost:5000/${item.imageUrl}`}
+                                            className="card-img-top playlist-image"
+                                            alt="Playlist Image"
+                                        />
                                         <h5 className="card-title">{item.title}</h5>
                                         <p className="card-text">{item.desc}</p>
                                     </div>
-                                    <button className="btn btn-primary m-3 w-50">Edit Playlist</button>
+                                    <button className="btn btn-outline-primary m-3">Edit Playlist</button>
                                 </div>
                             </div>
                         );
