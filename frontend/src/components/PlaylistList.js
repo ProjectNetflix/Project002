@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
+import './PlaylistList.css'
 const MySwal = withReactContent(Swal);
 
 
@@ -45,12 +45,15 @@ const PlaylistList = () => {
     const userId = window.localStorage.getItem("userId");
     console.log(title, desc, userId, pic);
 
-    if (title === "") {
+    if (title === "" || userId === "") {
       MySwal.fire({
         text: "Please enter data",
         icon: 'error',
         showConfirmButton: true,
+        timer: 5000,
+
       });
+
     } else {
       const formData = new FormData();
       formData.append('image', pic);
@@ -69,16 +72,18 @@ const PlaylistList = () => {
             MySwal.fire({
               text: 'Success',
               icon: 'success',
-              showConfirmButton: true,
+              showConfirmButton: false,
+              timer: 50000,
             });
-            setDesc("");
-            setTitle("");
+            window.location.reload();
+
 
           } else {
             MySwal.fire({
               text: "Error",
               icon: 'error',
               showConfirmButton: true,
+              timer: 5000,
             });
           }
         });
@@ -150,31 +155,43 @@ const PlaylistList = () => {
     formData.append('title', title);
     formData.append('desc', desc);
 
+    if (title === "" && desc === "" && pic === "" && playlistId !== "") {
+      MySwal.fire({
+        text: "Please enter data",
+        icon: 'error',
+        showConfirmButton: true,
+        timer: 5000,
+      })
+    }
+    else {
 
-    fetch(`http://localhost:5000/updatePlaylist/${playlistId}`, {
-      method: "PUT",
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data, "Playlist");
-        if (data) {
-          MySwal.fire({
-            text: 'Edit Success',
-            icon: 'success',
-            showConfirmButton: true,
-          });
+      fetch(`http://localhost:5000/updatePlaylist/${playlistId}`, {
+        method: "PUT",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data, "Playlist");
+          if (data) {
+            MySwal.fire({
+              text: 'Edit Success',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 5000,
+            });
+            window.location.reload();
 
-          // window.location.reload();
-        } else {
-          MySwal.fire({
-            text: "Error",
-            icon: 'error',
-            showConfirmButton: true,
-          });
-        }
-      });
-  };
+          } else {
+            MySwal.fire({
+              text: "Error",
+              icon: 'error',
+              showConfirmButton: true,
+            });
+          }
+        });
+    };
+  }
+
 
   useEffect(() => {
     getPlaylist();
@@ -229,7 +246,7 @@ const PlaylistList = () => {
             </div>
 
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              {/* <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button> */}
               <button type="submit" className="btn btn-primary" onClick={CreatePlaylist} >Save</button>
             </div>
 
@@ -243,16 +260,16 @@ const PlaylistList = () => {
         {playlist.map((item) => {
           return (
             <div className="col" key={item._id}>
-              <div className="card h-100">
+              <div className="card">
                 <div className="card-body">
                   <img
                     src={`http://localhost:5000/${item.imageUrl}`}
-                    className="card-img-top playlist-image" // ตรงนี้เพิ่ม CSS
+                    className="card-img-top playlist-image"
                     alt="Playlist Image"
-                    style={{ width: '180px', height: '120px' }} // เพิ่ม style
+                    style={{ height: '150px' }}
                   />
                   <h5 className="card-title">{item.title}</h5>
-                  <p className="card-text">{item.desc}</p>
+                  <p className="card-text ">{item.desc}</p>
                 </div>
                 <button className="btn btn-outline-secondary m-3" data-bs-toggle="modal" data-bs-target="#EditPlaylist" onClick={() => setCurrentPlaylist(item._id)} >Edit Playlist</button>
               </div>
