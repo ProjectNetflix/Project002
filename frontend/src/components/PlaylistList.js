@@ -116,33 +116,37 @@ const PlaylistList = () => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
-
-      // fetch(`http://localhost:5000/updatePlaylist/${playlistId}`, {
-      //   method: "PUT",
-      //   body: formData,
-      // })
-      //   .then((res) => res.json())
-      //   .then((data) => {
-      //     console.log(data, "Playlist");
       if (result.isConfirmed) {
-        MySwal.fire(
-          'Deleted!',
-          'Your file has been deleted.',
-          'success'
-        )
-        window.location.reload();
-
-      } else {
-        MySwal.fire({
-          text: "Error",
-          icon: 'error',
-          showConfirmButton: true,
-        });
+        fetch(`http://localhost:5000/playlists/${playlistId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.message) {
+              MySwal.fire({
+                text: 'ลบเพลย์ลิสต์เรียบร้อยแล้ว',
+                icon: 'success',
+                showConfirmButton: true,
+              });
+              // getPlaylist(); // ดึงข้อมูลเพลย์ลิสต์อัพเดตหลังจากการลบ
+              window.location.reload();
+            } else {
+              MySwal.fire({
+                text: 'error',
+                icon: 'error',
+                showConfirmButton: true,
+              });
+            }
+          });
       }
-      //});
-    })
+    });
   };
-
 
   const EditPlaylist = (e, playlistId) => {
     e.preventDefault();

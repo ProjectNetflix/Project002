@@ -315,6 +315,28 @@ app.put('/updatePlaylist/:id', upload.single('image'), async (req, res) => {
   }
 });
 
+app.delete("/playlists/:id", async (req, res) => {
+  try {
+    const playlistId = req.params.id;
+
+    // ค้นหาเพลย์ลิสต์ด้วย ID
+    const playlist = await PlaylistInfo.findById(playlistId);
+
+    if (!playlist) {
+      return res.status(404).json({ error: "ไม่พบเพลย์ลิสต์" });
+    }
+    
+    // ลบเพลย์ลิสต์
+    await PlaylistInfo.deleteOne({ _id: playlistId });
+
+    res.json({ message: "ลบเพลย์ลิสต์เรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
+
 app.listen(5000, () => {
   console.log("Server Started");
 });
