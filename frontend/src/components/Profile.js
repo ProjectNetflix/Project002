@@ -22,6 +22,32 @@ const Profile = () => {
     formData.append('userId', uid);
 
   }
+  const getPlaylist = async () => {
+    const requestOptions = {
+      method: "GET",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    fetch(`http://localhost:5000/playlists-user/${localStorage.getItem("userId")}`, requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          console.log(data, "Playlist User");
+          setPlaylist(data);
+        } else {
+          alert(data.status);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
+      });
+  };
 
   const getUser = async () => {
     let uid = localStorage.getItem("userId");
@@ -54,6 +80,8 @@ const Profile = () => {
 
   useEffect(() => {
     getUser();
+    getPlaylist();
+
   }, []);
 
   return (
@@ -76,7 +104,7 @@ const Profile = () => {
             <span>Favlist Movie 0</span>
             <div>
               <button className="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#EditUser" >Edit Profile</button>
-              <PlaylistList /> 
+              <PlaylistList />
             </div>
 
 

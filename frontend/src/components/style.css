@@ -293,13 +293,3 @@ html,
 .homepage {
     text-align: center;
 }
-
-.swal2-success-line-tip,
-.swal2-success-line-long {
-    font-size: 16px !important;
-}
-
-.swal2-x-mark-line-right,
-.swal2-x-mark-line-left {
-    font-size: 16px !important;
-}

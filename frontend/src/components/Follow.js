@@ -220,7 +220,7 @@ const Follow = () => {
                                         <h5 className="card-title">{item.title}</h5>
                                         <p className="card-text">{item.desc}</p>
                                     </div>
-                                    <button className="btn btn-outline-primary m-3">Edit Playlist</button>
+                                    <button className="btn btn-outline-primary m-3">Favorite</button>
                                 </div>
                             </div>
                         );

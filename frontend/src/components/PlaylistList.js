@@ -91,6 +91,54 @@ const PlaylistList = () => {
     setCurrentPlaylistId(playlistId);
   };
 
+  const DeletePlaylist = (e, playlistId) => {
+    e.preventDefault();
+    console.log(playlistId)
+    const userId = window.localStorage.getItem("userId");
+    console.log(title, desc, userId, pic, playlistId);
+
+    // const formData = new FormData();
+    // formData.append('image', pic);
+    // formData.append('title', title);
+    // formData.append('desc', desc);
+
+    MySwal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+
+      // fetch(`http://localhost:5000/updatePlaylist/${playlistId}`, {
+      //   method: "PUT",
+      //   body: formData,
+      // })
+      //   .then((res) => res.json())
+      //   .then((data) => {
+      //     console.log(data, "Playlist");
+      if (result.isConfirmed) {
+        MySwal.fire(
+          'Deleted!',
+          'Your file has been deleted.',
+          'success'
+        )
+        window.location.reload();
+
+      } else {
+        MySwal.fire({
+          text: "Error",
+          icon: 'error',
+          showConfirmButton: true,
+        });
+      }
+      //});
+    })
+  };
+
+
   const EditPlaylist = (e, playlistId) => {
     e.preventDefault();
     console.log(playlistId)
@@ -199,8 +247,9 @@ const PlaylistList = () => {
                 <div className="card-body">
                   <img
                     src={`http://localhost:5000/${item.imageUrl}`}
-                    className="card-img-top playlist-image"
+                    className="card-img-top playlist-image" // ตรงนี้เพิ่ม CSS
                     alt="Playlist Image"
+                    style={{ width: '180px', height: '120px' }} // เพิ่ม style
                   />
                   <h5 className="card-title">{item.title}</h5>
                   <p className="card-text">{item.desc}</p>
@@ -256,6 +305,7 @@ const PlaylistList = () => {
               </div>
 
               <div className="modal-footer">
+                <button type="button" className="btn btn-danger me-auto" data-bs-dismiss="modal" onClick={(e) => DeletePlaylist(e, currentPlaylistId)}>Delete</button>
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" className="btn btn-primary" onClick={(e) => EditPlaylist(e, currentPlaylistId)}>Save</button>
               </div>
