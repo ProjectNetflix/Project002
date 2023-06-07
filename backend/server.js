@@ -152,6 +152,29 @@ app.get("/allusers", async (req, res) => {
   }
 });
 
+//แก้ไข user profile
+app.post("/updateUser/:id", async (req, res) => {
+  const { fname, lname, email } = req.body;
+  
+  try {
+    const user = await UserInfo.findByIdAndUpdate(req.params.id, {
+      fname,
+      lname,
+      // email,
+    }, { new: true });
+    
+    if (!user) {
+      return res.status(404).json({ error: "ไม่พบผู้ใช้งาน" });
+    }
+    
+    res.json({ status: "ok", data: user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
+
 app.get("/find/:id", async (req, res) => {
   try {
     const user = await UserInfo.findById(req.params.id);
