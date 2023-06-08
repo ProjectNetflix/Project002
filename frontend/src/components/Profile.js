@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import PlaylistList from "./PlaylistList";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal);
 
 const Profile = () => {
   const [pic, setPic] = useState();
@@ -10,16 +14,47 @@ const Profile = () => {
   const [userData, setUserData] = useState([]);
   const [follower, setFollower] = useState([]);
   const [following, setFollowing] = useState([]);
-  const [showpopup, setshowpopup] = useState(false);
 
-  const EditUserData = (e) => {
-
+  const EditUserData = () => {
+    //e.preventDefault();
     let uid = localStorage.getItem("userId");
     const formData = new FormData();
-    formData.append('image', pic);
-    formData.append('lname', lname);
+    //formData.append('image', pic);    
     formData.append('fname', fname);
-    formData.append('userId', uid);
+    formData.append('lname', lname);
+    console.log(fname, lname);
+
+    if (lname === "" && fname === "" && pic === "" && uid !== "") {
+      MySwal.fire({
+        text: "Please enter data",
+        icon: 'error',
+        showConfirmButton: true,
+        timer: 5000,
+      })
+    }
+    else {
+
+      fetch(`http://localhost:5000/updateUser/${uid}`, {
+        method: "POST",
+        body: {
+          formData
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            console.log(data, "UpdateUser");
+            alert(data.status);
+
+          } else {
+            alert(data.status);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("เกิดข้อผิดพลาดในแก้ไข");
+        });
+    }
 
   }
   const getPlaylist = async () => {
@@ -78,9 +113,11 @@ const Profile = () => {
       });
   };
 
+
   useEffect(() => {
     getUser();
     getPlaylist();
+
 
   }, []);
 
@@ -98,7 +135,7 @@ const Profile = () => {
               height={100}
             />
             <h4 className=""> {userData.fname} {userData.lname} </h4>
-            <span>Follow {following.length} </span>
+            <span>Following {following.length} </span>
             <span>Followers {follower.length} </span>
             <span>Playlist {playlist.length}</span>
             <span>Favlist Movie 0</span>
@@ -139,7 +176,7 @@ const Profile = () => {
                         <input
                           type="text"
                           className="form-control mt-1"
-                          onChange={(e) => setLname(e.target.value)}
+                          onChange={(e) => setFname(e.target.value)}
                         />
                       </div>
 

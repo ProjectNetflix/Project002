@@ -27,7 +27,7 @@ function App() {
         <Route path="/" component={Home} exact />
         <Route path="/profile" component={Profile} />
         <Route path="/movie" component={Movie} />
-        <Route path="/follow" component={Follow} />
+        <Route path="/follow/:id" component={Follow} />
         <Route path="/playlist" component={Playlist} />
 
       </Switch>

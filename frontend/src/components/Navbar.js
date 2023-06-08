@@ -4,7 +4,7 @@ import MenuData from "../data/MenuData";
 import './Navbar.css'
 import { IconContext } from "react-icons";
 import Follow from "./Follow";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -17,11 +17,6 @@ export default function Navbar() {
     const [dataFilter] = useState(["lname", "fname"])
     const [search, setSearch] = useState([]);
 
-    const handleSearch = (searchResult) => {
-        console.log(searchResult);
-        Follow(searchResult);
-        window.location.reload();
-    };
 
     const searchFollow = (search) => {
         return search.filter((item) => {
@@ -136,13 +131,13 @@ export default function Navbar() {
                         })}
 
                     </ul>
-
+                    {/* to={{ pathname: "/follow", state: { userid: item._id }, }} */}
                     <form className="grid align-items-center col-4 px-3" >
-                        <input className=" form-control  " placeholder="Search..." label="Search" onChange={handleChange} value={word} />
-                        <div className="list-group position-absolute " onChange={handleChange} >
+                        <input className=" form-control" placeholder="Search..." label="Search" onChange={handleChange} value={word} />
+                        <div className="list-group position-absolute  " onChange={handleChange} >
                             {word.length != 0 && searchFollow(search).map((item, index) => {
                                 return (
-                                    <Link to={{ pathname: "/follow", state: { userid: item._id }, }} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
+                                    <Link to={{ pathname: "/follow/:id", state: { userid: item._id },}} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
                                 )
                             })}
                         </div>

@@ -47,7 +47,7 @@ const SignUp = () => {
             timer: 2000
           })
 
-          alert("signup successful");
+          //alert("signup successful");
           window.location.href = "./signin";
         } else {
 

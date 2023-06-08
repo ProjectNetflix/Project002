@@ -1,4 +1,3 @@
-// import Navbar from "./Navbar1"
 import Navbar from "./Navbar"
 import './Follow.css'
 import { useState, useEffect } from "react"
@@ -10,16 +9,17 @@ const MySwal = withReactContent(Swal)
 
 
 const Follow = () => {
-
+    //window.location.reload();
     console.log();
     const [follower, setFollower] = useState([]);
     const [following, setFollowing] = useState([]);
     const location = useLocation();
     const { userid } = location.state;
+    const { olduserid } = userid;
     const [playlist, setPlaylist] = useState([]);
     const [follow, setFollow] = useState([]);
     const [isFollowed, setIsFollowed] = useState(false);
-
+    
     const handleFollowToggle = () => {
         //setIsFollowed((prevStatus) => !prevStatus);
         const requestOptionsPost = {
@@ -100,6 +100,7 @@ const Follow = () => {
     };
 
     const getFollowData = async () => {
+        let uid = 
         fetch(`http://localhost:5000/userData/${userid}`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
@@ -210,12 +211,14 @@ const Follow = () => {
                     {playlist.map((item) => {
                         return (
                             <div className="col" key={item._id}>
-                                <div className="card h-100">
+                                <div className="card">
                                     <div className="card-body">
                                         <img
                                             src={`http://localhost:5000/${item.imageUrl}`}
                                             className="card-img-top playlist-image"
                                             alt="Playlist Image"
+                                            style={{ height: '150px' }}
+
                                         />
                                         <h5 className="card-title">{item.title}</h5>
                                         <p className="card-text">{item.desc}</p>

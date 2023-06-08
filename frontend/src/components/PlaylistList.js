@@ -7,9 +7,9 @@ const MySwal = withReactContent(Swal);
 
 const PlaylistList = () => {
   const [playlist, setPlaylist] = useState([]);
-  const [pic, setPic] = useState("");
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
+  const [pic, setPic] = useState();
+  const [title, setTitle] = useState();
+  const [desc, setDesc] = useState();
 
 
   const getPlaylist = async () => {
@@ -44,8 +44,8 @@ const PlaylistList = () => {
     e.preventDefault();
     const userId = window.localStorage.getItem("userId");
     console.log(title, desc, userId, pic);
-
-    if (title === "" || userId === "") {
+    console.log(pic)
+    if (title === "" || userId === "" || pic === "") {
       MySwal.fire({
         text: "Please enter data",
         icon: 'error',
@@ -92,8 +92,19 @@ const PlaylistList = () => {
 
   const [currentPlaylistId, setCurrentPlaylistId] = useState();
 
-  const setCurrentPlaylist = (playlistId) => {
+  const CurrentPlaylist = (playlistId) => {
+
     setCurrentPlaylistId(playlistId);
+    // ค้นหาเพลย์ลิสต์ที่ต้องการแก้ไขจาก state playlist โดยใช้ playlistId
+    const selectedPlaylist = playlist.find(item => item._id === playlistId);
+
+    // ตั้งค่าค่าเริ่มต้นของ pic, title, และ desc จากข้อมูลในเพลย์ลิสต์ที่เลือก
+    setTitle(selectedPlaylist.title); // ตั้งค่าเริ่มต้นของ title
+    setDesc(selectedPlaylist.desc);
+    setPic(selectedPlaylist.imageUrl); // ตั้งค่าเริ่มต้นของ pic
+
+    console.log(desc, playlistId, title, selectedPlaylist, pic);
+
   };
 
   const DeletePlaylist = (e, playlistId) => {
@@ -101,11 +112,6 @@ const PlaylistList = () => {
     console.log(playlistId)
     const userId = window.localStorage.getItem("userId");
     console.log(title, desc, userId, pic, playlistId);
-
-    // const formData = new FormData();
-    // formData.append('image', pic);
-    // formData.append('title', title);
-    // formData.append('desc', desc);
 
     MySwal.fire({
       title: 'Are you sure?',
@@ -153,6 +159,7 @@ const PlaylistList = () => {
     console.log(playlistId)
     const userId = window.localStorage.getItem("userId");
     console.log(title, desc, userId, pic, playlistId);
+    //setCurrentPlaylist(playlistId);
 
     const formData = new FormData();
     formData.append('image', pic);
@@ -193,6 +200,8 @@ const PlaylistList = () => {
             });
           }
         });
+      console.log(title, desc, userId, playlistId);
+
     };
   }
 
@@ -275,7 +284,7 @@ const PlaylistList = () => {
                   <h5 className="card-title">{item.title}</h5>
                   <p className="card-text ">{item.desc}</p>
                 </div>
-                <button className="btn btn-outline-secondary m-3" data-bs-toggle="modal" data-bs-target="#EditPlaylist" onClick={() => setCurrentPlaylist(item._id)} >Edit Playlist</button>
+                <button className="btn btn-outline-secondary m-3" data-bs-toggle="modal" data-bs-target="#EditPlaylist" onClick={(e) => CurrentPlaylist(item._id)} >Edit Playlist</button>
               </div>
             </div>
           );
@@ -299,8 +308,7 @@ const PlaylistList = () => {
                       <input
                         type="file"
                         className="form-control mt-1"
-                        placeholder="Search..."
-                        onChange={(e) => setPic(e.target.files[0])}
+                        onChange={(e) => setPic(...pic, e.target.files[0])}
                       />
                     </div>
 

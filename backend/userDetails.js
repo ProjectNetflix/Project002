@@ -15,10 +15,10 @@ const UserDetailsSchema = new mongoose.Schema(
             default:[],
         },
 
-        playlists: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'PlaylistInfo',
-          }],
+        // playlists: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: 'PlaylistInfo',
+        //   }],
     },
     {
         collection: "UserInfo",
