@@ -18,23 +18,9 @@ const Follow = () => {
     const { olduserid } = userid;
     const [playlist, setPlaylist] = useState([]);
     const [follow, setFollow] = useState([]);
-    const [isFollowed, setIsFollowed] = useState(false);
-    const saveFollowStatus = (status) => {
-        localStorage.setItem("followStatus", status.toString());
-    };
+    const [isFollowed, setIsFollowed] = useState(Boolean);
 
     const handleFollowToggle = () => {
-        //setIsFollowed((prevStatus) => !prevStatus);
-        let uid =localStorage.getItem("userId");
-        const checkFollow = follower.find( e => e == uid);
-        if(!!checkFollow){
-            setIsFollowed(true);
-        }
-        else{
-            setIsFollowed(false);
-        }
-
-        console.log(checkFollow);
 
         const requestOptionsPost = {
             method: "PUT",
@@ -50,30 +36,26 @@ const Follow = () => {
         };
 
         if (isFollowed) {
-            // ดำเนินการ Unfollow ที่นี่
-            // เช่นเรียก API ส่งคำขอยกเลิกติดตามผู้ใช้
-
             fetch(`http://localhost:5000/${userid}/unfollow`, requestOptionsPost)  //id user
                 .then((response) => response.json())
                 .then((res) => {
                     if (res.data) {
                         alert("follow")
                         console.log("บันทึกได้")
-
                     } else {
                         console.log(res.error)
-
                     }
                 });
             MySwal.fire({
                 icon: "success",
                 text: "UnFollow Success",
-                showConfirmButton: true,
+                showConfirmButton: false,
+                timer: 3000,
             })
             console.log("Unfollow");
             // ตั้งค่าสถานะการติดตามเป็น false
             setIsFollowed(false);
-            saveFollowStatus(false); // บันทึกสถานะการติดตามลงใน Local Storage
+            window.location.reload();
 
         } else {
 
@@ -86,23 +68,23 @@ const Follow = () => {
 
                     } else {
                         console.log(res.error)
-
                     }
                 });
+
             MySwal.fire({
                 icon: "success",
                 text: "Follow Success",
-                showConfirmButton: true,
+                showConfirmButton: false,
+                timer: 3000,
             })
-            console.log("Unfollow");
 
-            // ดำเนินการ Follow ที่นี่
-            // เช่นเรียก API ส่งคำขอติดตามผู้ใช้
             console.log("Follow");
             // ตั้งค่าสถานะการติดตามเป็น true
             setIsFollowed(true);
-            saveFollowStatus(true);
+            window.location.reload();
+
         }
+
     };
 
     const requestOptions = {
@@ -116,21 +98,33 @@ const Follow = () => {
     };
 
     const getFollowData = async () => {
-            fetch(`http://localhost:5000/userData/${userid}`, requestOptions)
-                .then((res) => res.json())
-                .then((data) => {
-                    console.log(data, "follow");
-                    if (data) {
-                        //alert("Token expired signin again");
-                        setFollow(data.data);
-                        setFollower(data.data.follower);
-                        setFollowing(data.data.following);
-                        console.log(data.data.fname)
-                        // window.location.reload();
-                    } else {
-                        alert("data not found")
+
+        fetch(`http://localhost:5000/userData/${userid}`, requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data, "follow");
+                if (data) {
+                    //alert("Token expired signin again");
+                    setFollow(data.data);
+                    setFollower(data.data.follower);
+                    setFollowing(data.data.following);
+                    console.log(data.data.fname)
+
+                    let uid = localStorage.getItem("userId");
+                    const checkFollow = data.data.follower.find(e => e == uid);
+                    if (checkFollow === "" || checkFollow === undefined) {
+                        setIsFollowed(false);
                     }
-                });
+                    else {
+                        setIsFollowed(true);
+                    }
+                    console.log("check", isFollowed);
+                    // window.location.reload();
+                } else {
+                    alert("data not found")
+                }
+            });
+
     };
 
     const getPlaylist = async () => {
@@ -164,9 +158,6 @@ const Follow = () => {
     useEffect(() => {
         getFollowData();
         getPlaylist();
-
-        const savedStatus = localStorage.getItem("followStatus");
-        setIsFollowed(savedStatus === "true");
 
     }, []);
 
