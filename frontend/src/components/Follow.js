@@ -19,6 +19,9 @@ const Follow = () => {
     const [playlist, setPlaylist] = useState([]);
     const [follow, setFollow] = useState([]);
     const [isFollowed, setIsFollowed] = useState(false);
+    const saveFollowStatus = (status) => {
+        localStorage.setItem("followStatus", status.toString());
+    };
 
     const handleFollowToggle = () => {
         //setIsFollowed((prevStatus) => !prevStatus);
@@ -70,6 +73,7 @@ const Follow = () => {
             console.log("Unfollow");
             // ตั้งค่าสถานะการติดตามเป็น false
             setIsFollowed(false);
+            saveFollowStatus(false); // บันทึกสถานะการติดตามลงใน Local Storage
 
         } else {
 
@@ -97,6 +101,7 @@ const Follow = () => {
             console.log("Follow");
             // ตั้งค่าสถานะการติดตามเป็น true
             setIsFollowed(true);
+            saveFollowStatus(true);
         }
     };
 
@@ -159,6 +164,9 @@ const Follow = () => {
     useEffect(() => {
         getFollowData();
         getPlaylist();
+
+        const savedStatus = localStorage.getItem("followStatus");
+        setIsFollowed(savedStatus === "true");
 
     }, []);
 

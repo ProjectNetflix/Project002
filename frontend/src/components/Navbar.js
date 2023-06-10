@@ -34,6 +34,7 @@ export default function Navbar() {
         e.preventDefault();
 
         setWord(e.target.value);
+        getUser();
     };
 
     const requestOptions = {
@@ -94,7 +95,7 @@ export default function Navbar() {
         getUserData();
         getUser();
 
-    }, []);
+    }, [word]);
 
     const logOut = () => {
         window.localStorage.clear();
@@ -105,7 +106,7 @@ export default function Navbar() {
 
         })
 
-        window.location.href = "/signin";
+        // window.location.href = "/signin";
 
 
     };
@@ -136,7 +137,7 @@ export default function Navbar() {
                         <div className="list-group position-absolute  " onChange={handleChange} >
                             {word.length !== 0 && searchFollow(search).map((item, index) => {
                                 return (
-                                    <Link to={{ pathname: "/follow/:id", state: { userid: item._id },}} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
+                                    <Link to={{ pathname:  `/follow/${item._id}`, state: { userid: item._id },}} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
                                 )
                             })}
                         </div>
@@ -145,7 +146,11 @@ export default function Navbar() {
                     <a href='/profile' className="nav-link px-3  d-flex justify-content-center text-white">  {userData.fname}  {userData.lname} </a>
 
                     <div className="">
-                        <button type="button" className="btn btn-outline-primary" onClick={logOut}>Sign Out</button>
+                        <Link to="/signin">
+                            <button  className="btn btn-outline-primary">
+                                 Sign Out
+                            </button>
+                        </Link>
                     </div>
 
                 </div>

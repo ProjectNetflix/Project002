@@ -22,12 +22,12 @@ const MenuData = [
         path: "/movie",
         icon: <BiCameraMovie />
     },
-    {
-        title: "Follow",
-        heardertitle: "follow",
-        path: "/follow",
-        icon: <AiOutlineUsergroupAdd />
-    },
+    // {
+    //     title: "Follow",
+    //     heardertitle: "follow",
+    //     path: "/follow",
+    //     icon: <AiOutlineUsergroupAdd />
+    // },
 
 ]
 export default MenuData;
