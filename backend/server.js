@@ -85,6 +85,7 @@ app.post("/signup", async (req, res) => {
   } catch (error) {
     res.send({ status: "error" });
   }
+
 });
 
 app.post("/login", async (req, res) => {
@@ -136,10 +137,10 @@ app.post("/userData", async (req, res) => {
 
 app.get('/userData/:id', async (req, res) => {
   try {
-      const user = await UserInfo.findById(req.params.id);
-      res.send({ status: 'ok', data: user });
+    const user = await UserInfo.findById(req.params.id);
+    res.send({ status: 'ok', data: user });
   } catch (error) {
-      res.send({ status: 'error', data: error });
+    res.send({ status: 'error', data: error });
   }
 });
 
@@ -154,19 +155,21 @@ app.get("/allusers", async (req, res) => {
 
 //แก้ไข user profile
 app.post("/updateUser/:id", async (req, res) => {
-  const { fname, lname, email } = req.body;
-  
+  const { fname, lname } = req.body;
+  console.log(req.body);
   try {
     const user = await UserInfo.findByIdAndUpdate(req.params.id, {
       fname,
       lname,
       // email,
-    }, { new: true });
-    
+    }, 
+    { new: true });
+    console.log(fname, lname)
+
     if (!user) {
       return res.status(404).json({ error: "ไม่พบผู้ใช้งาน" });
     }
-    
+
     res.json({ status: "ok", data: user });
   } catch (error) {
     console.error(error);
@@ -226,33 +229,33 @@ app.put("/:id/follow", async (req, res) => {
 });
 
 app.put("/:id/unfollow", async (req, res) => {
-    if (req.body.userId !== req.params.id) {
-      try {
-        const user = await UserInfo.findById(req.params.id);
-        const currentUser = await UserInfo.findById(req.body.userId);
-        if (user.follower.includes(req.body.userId)) {
-          await user.updateOne({ $pull: { follower: req.body.userId } });
-          await currentUser.updateOne({ $pull: { following: req.params.id } });
-          res.status(200).json("เลิกติดตามแล้ว");
-        } else {
-          res.status(403).json("คุณไม่ได้ติดตาม");
-        }
-      } catch (err) {
-        res.status(500).json(err);
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await UserInfo.findById(req.params.id);
+      const currentUser = await UserInfo.findById(req.body.userId);
+      if (user.follower.includes(req.body.userId)) {
+        await user.updateOne({ $pull: { follower: req.body.userId } });
+        await currentUser.updateOne({ $pull: { following: req.params.id } });
+        res.status(200).json("เลิกติดตามแล้ว");
+      } else {
+        res.status(403).json("คุณไม่ได้ติดตาม");
       }
-    } else {
-      res.status(403).json("คุณไม่สามารถยกเลิกการติดตามตัวคุณเอง");
+    } catch (err) {
+      res.status(500).json(err);
     }
-  });
+  } else {
+    res.status(403).json("คุณไม่สามารถยกเลิกการติดตามตัวคุณเอง");
+  }
+});
 
-  app.post('/search-users',(req,res)=>{
-    let userPattern = new RegExp("^"+req.body.query)
-    UserInfo.find({fname:{$regex:userPattern}})
+app.post('/search-users', (req, res) => {
+  let userPattern = new RegExp("^" + req.body.query)
+  UserInfo.find({ fname: { $regex: userPattern } })
     .select("_id fname")
-    .then(user=>{
-        res.json({user})
-    }).catch(err=>{
-        console.log(err)
+    .then(user => {
+      res.json({ user })
+    }).catch(err => {
+      console.log(err)
     })
 
 })
@@ -273,7 +276,7 @@ app.get('/playlists', async (req, res) => {
 
 //POST /api/playlists สร้าง playlist 
 app.post('/createPlaylist', upload.single('image'), async (req, res) => {
-  const { userId, title, desc, movie} = req.body;
+  const { userId, title, desc, movie } = req.body;
   const imageURL = req.file.path.replace(/\\/g, '/');
 
   try {
@@ -293,7 +296,7 @@ app.post('/createPlaylist', upload.single('image'), async (req, res) => {
     await playlist.save();
 
     // Add the playlist ID to the user's playlists array
-    user.playlists.push(playlist._id);
+    //user.playlists.push(playlist._id);
     await user.save();
 
     res.status(200).json(playlist);
@@ -338,6 +341,30 @@ app.put('/updatePlaylist/:id', upload.single('image'), async (req, res) => {
   }
 });
 
+// ============ get by id ===========
+app.get("/playlists/:id", async (req, res) => {
+  try {
+    const playlistId = req.params.id;
+
+    // ค้นหาเพลย์ลิสต์ด้วย ID
+    const playlist = await PlaylistInfo.findById(playlistId);
+
+    if (!playlist) {
+      return res.status(404).json({ error: "ไม่พบเพลย์ลิสต์" });
+    }
+
+    // await PlaylistInfo.deleteOne({ _id: playlistId });
+    res.status(200).json(playlist);
+    //res.json({ message: "ลบเพลย์ลิสต์เรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
+
+
+
 app.delete("/playlists/:id", async (req, res) => {
   try {
     const playlistId = req.params.id;
@@ -348,7 +375,7 @@ app.delete("/playlists/:id", async (req, res) => {
     if (!playlist) {
       return res.status(404).json({ error: "ไม่พบเพลย์ลิสต์" });
     }
-    
+
     // ลบเพลย์ลิสต์
     await PlaylistInfo.deleteOne({ _id: playlistId });
 

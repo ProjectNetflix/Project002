@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import MenuData from "../data/MenuData";
 import './Navbar.css'
 import { IconContext } from "react-icons";
-import Follow from "./Follow";
 import { Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -65,9 +64,9 @@ export default function Navbar() {
         fetch(`http://localhost:5000/allusers`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
-                console.log(data, "userData");
+                //console.log(data, "userData");
                 if (data.status === "ok") {
-                    console.log(data.data)
+                    //console.log(data.data)
                     setSearch(data.data);
                 } else {
                     alert("Token expired signin again");
@@ -76,7 +75,7 @@ export default function Navbar() {
     };
 
     const getUserData = async () => {
-        let uid = localStorage.getItem("userid");
+        // let uid = localStorage.getItem("userid");
         fetch(`http://localhost:5000/userData`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
@@ -135,7 +134,7 @@ export default function Navbar() {
                     <form className="grid align-items-center col-4 px-3" >
                         <input className=" form-control" placeholder="Search..." label="Search" onChange={handleChange} value={word} />
                         <div className="list-group position-absolute  " onChange={handleChange} >
-                            {word.length != 0 && searchFollow(search).map((item, index) => {
+                            {word.length !== 0 && searchFollow(search).map((item, index) => {
                                 return (
                                     <Link to={{ pathname: "/follow/:id", state: { userid: item._id },}} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
                                 )

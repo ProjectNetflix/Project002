@@ -6,11 +6,44 @@ const MySwal = withReactContent(Swal);
 
 
 const PlaylistList = () => {
-  const [playlist, setPlaylist] = useState([]);
-  const [pic, setPic] = useState();
-  const [title, setTitle] = useState();
-  const [desc, setDesc] = useState();
 
+  const [playlist, setPlaylist] = useState([]);
+  // const [pic, setPic] = useState();
+  // const [title, setTitle] = useState();
+  // const [desc, setDesc] = useState();
+
+  const [state, setState] = useState({
+    title: "",
+    desc: "",
+    pic: "",
+    userId: window.localStorage.getItem("userId"),
+  })
+
+  const { title, pic, desc, userId } = state;
+  const inputValue = name => event => {
+    if (name === "pic") {
+      setState({ ...state, [name]: event.target.files[0] });
+    }
+    else {
+      setState({ ...state, [name]: event.target.value });
+    }
+  }
+
+  const [currentPlaylistId, setCurrentPlaylistId] = useState();
+  const CurrentPlaylist = (playlistId) => {
+
+    setCurrentPlaylistId(playlistId);
+    const selectedPlaylist = playlist.find(item => item._id === playlistId);
+
+    setState({
+      ...state,
+      desc: selectedPlaylist.desc,
+      title: selectedPlaylist.title,
+      pic: selectedPlaylist.imageUrl,
+    });
+
+    console.log(state);
+  };
 
   const getPlaylist = async () => {
     const requestOptions = {
@@ -29,8 +62,6 @@ const PlaylistList = () => {
         if (data) {
           console.log(data, "Playlist User");
           setPlaylist(data);
-        } else {
-          alert(data.status);
         }
       })
       .catch((error) => {
@@ -39,28 +70,30 @@ const PlaylistList = () => {
       });
   };
 
-
   const CreatePlaylist = (e) => {
     e.preventDefault();
     const userId = window.localStorage.getItem("userId");
     console.log(title, desc, userId, pic);
-    console.log(pic)
+    // console.log(pic.name)
+
+    const formData = new FormData();
+    formData.append('image', pic);
+    formData.append('title', title);
+    formData.append('desc', desc);
+    formData.append('userId', userId);
+    //console.log("state", formData);
+
     if (title === "" || userId === "" || pic === "") {
       MySwal.fire({
         text: "Please enter data",
-        icon: 'error',
+        icon: 'warning',
         showConfirmButton: true,
         timer: 5000,
 
       });
 
     } else {
-      const formData = new FormData();
-      formData.append('image', pic);
-      formData.append('title', title);
-      formData.append('desc', desc);
-      formData.append('userId', userId);
-
+      
       fetch("http://localhost:5000/createPlaylist", {
         method: "POST",
         body: formData,
@@ -88,23 +121,6 @@ const PlaylistList = () => {
           }
         });
     }
-  };
-
-  const [currentPlaylistId, setCurrentPlaylistId] = useState();
-
-  const CurrentPlaylist = (playlistId) => {
-
-    setCurrentPlaylistId(playlistId);
-    // ค้นหาเพลย์ลิสต์ที่ต้องการแก้ไขจาก state playlist โดยใช้ playlistId
-    const selectedPlaylist = playlist.find(item => item._id === playlistId);
-
-    // ตั้งค่าค่าเริ่มต้นของ pic, title, และ desc จากข้อมูลในเพลย์ลิสต์ที่เลือก
-    setTitle(selectedPlaylist.title); // ตั้งค่าเริ่มต้นของ title
-    setDesc(selectedPlaylist.desc);
-    setPic(selectedPlaylist.imageUrl); // ตั้งค่าเริ่มต้นของ pic
-
-    console.log(desc, playlistId, title, selectedPlaylist, pic);
-
   };
 
   const DeletePlaylist = (e, playlistId) => {
@@ -208,6 +224,7 @@ const PlaylistList = () => {
 
   useEffect(() => {
     getPlaylist();
+
   }, []);
 
   return (
@@ -233,7 +250,7 @@ const PlaylistList = () => {
                       type="file"
                       className="form-control mt-1"
                       placeholder="Search..."
-                      onChange={(e) => setPic(e.target.files[0])}
+                      onChange={inputValue("pic")}
                     />
                   </div>
 
@@ -242,16 +259,17 @@ const PlaylistList = () => {
                     <input
                       type="text"
                       className="form-control mt-1"
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={inputValue("title")}
+
                     />
                   </div>
 
                   <div className="form-group mt-2">
                     <label>Description</label>
-                    <input
-                      type="textarea"
+                    <textarea
+                      type="text"
                       className="form-control mt-1"
-                      onChange={(e) => setDesc(e.target.value)}
+                      onChange={inputValue("desc")}
                     />
                   </div>
                 </div>
@@ -308,7 +326,7 @@ const PlaylistList = () => {
                       <input
                         type="file"
                         className="form-control mt-1"
-                        onChange={(e) => setPic(...pic, e.target.files[0])}
+                        onChange={inputValue("pic")}
                       />
                     </div>
 
@@ -317,16 +335,18 @@ const PlaylistList = () => {
                       <input
                         type="text"
                         className="form-control mt-1"
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={title}
+                        onChange={inputValue("title")}
                       />
                     </div>
 
                     <div className="form-group mt-2">
                       <label>Description</label>
-                      <input
-                        type="textarea"
+                      <textarea
+                        type="text"
                         className="form-control mt-1"
-                        onChange={(e) => setDesc(e.target.value)}
+                        value={desc}
+                        onChange={inputValue("desc")}
                       />
                     </div>
                   </div>
