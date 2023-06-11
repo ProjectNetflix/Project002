@@ -186,7 +186,7 @@ const Follow = () => {
 
                 </div>
 
-                <h3> {follow.fname} {follow.lname}'s Playlist Movie </h3>
+                <h5> {follow.fname} {follow.lname}'s Playlist Movie </h5>
                 <div className="row card-group">
                     {playlist.map((item) => {
                         return (

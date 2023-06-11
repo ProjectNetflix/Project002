@@ -9,9 +9,9 @@ import SignUp from './components/Signup'
 import Movie from './components/Movie'
 import Home from './components/Home'
 import Profile from './components/Profile'
-// import Profile from './components/Profile1'
-import Follow from './components/Follow'
 import Playlist from './components/Playlist'
+import Follow from './components/Follow'
+import PlaylistList from './components/PlaylistList'
 
 
 function App() {
@@ -26,9 +26,10 @@ function App() {
         <Route path="/signup" component={SignUp} />
         <Route path="/" component={Home} exact />
         <Route path="/profile" component={Profile} />
+        <Route path="/playlist/:id" component={Playlist} />
         <Route path="/movie" component={Movie} />
         <Route path="/follow/:id" component={Follow} />
-        <Route path="/playlist" component={Playlist} />
+        {/* <Route path="/playlist" component={PlaylistList} /> */}
 
       </Switch>
 

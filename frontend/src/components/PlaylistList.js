@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import './PlaylistList.css'
@@ -93,7 +94,7 @@ const PlaylistList = () => {
       });
 
     } else {
-      
+
       fetch("http://localhost:5000/createPlaylist", {
         method: "POST",
         body: formData,
@@ -285,23 +286,27 @@ const PlaylistList = () => {
         </div>
       </div>
 
-      {/* List Playlist and Edit Plalist */}
-      <h3 className="align-items-left"> My Playlist Movie </h3>
-      <div className="row card-group h-80">
+      <h5> My Playlist Movie </h5>
+      <div className="row card-group " >
         {playlist.map((item) => {
           return (
             <div className="col" key={item._id}>
+
               <div className="card">
-                <div className="card-body">
-                  <img
-                    src={`http://localhost:5000/${item.imageUrl}`}
-                    className="card-img-top playlist-image"
-                    alt="Playlist Image"
-                    style={{ height: '150px' }}
-                  />
-                  <h5 className="card-title">{item.title}</h5>
-                  <p className="card-text ">{item.desc}</p>
-                </div>
+                <Link to={`/playlist/${item._id}`} className="link-no-underline" >
+
+                  <div className="card-body">
+                    <img
+                      src={`http://localhost:5000/${item.imageUrl}`}
+                      className="card-img-top playlist-image"
+                      alt="Playlist Image"
+                      style={{ height: '150px' }}
+                    />
+
+                    <h5 className="card-title text-black">{item.title}</h5>
+                    <p className="card-text text-gray">{item.desc}</p>
+                  </div>
+                </Link>
                 <button className="btn btn-outline-secondary m-3" data-bs-toggle="modal" data-bs-target="#EditPlaylist" onClick={(e) => CurrentPlaylist(item._id)} >Edit Playlist</button>
               </div>
             </div>
