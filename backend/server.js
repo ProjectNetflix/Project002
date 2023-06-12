@@ -29,6 +29,8 @@ mongoose.connect(mongoUrl, {
 
 require("./userDetails");
 require("./playlist");
+require("./movie");
+
 
 
 // กำหนดตำแหน่งเก็บไฟล์ให้ multer
@@ -153,29 +155,36 @@ app.get("/allusers", async (req, res) => {
   }
 });
 
-//แก้ไข user profile
-app.post("/updateUser/:id", async (req, res) => {
+ 
+//---------แก้ไข user profile
+app.put('/updateUser/:id', async (req, res) => {
   const { fname, lname } = req.body;
-  console.log(req.body);
+
   try {
-    const user = await UserInfo.findByIdAndUpdate(req.params.id, {
-      fname,
-      lname,
-      // email,
-    }, 
-    { new: true });
-    console.log(fname, lname)
-
+    const user = await UserInfo.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ error: "ไม่พบผู้ใช้งาน" });
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้' });
     }
+ 
+    user.fname = fname || user.fname;
+    user.lname = lname || user.lname;
+    if (req.file) {
+      // ถ้ามีการส่งไฟล์รูปภาพมา
+      user.pic = req.file;
+    }
+    
+    const updatedUser = await user.save();
 
-    res.json({ status: "ok", data: user });
+    console.log(updatedUser); // แสดงค่าที่อัพเดตของผู้ใช้
+
+    res.status(200).json({ user: updatedUser });
+    // res.status(200).json({ user });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    res.status(500).json({ message: 'ข้อผิดพลาดของเซิร์ฟเวอร์' });
   }
 });
+ 
 
 
 app.get("/find/:id", async (req, res) => {
@@ -362,9 +371,6 @@ app.get("/playlists/:id", async (req, res) => {
   }
 });
 
-
-
-
 app.delete("/playlists/:id", async (req, res) => {
   try {
     const playlistId = req.params.id;
@@ -386,6 +392,17 @@ app.delete("/playlists/:id", async (req, res) => {
   }
 });
 
+const movieInfo = mongoose.model("movieInfo")
+
+app.post("/movies", async (req, res) => {
+  const { name, synopsis, pic } = req.body;
+  try {
+    const movie = await movieInfo.create({ name, synopsis, pic });
+    res.status(201).json(movie);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create movie" });
+  }
+});
 
 app.listen(5000, () => {
   console.log("Server Started");
