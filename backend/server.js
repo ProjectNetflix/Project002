@@ -157,36 +157,31 @@ app.get("/allusers", async (req, res) => {
 
  
 //---------แก้ไข user profile
-app.put('/updateUser/:id', async (req, res) => {
+app.put("/updateUser/:id", async (req, res) => {
+  const { id } = req.params;
   const { fname, lname } = req.body;
 
   try {
-    const user = await UserInfo.findById(req.params.id);
+    const user = await UserInfo.findByIdAndUpdate(
+      id,
+      { fname, lname },
+      { new: true }
+    );
+
     if (!user) {
-      return res.status(404).json({ message: 'ไม่พบผู้ใช้' });
+      return res.status(404).json({ error: "ไม่พบผู้ใช้" });
     }
- 
-    user.fname = fname || user.fname;
-    user.lname = lname || user.lname;
-    if (req.file) {
-      // ถ้ามีการส่งไฟล์รูปภาพมา
-      user.pic = req.file;
-    }
-    
-    const updatedUser = await user.save();
 
-    console.log(updatedUser); // แสดงค่าที่อัพเดตของผู้ใช้
-
-    res.status(200).json({ user: updatedUser });
-    // res.status(200).json({ user });
+    res.status(200).json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'ข้อผิดพลาดของเซิร์ฟเวอร์' });
+    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
   }
 });
+
+
+
  
-
-
 app.get("/find/:id", async (req, res) => {
   try {
     const user = await UserInfo.findById(req.params.id);

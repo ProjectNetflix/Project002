@@ -7,9 +7,6 @@ import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
 const Profile = () => {
-  // const [pic, setPic] = useState();
-  // const [fname, setFname] = useState();
-  // const [lname, setLname] = useState();
   const [playlist, setPlaylist] = useState([]);
   const [userData, setUserData] = useState([]);
   const [follower, setFollower] = useState([]);
@@ -20,80 +17,31 @@ const Profile = () => {
     lname: "",
   })
 
-  const { fname, pic, lname } = state;
+  const { fname, lname } = state;
+
   const inputValue = name => event => {
-    if (name === "pic") {
-      setState({ ...state, [name]: event.target.files[0] });
-    }
-    else {
-      setState({ ...state, [name]: event.target.value });
-    }
+    setState({ ...state, [name]: event.target.value });
   }
 
-
-  const EditUserData = (e) => {
-    e.preventDefault();
-    let uid = localStorage.getItem("userId");
-    const formData = new FormData();
-    formData.append('fname', fname);
-    formData.append('lname', lname);
-
-    console.log(fname, lname);
-    // formData.append('desc', desc);
-
-    if (lname === "" && fname === "" && pic === "" && uid !== "") {
-      MySwal.fire({
-        text: "Please enter data",
-        icon: "error",
-        showConfirmButton: true,
-        timer: 5000,
-      });
-    } else {
-
-      const requestOptions = {
-        method: "POST",
-        body: formData,
-      };
-
-      console.log(state);
-      
-      fetch(`http://localhost:5000/updateUser/${uid}`, requestOptions)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data) {
-            console.log(data, "UpdateUser");
-            //alert(data.status);
-          } else {
-            alert(data.status);
-          }
-
-        })
-        .catch((error) => {
-          console.error(error);
-          alert("เกิดข้อผิดพลาดในแก้ไข");
-        });
-    }
-  };
-
-  const requestOptions = {
-    method: "GET",
-    crossDomain: true,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "Access-Control-Allow-Origin": "*",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  };
-
   const getPlaylist = async () => {
+    const requestOptions = {
+      method: "GET",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
 
     fetch(
-      `http://localhost:5000/playlists-user/${localStorage.getItem("userId")}`, requestOptions)
+      `http://localhost:5000/playlists-user/${localStorage.getItem("userId")}`,
+      requestOptions
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          //console.log(data, "Playlist User");
           setPlaylist(data);
         } else {
           alert(data.status);
@@ -108,12 +56,22 @@ const Profile = () => {
   const getUser = async () => {
     let uid = localStorage.getItem("userId");
 
+    const requestOptions = {
+      method: "GET",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+
     fetch(`http://localhost:5000/userData/${uid}`, requestOptions)
       .then((res) => res.json())
       .then((data) => {
-        //console.log(data, "userData");
         if (data.data === "token expired") {
-          alert("Token expired signin again");
+          alert("Token expired, sign in again");
           window.localStorage.clear();
           window.location.href = "./signin";
         } else {
@@ -124,7 +82,6 @@ const Profile = () => {
             ...state,
             fname: data.data.fname,
             lname: data.data.lname,
-            //pic: data.imageUrl,
           });
         }
       });
@@ -134,6 +91,46 @@ const Profile = () => {
     getUser();
     getPlaylist();
   }, []);
+
+  const EditUserData = (e) => {
+    e.preventDefault();
+    let uid = localStorage.getItem("userId");
+
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        fname: state.fname,
+        lname: state.lname,
+      }),
+    };
+
+    fetch(`http://localhost:5000/updateUser/${uid}`, requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          console.log(data, "UpdateUser");
+          // แสดงข้อความหลังจากการอัปเดตข้อมูลสำเร็จ
+          MySwal.fire({
+            text: "Profile updated successfully",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+          window.location.reload();
+        } else {
+          alert(data.status);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("เกิดข้อผิดพลาดในการแก้ไข");
+      });
+  };
 
   return (
     <div>
@@ -147,10 +144,13 @@ const Profile = () => {
               className="rounded-circle"
               width={100}
               height={100}
+              alt="Profile"
             />
-            <h4 className=""> {userData.fname}   {userData.lname} </h4>
-            <span>Following {following.length} </span>
-            <span>Followers {follower.length} </span>
+            <h4 className="">
+              {userData.fname} {userData.lname}
+            </h4>
+            <span>Following {following.length}</span>
+            <span>Followers {follower.length}</span>
             <span>Playlist {playlist.length}</span>
             <span>Favlist Movie 0</span>
             <div>
@@ -190,22 +190,11 @@ const Profile = () => {
                   <form className="container w-100 h-50">
                     <div className="form-content ">
                       <div className="form-group mt-2">
-                        <label>Picture</label>
-                        <input
-                          type="file"
-                          className="form-control mt-1"
-                          placeholder="Search..."
-                          onChange={inputValue("pic")}
-                        />
-                      </div>
-
-                      <div className="form-group mt-2">
                         <label>First Name</label>
                         <input
                           type="text"
                           className="form-control mt-1"
                           value={fname}
-                          // onChange={(e) => setFname(e.target.value)}
                           onChange={inputValue("fname")}
                         />
                       </div>
@@ -213,10 +202,9 @@ const Profile = () => {
                       <div className="form-group mt-2">
                         <label>Last Name</label>
                         <input
-                          type="textarea"
+                          type="text"
                           className="form-control mt-1"
                           value={lname}
-                          // onChange={(e) => setLname(e.target.value)}
                           onChange={inputValue("lname")}
                         />
                       </div>
