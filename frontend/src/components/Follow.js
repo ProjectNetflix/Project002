@@ -1,7 +1,7 @@
 import Navbar from "./Navbar"
 import './Follow.css'
 import { useState, useEffect } from "react"
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
@@ -10,6 +10,7 @@ const MySwal = withReactContent(Swal)
 
 const Follow = () => {
     //window.location.reload();
+
     console.log();
     const [follower, setFollower] = useState([]);
     const [following, setFollowing] = useState([]);
@@ -192,19 +193,24 @@ const Follow = () => {
                         return (
                             <div className="col" key={item._id}>
                                 <div className="card">
-                                    <div className="card-body">
-                                        <img
-                                            src={`http://localhost:5000/${item.imageUrl}`}
-                                            className="card-img-top playlist-image"
-                                            alt="Playlist Image"
-                                            style={{ height: '150px' }}
 
-                                        />
-                                        <h5 className="card-title">{item.title}</h5>
-                                        <p className="card-text">{item.desc}</p>
-                                    </div>
-                                    <button className="btn btn-outline-primary m-3">Favorite</button>
+                                    <Link to={{ pathname: `/playlist/${item._id}`, state: { title: item.title }, }} className="link-no-underline" >
+
+                                        <div className="card-body text-black">
+                                            <img
+                                                src={`http://localhost:5000/${item.imageUrl}`}
+                                                className="card-img-top playlist-image"
+                                                alt="Playlist Image"
+                                                style={{ height: '150px' }}
+
+                                            />
+                                            <h5 className="card-title">{item.title}</h5>
+                                            <p className="card-text">{item.desc}</p>
+                                        </div>
+                                        <button className="btn btn-outline-primary m-3">Favorite</button>
+                                    </Link>
                                 </div>
+
                             </div>
                         );
                     })}

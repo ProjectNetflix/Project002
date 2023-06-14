@@ -155,7 +155,7 @@ app.get("/allusers", async (req, res) => {
   }
 });
 
- 
+
 //---------แก้ไข user profile
 app.put("/updateUser/:id", async (req, res) => {
   const { id } = req.params;
@@ -181,7 +181,7 @@ app.put("/updateUser/:id", async (req, res) => {
 
 
 
- 
+
 app.get("/find/:id", async (req, res) => {
   try {
     const user = await UserInfo.findById(req.params.id);
@@ -387,15 +387,29 @@ app.delete("/playlists/:id", async (req, res) => {
   }
 });
 
-const movieInfo = mongoose.model("movieInfo")
+
+
+
+const movieInfo = mongoose.model("movieIn")
 
 app.post("/movies", async (req, res) => {
-  const { name, synopsis, pic } = req.body;
+  const { name, synopsis, pic, title_type, netflix_id, title_date, year } = req.body;
+  console.log( req.body);
   try {
-    const movie = await movieInfo.create({ name, synopsis, pic });
+    const movie = await movieInfo.create({ name, synopsis, pic, title_type, netflix_id, title_date, year });
     res.status(201).json(movie);
   } catch (error) {
     res.status(500).json({ error: "Failed to create movie" });
+  }
+});
+
+app.get('/movies', async (req, res) => {
+  try {
+    const movies = await movieInfo.find().populate('name');
+    res.json(movies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 

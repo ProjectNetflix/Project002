@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { AiFillGithub, AiFillHeart } from "react-icons/ai";
-import './Movie.css'
+import './style.css'
 import Navbar from "./Navbar";
 import withReactContent from 'sweetalert2-react-content'
 import Swal from 'sweetalert2'
@@ -45,7 +45,7 @@ const Movie = () => {
         //     }
         // };
 
-        // fetch('https://unogs-unogs-v1.p.rapidapi.com/search/titles?country_list=425&order_by=date&limit=5000&new_date=2021-01-01&subtitle=thai&english&type=movie', options)
+        // fetch('https://unogs-unogs-v1.p.rapidapi.com/search/titles?country_list=425&order_by=date&limit=20', options)
         //     .then(response => response.json())
         //     .then(data => {
         //         setMovie(data.results);
@@ -54,31 +54,6 @@ const Movie = () => {
         //     .catch(err => console.error(err));
 
     }
-
-    const getPlaylist = async () => {
-        const requestOptions = {
-            method: "GET",
-            crossDomain: true,
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "Access-Control-Allow-Origin": "*",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        };
-        fetch(`http://localhost:5000/movies`, requestOptions)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data) {
-                    console.log(data, "Playlist User");
-                    setMovie(data);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
-            });
-    };
 
     const [state, setState] = useState({
         name: "",
@@ -92,53 +67,89 @@ const Movie = () => {
 
     const { name, synopsis, pic, title_type, netflix_id, title_date, year } = state;
 
-    const SaveMovie = (e, title, synopsis, img, title_type, netflix_id, title_date, year) => {
+    const [currentPlaylistId, setCurrentPlaylistId] = useState();
+    const CurrentPlaylist = (id) => {
+
+        setCurrentPlaylistId(id);
+        const selectedPlaylist = movie.find(item => item.netflix_id === id);
+
+        setState({
+            ...state,
+            name: selectedPlaylist.title,
+            synopsis: selectedPlaylist.synopsis,
+            pic: selectedPlaylist.img,
+            title_type: selectedPlaylist.title_type,
+            netflix_id: selectedPlaylist.netflix_id,
+            title_date: selectedPlaylist.title_date,
+            year: selectedPlaylist.year,
+
+        });
+
+        console.log(state);
+    };
+
+
+    const SaveMovie = (e) => {
         e.preventDefault();
-        const updatedMovie = {
-            name: title,
-            synopsis: synopsis,
-            pic: img,
-            title_type: title_type,
-            netflix_id: netflix_id,
-            title_date: title_date,
-            year: year,
-        };
-        setState(updatedMovie);
+        // const updatedMovie = {
+        //     name: title,
+        //     synopsis: synopsis,
+        //     pic: img,
+        //     title_type: title_type,
+        //     netflix_id: netflix_id,
+        //     title_date: title_date,
+        //     year: year,
+        // };
+        //setState(updatedMovie);
         console.log(state);
 
         const requestOptions = {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "Access-Control-Allow-Origin": "*",
-            },
-            body: JSON.stringify(updatedMovie),
+            // crossDomain: true,
+            // headers: {
+            //     "Content-Type": "application/json",
+            //     Accept: "application/json",
+            //     "Access-Control-Allow-Origin": "*",
+            //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+            // },
+            //body : state,
+            body: JSON.stringify({
+                name: state.name,
+                synopsis: state.synopsis,
+                pic: state.pic,
+                title_type: state.title_type,
+                netflix_id: state.netflix_id,
+                title_date: state.title_date,
+                year: state.year,
+            }),
         };
+        console.log("test");
 
-        fetch("http://localhost:5000/movies", requestOptions)
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data, "Playlist");
-                if (data) {
-                    console.log("save");
-                } else {
-                    MySwal.fire({
-                        text: "Error",
-                        icon: 'error',
-                        showConfirmButton: true,
-                        timer: 2000,
-                    });
+        if (true) {
+            fetch("http://localhost:5000/createmovies", requestOptions)
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data, "Playlist");
+                    if (data) {
+                        console.log("save");
+
+                    } else {
+                        MySwal.fire({
+                            text: "Error",
+                            icon: 'error',
+                            showConfirmButton: true,
+                            timer: 2000,
+                        });
+                    }
                 }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+                )
+        }
+
+
     }
 
     useEffect(() => {
-        //GetMovie();
-        getPlaylist()
+        GetMovie();
     }, [])
 
     return (
@@ -146,53 +157,59 @@ const Movie = () => {
             <Navbar />
             <div className="container">
                 <br />
-                <h2>Movie</h2>
+                <h1>รายการภาพยนต์</h1>
 
-                <form className="grid align-items-center col-4 p-3" >
-                    <input className=" form-control" placeholder="Search for Movie ... "  />
-                    {/* <div className="list-group position-absolute  " onChange={handleChange} >
-                            {word.length !== 0 && searchFollow(search).map((item, index) => {
-                                return (
-                                    <Link to={{ pathname:  `/follow/${item._id}`, state: { userid: item._id },}} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
-                                )
-                            })}
-                        </div> */}
-                </form>
+                {/* <div className="search-container">
+                    <label htmlFor="search-form">
+                        <input type="text"
+                            className="search-input"
+                            placeholder="ค้นหาชื่อเรื่อง"
+                            value={word}
+                            onChange={(e) => setWord(e.target.value)}
+                        />
+                    </label>
+                </div> */}
 
                 <div className="row card-group">
                     {movie.map((item) => {
                         return (
-                            <div className="col" key={item.netflix_id}>
-
+                            <div className="col">
                                 <div className="card">
                                     <div className="card-body">
                                         <img
                                             // src={item.picture}
-                                            src={item.pic}
+                                            src={item.img}
                                             className="card-img-top playlist-image"
                                             alt="Playlist Image"
                                             style={{ height: '150px' }}
                                         />
 
                                         <div className="card-title">
-                                            <h6>{item.name}</h6>
+                                            <h4> name : {item.title}</h4>
                                         </div>
 
                                         <div className="card-text">
-                                            <p>{item.synopsis}</p>
-                                            {/* <span>{item.title_type}</span>
+                                            <span>{item.synopsis}</span>
+                                            <span>{item.title_type}</span>
                                             <span>{item.netflix_id}</span>
                                             <span>{item.title_date}</span>
-                                            <span>{item.year}</span> */}
+                                            <span>{item.year}</span>
 
                                         </div>
+
                                     </div>
+                                    <button className="btn btn-outline-secondary m-3"
+                                        onClick={(e) => setCurrentPlaylistId(e, item.netflix_id)}>save</button>
+                                    {/* <button className="btn btn-outline-secondary m-3"
+                                        onClick={(e) => SaveMovie(e, item.title, item.synopsis, item.img, item.title_type, item.netflix_id, item.title_date, item.year)}>save</button> */}
                                 </div>
                             </div>
                         )
 
                     })}
                 </div>
+
+                <button type="submit" className="btn btn-primary" onClick={(e) => SaveMovie()}>Save</button>
 
             </div>
         </div>

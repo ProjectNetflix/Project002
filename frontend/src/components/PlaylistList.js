@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import './PlaylistList.css'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import './PlaylistList.css'
 const MySwal = withReactContent(Swal);
 
 
@@ -293,9 +293,9 @@ const PlaylistList = () => {
             <div className="col" key={item._id}>
 
               <div className="card">
-                <Link to={`/playlist/${item._id}`} className="link-no-underline" >
+                <Link to={{ pathname: `/playlist/${item._id}`, state: { title: item.title }, }} className="link-no-underline" >
 
-                  <div className="card-body">
+                  <div className="card-body text-black">
                     <img
                       src={`http://localhost:5000/${item.imageUrl}`}
                       className="card-img-top playlist-image"
@@ -303,8 +303,8 @@ const PlaylistList = () => {
                       style={{ height: '150px' }}
                     />
 
-                    <h5 className="card-title text-black">{item.title}</h5>
-                    <p className="card-text text-gray">{item.desc}</p>
+                    <h5 className="card-title">{item.title}</h5>
+                    <p className="card-text">{item.desc}</p>
                   </div>
                 </Link>
                 <button className="btn btn-outline-secondary m-3" data-bs-toggle="modal" data-bs-target="#EditPlaylist" onClick={(e) => CurrentPlaylist(item._id)} >Edit Playlist</button>
