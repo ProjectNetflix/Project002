@@ -17,8 +17,8 @@ const MenuData = [
         icon: <AiOutlineUser />
     },
     {
-        title: "Movielist",
-        heardertitle: "Movielist",
+        title: "Movie",
+        heardertitle: "Movie",
         path: "/movie",
         icon: <BiCameraMovie />
     },

@@ -9,32 +9,11 @@ import Swal from 'sweetalert2'
 const MySwal = withReactContent(Swal);
 
 const Movie = () => {
-    const data = [
-        {
-            id: 1, pic: "https://m.media-amazon.com/images/M/MV5BZjZjNzI5MDctY2Y4YS00NmM4LTljMmItZTFkOTExNGI3ODRhXkEyXkFqcGdeQXVyNjc3MjQzNTI@._V1_.jpg",
-            name: "Demonslayer",
-            synopsis: "asia"
-        },
-        {
-            id: 2, pic: "https://images.justwatch.com/poster/269914828/s718/a-business-proposal.%7Bformat%7D",
-            name: "Business Proposal",
-            synopsis: "asia"
-        },
-        {
-            id: 3, pic: "https://puui.wetvinfo.com/vcover_hz_pic/0/w9cphb9w7ev2m931582334936/0",
-            name: "Naruto",
-            synopsis: "asia"
-        },
-        {
-            id: 4, pic: "https://thaipublica.org/wp-content/uploads/2023/03/11-The_Glory.jpg",
-            name: "Glory",
-            synopsis: "ซีรีส์จะเล่าเรื่องราวเกี่ยวกับชีวิตของ มุนดงอึน (รับบทโดย ซงฮเยคโย) หญิงสาวคนหนึ่งที่ใฝ่ฝันอยากเป็นสถาปนิก แต่เธอต้องลาออกจากโรงเรียน หลังถูกรังแกและทำร้ายร่างกายอย่างรุนแรงสมัยมัธยมปลาย เธอจึงเฝ้ารอให้คู่กรณีเติบโตขึ้นจนแต่งงานและมีลูก เมื่อลูกของคู่กรณีโตพอที่จะเข้าโรงเรียนประถม เธอก็ได้เข้ามาเป็นคุณครูประจำชั้นของเด็กคนนั้น และเริ่มต้นการแก้แค้น"
-        }
-    ]
 
-    const [countries, setCountries] = useState(data);
     const [word, setWord] = useState("");
     const [movie, setMovie] = useState([]);
+    const [dataFilter] = useState(["name", "synopsis"])
+    const [search, setSearch] = useState([]);
 
     const GetMovie = () => {
         // const options = {
@@ -55,7 +34,22 @@ const Movie = () => {
 
     }
 
-    const getPlaylist = async () => {
+    const searchMovies = (search) => {
+        return search.filter((item) => {
+            return dataFilter.some((filter) => {
+                if (item[filter]) { // ตรวจสอบค่าว่าง
+                    return item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1;
+                }
+            });
+        });
+    };
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        setWord(e.target.value);
+    };
+
+    const GetMovies = async () => {
         const requestOptions = {
             method: "GET",
             crossDomain: true,
@@ -138,7 +132,7 @@ const Movie = () => {
 
     useEffect(() => {
         //GetMovie();
-        getPlaylist()
+        GetMovies();
     }, [])
 
     return (
@@ -149,29 +143,20 @@ const Movie = () => {
                 <h2>Movie</h2>
 
                 <form className="grid align-items-center col-4 p-3" >
-                    <input className=" form-control" placeholder="Search for Movie ... "  />
-                    {/* <div className="list-group position-absolute  " onChange={handleChange} >
-                            {word.length !== 0 && searchFollow(search).map((item, index) => {
-                                return (
-                                    <Link to={{ pathname:  `/follow/${item._id}`, state: { userid: item._id },}} className=" list-group-item align-items-center " key={index} >{item.fname}  {item.lname}</Link>
-                                )
-                            })}
-                        </div> */}
+                    <input className=" form-control" placeholder="Search for Movie ... " onChange={handleChange} value={word} />
                 </form>
 
                 <div className="row card-group">
-                    {movie.map((item) => {
+                    {searchMovies(movie).map((item) => {
                         return (
                             <div className="col" key={item.netflix_id}>
-
                                 <div className="card">
                                     <div className="card-body">
                                         <img
-                                            // src={item.picture}
                                             src={item.pic}
                                             className="card-img-top playlist-image"
                                             alt="Playlist Image"
-                                            style={{ height: '150px' }}
+                                            style={{ height: '250px' }}
                                         />
 
                                         <div className="card-title">

@@ -300,7 +300,7 @@ const PlaylistList = () => {
                       src={`http://localhost:5000/${item.imageUrl}`}
                       className="card-img-top playlist-image"
                       alt="Playlist Image"
-                      style={{ height: '150px' }}
+                      style={{ height: '200px' }}
                     />
 
                     <h5 className="card-title">{item.title}</h5>
