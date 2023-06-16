@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import PlaylistList from "./PlaylistList";
+import EditProfile from "./EditProfile";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-
 const MySwal = withReactContent(Swal);
 
 const Profile = () => {
@@ -11,17 +11,8 @@ const Profile = () => {
   const [userData, setUserData] = useState([]);
   const [follower, setFollower] = useState([]);
   const [following, setFollowing] = useState([]);
-
-  const [state, setState] = useState({
-    fname: "",
-    lname: "",
-  })
-
-  const { fname, lname } = state;
-
-  const inputValue = name => event => {
-    setState({ ...state, [name]: event.target.value });
-  }
+  const DefaultPic = "https://xn--72czjvzci0ftdsfvb.com/images/2022/12/22/xn--72czjvzci0ftdsfvb.com_f9cb000afb0aeb014f735bcfd3551282.png";
+  const [success, setSuccess] = useState(Boolean);
 
   const getPlaylist = async () => {
     const requestOptions = {
@@ -78,11 +69,6 @@ const Profile = () => {
           setUserData(data.data);
           setFollower(data.data.follower);
           setFollowing(data.data.following);
-          setState({
-            ...state,
-            fname: data.data.fname,
-            lname: data.data.lname,
-          });
         }
       });
   };
@@ -90,47 +76,8 @@ const Profile = () => {
   useEffect(() => {
     getUser();
     getPlaylist();
-  }, []);
+  }, [success]);
 
-  const EditUserData = (e) => {
-    e.preventDefault();
-    let uid = localStorage.getItem("userId");
-
-    const requestOptions = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        fname: state.fname,
-        lname: state.lname,
-      }),
-    };
-
-    fetch(`http://localhost:5000/updateUser/${uid}`, requestOptions)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          console.log(data, "UpdateUser");
-          // แสดงข้อความหลังจากการอัปเดตข้อมูลสำเร็จ
-          MySwal.fire({
-            text: "Profile updated successfully",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 2000,
-          });
-          window.location.reload();
-        } else {
-          alert(data.status);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาดในการแก้ไข");
-      });
-  };
 
   return (
     <div>
@@ -140,95 +87,19 @@ const Profile = () => {
         <div className="row-12">
           <div className="col align-items-center p-3">
             <img
-              src="https://pbs.twimg.com/media/FBdflFiVkAMsmK2?format=jpg&name=small"
-              className="rounded-circle"
+              src={userData.imageUrl ? `http://localhost:5000/${userData.imageUrl}` : DefaultPic}
+              className="rounded-circle img-rounded "
               width={100}
               height={100}
-              alt="Profile"
             />
-            <h4 className="">
-              {userData.fname} {userData.lname}
-            </h4>
+            <h4 className="p-2"> {userData.fname} {userData.lname}</h4>
             <span>Following {following.length}</span>
             <span>Followers {follower.length}</span>
             <span>Playlist {playlist.length}</span>
             <span>Favlist Movie 0</span>
             <div>
-              <button
-                className="btn btn-outline-warning mt-3"
-                data-bs-toggle="modal"
-                data-bs-target="#EditUser"
-              >
-                Edit Profile
-              </button>
+              <EditProfile />
               <PlaylistList />
-            </div>
-          </div>
-
-          <div
-            className="modal fade"
-            id="EditUser"
-            tabIndex="-1"
-            aria-labelledby="UserModalLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="UserModalLabel">
-                    Edit Profile
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-
-                <div className="modal-body">
-                  <form className="container w-100 h-50">
-                    <div className="form-content ">
-                      <div className="form-group mt-2">
-                        <label>First Name</label>
-                        <input
-                          type="text"
-                          className="form-control mt-1"
-                          value={fname}
-                          onChange={inputValue("fname")}
-                        />
-                      </div>
-
-                      <div className="form-group mt-2">
-                        <label>Last Name</label>
-                        <input
-                          type="text"
-                          className="form-control mt-1"
-                          value={lname}
-                          onChange={inputValue("lname")}
-                        />
-                      </div>
-                    </div>
-                  </form>
-                </div>
-
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    onClick={EditUserData}
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>

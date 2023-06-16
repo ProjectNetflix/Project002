@@ -1,78 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@200&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Geologica:wght@200&family=Prompt:wght@200&display=swap');
 
-/* Navbar css */
-.nav-menu {
-    background: white;
-    width: 200px;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    top: 0;
-    left: -50%;
-    transition: 850ms;
-}
-
-.nav-menu.active {
-    left: 0;
-    transition: 350ms;
-}
-
-.navbar {
-    display: flex;
-    height: 80px;
-    justify-content: flex-start;
-    align-items: left;
-
-}
-
-.navbar-toggle {
-    background: white;
-    width: 100%;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.menu-bar {
-    font-size: 2rem;
-    margin-left: 2rem;
-}
-
-svg {
-    color: black;
-}
-
-.nav-menu-item {
-    width: 100%;
-}
-
-.menu-text {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 8px 0px 8px 16px;
-    list-style: none;
-    height: 60px;
-}
-
-.menu-text a {
-    text-decoration: none;
-    color: black;
-    font-size: 18px;
-    width: 95%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    border-radius: 4px;
-}
-
-.menu-text a:hover {
-    background: #ffbf7f;
-}
 
 label,
 span {
@@ -80,7 +8,6 @@ span {
     font-weight: 500;
     /* font-family: 'Prompt', sans-serif; */
     font-family: 'Geologica', sans-serif;
-    /* font-family: 'Prompt', sans-serif; */
 }
 
 
@@ -92,108 +19,6 @@ span {
     font-family: 'Geologica', sans-serif;
 
 }
-
-/* login css */
-.container {
-    color: black;
-    width: 96%;
-    text-align: center;
-    max-width: 1200px;
-    margin: 10px auto;
-}
-
-.container-login {
-
-    color: black;
-
-    width: 96%;
-    max-width: 500px;
-    /* margin:120px 100px 0 auto; */
-    margin: 80px auto;
-    padding: 20px;
-
-}
-
-.card-login {
-    box-shadow: 0px 2px 4px white;
-}
-
-.container-signup {
-
-    color: black;
-    width: 96%;
-    max-width: 500px;
-    margin: 100px auto;
-}
-
-.row {
-    margin: 2em 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    grid-gap: 48px;
-}
-
-/* Movie-list css */
-.card {
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.card-title {
-    max-height: 150px;
-}
-
-.card-title img {
-    width: 100%;
-    object-fit: cover;
-    min-height: 100%;
-    object-position: center;
-}
-
-.card-body {
-    padding: 10px 10px 10px 10px;
-}
-
-.card-list {
-    color: black;
-    margin-top: 16px;
-}
-
-.card-list li {
-    margin: 10px auto;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
-}
-
-.card-list li span {
-    color: black;
-}
-
-.card-description {
-    margin: 100px 0 0 0;
-    padding: 1px;
-    text-align: left;
-    font-weight: bold;
-    font-size: 15px;
-}
-
-ul,
-ol {
-    list-style: none;
-}
-
-/* search movie css */
-.search-container {
-    margin: auto;
-}
-
-.search-input {
-    padding: 1.5rem 1.5rem;
-    width: 100%;
-    font-size: 18px;
-    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 
 body {
     background: white !important;
@@ -282,14 +107,5 @@ html,
 }
 
 .user-container {
-    text-align: center;
-}
-
-.profile {
-    text-align: left;
-    font-size: 20px;
-}
-
-.homepage {
     text-align: center;
 }

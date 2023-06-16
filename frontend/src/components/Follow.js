@@ -9,17 +9,17 @@ const MySwal = withReactContent(Swal)
 
 
 const Follow = () => {
-    //window.location.reload();
 
     console.log();
     const [follower, setFollower] = useState([]);
     const [following, setFollowing] = useState([]);
     const location = useLocation();
     const { userid } = location.state;
-    const { olduserid } = userid;
     const [playlist, setPlaylist] = useState([]);
     const [follow, setFollow] = useState([]);
     const [isFollowed, setIsFollowed] = useState(Boolean);
+
+    const DefaultPic = "https://xn--72czjvzci0ftdsfvb.com/images/2022/12/22/xn--72czjvzci0ftdsfvb.com_f9cb000afb0aeb014f735bcfd3551282.png";
 
     const handleFollowToggle = () => {
 
@@ -47,16 +47,10 @@ const Follow = () => {
                         console.log(res.error)
                     }
                 });
-            MySwal.fire({
-                icon: "success",
-                text: "UnFollow Success",
-                showConfirmButton: false,
-                timer: 3000,
-            })
             console.log("Unfollow");
-            // ตั้งค่าสถานะการติดตามเป็น false
             setIsFollowed(false);
             window.location.reload();
+
 
         } else {
 
@@ -72,15 +66,7 @@ const Follow = () => {
                     }
                 });
 
-            MySwal.fire({
-                icon: "success",
-                text: "Follow Success",
-                showConfirmButton: false,
-                timer: 3000,
-            })
-
             console.log("Follow");
-            // ตั้งค่าสถานะการติดตามเป็น true
             setIsFollowed(true);
             window.location.reload();
 
@@ -105,22 +91,15 @@ const Follow = () => {
             .then((data) => {
                 console.log(data, "follow");
                 if (data) {
-                    //alert("Token expired signin again");
                     setFollow(data.data);
                     setFollower(data.data.follower);
                     setFollowing(data.data.following);
-                    console.log(data.data.fname)
 
                     let uid = localStorage.getItem("userId");
-                    const checkFollow = data.data.follower.find(e => e == uid);
-                    if (checkFollow === "" || checkFollow === undefined) {
-                        setIsFollowed(false);
-                    }
-                    else {
-                        setIsFollowed(true);
-                    }
+                    const checkFollow = data.data.follower.includes(uid);
+                    setIsFollowed(checkFollow);
                     console.log("check", isFollowed);
-                    // window.location.reload();
+
                 } else {
                     alert("data not found")
                 }
@@ -160,7 +139,7 @@ const Follow = () => {
         getFollowData();
         getPlaylist();
 
-    }, []);
+    }, [userid]);
 
     return (
         <div>
@@ -170,8 +149,12 @@ const Follow = () => {
                 <div className="row-12 " >
                     <div className="col align-items-center p-3">
 
-                        <img src="https://pbs.twimg.com/media/FBdflFiVkAMsmK2?format=jpg&name=small" className="rounded-circle " width={100} height={100} />
-
+                        <img
+                            src={follow.imageUrl ? `http://localhost:5000/${follow.imageUrl}` : DefaultPic}
+                            className="rounded-circle img-rounded "
+                            width={100}
+                            height={100}
+                        />
                         <h4 >{follow.fname} {follow.lname}</h4>
                         <span >Following {following.length} </span>
                         <span >Followers {follower.length} </span>
@@ -210,7 +193,6 @@ const Follow = () => {
                                         <button className="btn btn-outline-primary m-3">Favorite</button>
                                     </Link>
                                 </div>
-
                             </div>
                         );
                     })}

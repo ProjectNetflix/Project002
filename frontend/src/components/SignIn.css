@@ -1,0 +1,40 @@
+
+/* login css */
+.container {
+    color: black;
+    width: 96%;
+    text-align: center;
+    max-width: 1200px;
+    margin: 10px auto;
+}
+
+.container-login {
+
+    color: black;
+
+    width: 96%;
+    max-width: 500px;
+    /* margin:120px 100px 0 auto; */
+    margin: 80px auto;
+    padding: 20px;
+
+}
+
+.card-login {
+    box-shadow: 0px 2px 4px white;
+}
+
+.container-signup {
+
+    color: black;
+    width: 96%;
+    max-width: 500px;
+    margin: 100px auto;
+}
+
+.row {
+    margin: 2em 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 48px;
+}

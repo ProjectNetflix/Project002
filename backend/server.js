@@ -13,6 +13,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
+const { userInfo } = require("os");
 
 const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 const mongoUrl = "mongodb+srv://Maprang6224:3gfksnMxGlIVQ6uq@project-workshop.isbh5gk.mongodb.net/?retryWrites=true&w=majority"
@@ -27,10 +28,9 @@ mongoose.connect(mongoUrl, {
   .catch((e) => console.log(e));
 
 
-require("./userDetails");
-require("./playlist");
-require("./movie");
-
+require("./User");
+require("./Playlist");
+require("./Movie");
 
 
 // กำหนดตำแหน่งเก็บไฟล์ให้ multer
@@ -58,7 +58,6 @@ const upload = multer({
 });
 
 
-
 const UserInfo = mongoose.model("UserInfo");
 app.post("/signup", async (req, res) => {
   const { fname, lname, email, password } = req.body;
@@ -72,12 +71,12 @@ app.post("/signup", async (req, res) => {
       return res.json({ status: "อีเมลล์นี้ถูกใช้แล้ว" });
     }
 
-
     if (password.length < 8) {
       return res.json({ status: "กรุณากรอก Password ให้ถูกต้อง" });
     }
 
     await UserInfo.create({
+      imageUrl:"" ,
       fname,
       lname,
       email,
@@ -85,7 +84,7 @@ app.post("/signup", async (req, res) => {
     });
     res.send({ status: "ok" });
   } catch (error) {
-    res.send({ status: "error" });
+    res.send({ status: "error" + error });
   }
 
 });
@@ -155,32 +154,26 @@ app.get("/allusers", async (req, res) => {
   }
 });
 
-
-//---------แก้ไข user profile
-app.put("/updateUser/:id", async (req, res) => {
-  const { id } = req.params;
+app.put('/updateUser/:id', upload.single('image'), async (req, res) => {
   const { fname, lname } = req.body;
+  const imageURL = req.file ? req.file.path.replace(/\\/g, '/') : null;
 
   try {
-    const user = await UserInfo.findByIdAndUpdate(
-      id,
-      { fname, lname },
-      { new: true }
-    );
-
+    const user = await UserInfo.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ error: "ไม่พบผู้ใช้" });
+      return res.status(404).json({ message: 'ไม่พบเพลย์ลิสต์' });
     }
+    user.imageUrl = imageURL || user.imageUrl;
+    user.fname = fname || user.fname;
+    user.lname = lname || user.lname;
 
+    await user.save();
     res.status(200).json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    res.status(500).json({ message: 'ข้อผิดพลาดของเซิร์ฟเวอร์' });
   }
 });
-
-
-
 
 app.get("/find/:id", async (req, res) => {
   try {
@@ -265,7 +258,7 @@ app.post('/search-users', (req, res) => {
 })
 
 //---------
-require("./playlist");
+require("./Playlist");
 const PlaylistInfo = mongoose.model("PlaylistInfo")
 
 app.get('/playlists', async (req, res) => {
@@ -282,7 +275,7 @@ app.get('/playlists', async (req, res) => {
 app.post('/createPlaylist', upload.single('image'), async (req, res) => {
   const { userId, title, desc, movie } = req.body;
   const imageURL = req.file.path.replace(/\\/g, '/');
-
+  console.log(req.file);
   try {
     const user = await UserInfo.findById(userId);
     if (!user) {
