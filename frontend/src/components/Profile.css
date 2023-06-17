@@ -1,5 +1,12 @@
 .img-rounded {
-    object-fit: cover;
-    object-position: center;
-    border-radius: 50%;
-  }
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+.modal-dialog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: calc(50vh - 200px);
+}

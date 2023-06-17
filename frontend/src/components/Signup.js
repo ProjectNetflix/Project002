@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './style.css'
+import './Style.css'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
@@ -68,24 +68,24 @@ const SignUp = () => {
 
       <form className="signup-form" onSubmit={handleSubmit}>
         <div className="signup-form-content">
-          <h1 className="signup-form-title">Sign Up</h1>
+          <h3 className="signup-form-title">Sign Up</h3>
 
           <div className="form-group mt-3">
-            <label>First name</label>
+            <label>First Name</label>
             <input
               type="text" required
               className="form-control mt-1"
-              placeholder="First name"
+              // placeholder="First name"
               onChange={(e) => (setFname(e.target.value))}
             />
           </div>
 
           <div className="form-group mt-3">
-            <label>Last name</label>
+            <label>Last Name</label>
             <input
               type="text" required
               className="form-control mt-1"
-              placeholder="Last name"
+              // placeholder="Last name"
               onChange={(e) => (setLname(e.target.value))}
             />
           </div>
@@ -95,7 +95,7 @@ const SignUp = () => {
             <input
               type="email" required
               className="form-control mt-1"
-              placeholder="Enter email"
+              // placeholder="Enter email"
               onChange={(e) => (setEmail(e.target.value))}
             />
           </div>
@@ -105,7 +105,7 @@ const SignUp = () => {
             <input
               type="password" required
               className="form-control mt-1"
-              placeholder="Enter password"
+              // placeholder="Enter password"
               onChange={(e) => (setPassword(e.target.value))}
             />
           </div>

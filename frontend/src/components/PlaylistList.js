@@ -10,6 +10,7 @@ const PlaylistList = () => {
   // const [pic, setPic] = useState();
   // const [title, setTitle] = useState();
   // const [desc, setDesc] = useState();
+  const DefaultPic = "https://cdn.icon-icons.com/icons2/2632/PNG/512/movies_icon_159164.png";
 
   const [state, setState] = useState({
     title: "",
@@ -72,6 +73,7 @@ const PlaylistList = () => {
 
   const CreatePlaylist = (e) => {
     e.preventDefault();
+
     const userId = window.localStorage.getItem("userId");
     console.log(title, desc, userId, pic);
     // console.log(pic.name)
@@ -81,9 +83,8 @@ const PlaylistList = () => {
     formData.append("title", title);
     formData.append("desc", desc);
     formData.append("userId", userId);
-    //console.log("state", formData);
 
-    if (title === "" || userId === "" || pic === "") {
+    if (title === "" || userId === "") {
       MySwal.fire({
         text: "Please enter data",
         icon: "warning",
@@ -98,20 +99,22 @@ const PlaylistList = () => {
         .then((res) => res.json())
         .then((data) => {
           console.log(data, "Playlist");
+
           if (data) {
             MySwal.fire({
               text: "Success",
               icon: "success",
               showConfirmButton: false,
-              timer: 50000,
+              timer: 3000,
             });
             window.location.reload();
+
           } else {
             MySwal.fire({
               text: "Error",
               icon: "error",
               showConfirmButton: true,
-              timer: 5000,
+              timer: 3000,
             });
           }
         });
@@ -151,8 +154,8 @@ const PlaylistList = () => {
                 icon: "success",
                 showConfirmButton: true,
               });
-              // getPlaylist(); // ดึงข้อมูลเพลย์ลิสต์อัพเดตหลังจากการลบ
               window.location.reload();
+
             } else {
               MySwal.fire({
                 text: "error",
@@ -182,8 +185,9 @@ const PlaylistList = () => {
         text: "Please enter data",
         icon: "error",
         showConfirmButton: true,
-        timer: 5000,
+        timer: 3000,
       });
+
     } else {
       fetch(`http://localhost:5000/updatePlaylist/${playlistId}`, {
         method: "PUT",
@@ -197,18 +201,20 @@ const PlaylistList = () => {
               text: "Edit Success",
               icon: "success",
               showConfirmButton: false,
-              timer: 5000,
+              timer: 3000,
             });
             window.location.reload();
+
           } else {
             MySwal.fire({
               text: "Error",
               icon: "error",
-              showConfirmButton: true,
+              timer: 3000,
+              //showConfirmButton: true,
+
             });
           }
         });
-      console.log(title, desc, userId, playlistId);
     }
   };
 
@@ -219,7 +225,7 @@ const PlaylistList = () => {
   return (
     <div className="container">
       <button
-        className="btn btn-outline-secondary m-3"
+        className="btn btn-primary m-3"
         data-bs-toggle="modal"
         data-bs-target="#CreatePlaylist"
       >
@@ -296,11 +302,11 @@ const PlaylistList = () => {
       </div>
 
       <h5> My Playlist Movie </h5>
-      <div className="row card-group ">
+      <div className="row card-group">
         {playlist.map((item) => {
           return (
             <div className="col" key={item._id}>
-              <div className="card">
+              <div className="card mx-3">
                 <Link
                   to={{
                     pathname: `/playlist/${item._id}`,
@@ -310,24 +316,38 @@ const PlaylistList = () => {
                 >
                   <div className="card-body text-black ">
                     <img
-                      src={`http://localhost:5000/${item.imageUrl}`}
+                      src={item.imageUrl ? `http://localhost:5000/${item.imageUrl}` : DefaultPic}
+                      // src={`http://localhost:5000/${item.imageUrl}`}
                       className="card-img-top playlist-image"
                       alt="Playlist Image"
                       style={{ height: "200px" }}
                     />
 
-                    <h5 className="card-title">{item.title}</h5>
-                    <p className="card-text">{item.desc}</p>
+                    <div className="card-title p-2">
+                      <h6>{item.title}</h6>
+                    </div>
+
+                    <div className="card-text">
+                      <p>{item.desc}</p>
+                      {/* <span>{item.title_type}</span>
+                        <span>{item.netflix_id}</span>
+                        <span>{item.title_date}</span>
+                        <span>{item.year}</span> */}
+                    </div>
+
                   </div>
                 </Link>
-                <button
-                  className="btn btn-outline-secondary m-3"
-                  data-bs-toggle="modal"
-                  data-bs-target="#EditPlaylist"
-                  onClick={(e) => CurrentPlaylist(item._id)}
-                >
-                  Edit Playlist
-                </button>
+                <div className="footer">
+                  <button
+                    className="btn btn-outline-secondary m-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#EditPlaylist"
+                    onClick={(e) => CurrentPlaylist(item._id)}
+                  >
+                    Edit Playlist
+                  </button>
+                </div>
+
               </div>
             </div>
           );
@@ -343,7 +363,7 @@ const PlaylistList = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title" id="PlaylistModalLabel">
+                <h5 className="modal-title " id="PlaylistModalLabel">
                   Edit Playlist
                 </h5>
                 <button
@@ -408,6 +428,7 @@ const PlaylistList = () => {
                 <button
                   type="submit"
                   className="btn btn-primary"
+                  data-bs-dismiss="modal"
                   onClick={(e) => EditPlaylist(e, currentPlaylistId)}
                 >
                   Save

@@ -45,7 +45,7 @@ const storage = multer.diskStorage({
 });
 // ตรวจสอบประเภทไฟล์ที่อัปโหลดเฉพาะ .jpg, .jpeg, และ .png
 const fileFilter = (req, file, cb) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|PNG|JPG|JPEG)$/)) {
     return cb(new Error('Only image files are allowed!'), false);
   }
   cb(null, true);
@@ -76,7 +76,7 @@ app.post("/signup", async (req, res) => {
     }
 
     await UserInfo.create({
-      imageUrl:"" ,
+      imageUrl: "",
       fname,
       lname,
       email,
@@ -274,8 +274,14 @@ app.get('/playlists', async (req, res) => {
 //POST /api/playlists สร้าง playlist 
 app.post('/createPlaylist', upload.single('image'), async (req, res) => {
   const { userId, title, desc, movie } = req.body;
-  const imageURL = req.file.path.replace(/\\/g, '/');
-  console.log(req.file);
+  //const imageURL = req.file.path.replace(/\\/g, '/')
+  const imageURL = req.file ? req.file.path.replace(/\\/g, '/') : null;
+
+  // if (!!imageURL) {
+  //   const imageURL = req.file.path.replace(/\\/g, '/')
+  //   console.log(req.file);
+  // };
+
   try {
     const user = await UserInfo.findById(userId);
     if (!user) {
@@ -287,7 +293,7 @@ app.post('/createPlaylist', upload.single('image'), async (req, res) => {
       desc,
       movie,
       user: user._id,
-      imageUrl: imageURL // เพิ่มส่วนนี้เพื่อเก็บที่อยู่ของรูปภาพ
+      imageUrl: imageURL  // เพิ่มส่วนนี้เพื่อเก็บที่อยู่ของรูปภาพ
     });
 
     await playlist.save();
@@ -380,14 +386,11 @@ app.delete("/playlists/:id", async (req, res) => {
   }
 });
 
-
-
-
 const movieInfo = mongoose.model("movieIn")
 
 app.post("/movies", async (req, res) => {
   const { name, synopsis, pic, title_type, netflix_id, title_date, year } = req.body;
-  console.log( req.body);
+  console.log(req.body);
   try {
     const movie = await movieInfo.create({ name, synopsis, pic, title_type, netflix_id, title_date, year });
     res.status(201).json(movie);
@@ -403,6 +406,66 @@ app.get('/movies', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+//เพิ่ม Movie ลงใน playlist
+app.put("/addMovieToPlaylist/:playlistId", async (req, res) => {
+
+  try {
+    const playlistId = req.params.playlistId;
+    const movieId = req.body.movieId;
+    const playlist = await PlaylistInfo.findById(playlistId);    // ค้นหา Playlist ด้วย ID
+
+    if (!playlist) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+
+    // ตรวจสอบว่าหนังอยู่ในเพลย์ลิสต์แล้วหรือไม่
+    const movieIndex = playlist.movie.findIndex((m) => m._id.toString() === movieId);
+    if (movieIndex !== -1) {
+      return res.status(400).json({ message: "Movie already exists in the playlist" });
+    }
+
+    const movie = await movieInfo.findById(movieId);    // ค้นหาหนังด้วย ID
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found" });
+    }
+
+    // เพิ่มหนังเข้าใน Playlist
+    playlist.movie.push(movie);
+    await playlist.save();
+    res.status(200).json(playlist);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// ลบหนังออกจาก Playlist
+app.put("/removeMovieFromPlaylist/:playlistId", async (req, res) => {
+  try {
+    const playlistId = req.params.playlistId;
+    const movieId = req.body.movieId;
+    const playlist = await PlaylistInfo.findById(playlistId);    // ค้นหา Playlist ด้วย ID
+    console.lod(movieId);
+    if (!playlist) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+
+    const movie = await movieInfo.findById(movieId);    // ค้นหาหนังด้วย ID
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found" });
+    }
+
+    playlist.movie = playlist.movie.filter((m) => m._id.toString() !== movieId);    // ลบหนังออกจาก Playlist
+    await playlist.save();
+    res.status(200).json(playlist);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
 });
 

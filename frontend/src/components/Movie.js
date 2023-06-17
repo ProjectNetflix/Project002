@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { AiFillGithub, AiFillHeart } from "react-icons/ai";
+import { BsHeartFill, BsPlusCircle, BsHeart } from "react-icons/bs";
 import "./Movie.css";
 import Navbar from "./Navbar";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { IconContext } from "react-icons";
 
 const MySwal = withReactContent(Swal);
 
 const Movie = () => {
+  const [playlist, setPlaylist] = useState([]);
   const [word, setWord] = useState("");
   const [movie, setMovie] = useState([]);
   const [dataFilter] = useState(["name", "synopsis"]);
-  const [search, setSearch] = useState([]);
+  const [Like, setLike] = useState(true);
+  const [movieId, setMovieId] = useState("");
+  const [PlaylistId, setPlaylistId] = useState("");
 
   const GetMovie = () => {
     // const options = {
@@ -31,14 +36,41 @@ const Movie = () => {
     //     .catch(err => console.error(err));
   };
 
+  const GetPlaylist = async () => {
+    const requestOptions = {
+      method: "GET",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    fetch(
+      `http://localhost:5000/playlists-user/${localStorage.getItem("userId")}`,
+      requestOptions
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          console.log(data, "Playlist User");
+          setPlaylist(data);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
+      });
+  };
+
   const searchMovies = (search) => {
     return search.filter((item) => {
       return dataFilter.some((filter) => {
         if (item[filter]) {
           // ตรวจสอบค่าว่าง
           return (
-            item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) >
-            -1
+            item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
           );
         }
       });
@@ -71,78 +103,117 @@ const Movie = () => {
       })
       .catch((error) => {
         console.error(error);
-        alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
+        alert("เกิดข้อผิดพลาด");
       });
   };
 
-  const [state, setState] = useState({
-    name: "",
-    synopsis: "",
-    pic: "",
-    title_type: "",
-    netflix_id: "",
-    title_date: "",
-    year: "",
-  });
+  const handleFollowToggle = () => {
+    setLike(!Like);
+  }
 
-  const { name, synopsis, pic, title_type, netflix_id, title_date, year } =
-    state;
+  const handleChangePlaylist = (e) => {
+    setPlaylistId(e.target.value);
+  };
 
-  const SaveMovie = (
-    e,
-    title,
-    synopsis,
-    img,
-    title_type,
-    netflix_id,
-    title_date,
-    year
-  ) => {
+  // const [state, setState] = useState({
+  //   name: "",
+  //   synopsis: "",
+  //   pic: "",
+  //   title_type: "",
+  //   netflix_id: "",
+  //   title_date: "",
+  //   year: "",
+  // });
+
+  // const { name, synopsis, pic, title_type, netflix_id, title_date, year } = state;
+
+  // const SaveMovie = (e, title, synopsis, img, title_type, netflix_id, title_date, year) => {
+  //   e.preventDefault();
+  //   const updatedMovie = {
+  //     name: title,
+  //     synopsis: synopsis,
+  //     pic: img,
+  //     title_type: title_type,
+  //     netflix_id: netflix_id,
+  //     title_date: title_date,
+  //     year: year,
+  //   };
+  //   setState(updatedMovie);
+  //   console.log(state);
+
+  //   const requestOptions = {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Accept: "application/json",
+  //       "Access-Control-Allow-Origin": "*",
+  //     },
+  //     body: JSON.stringify(updatedMovie),
+  //   };
+
+  //   fetch("http://localhost:5000/movies", requestOptions)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data, "Playlist");
+  //       if (data) {
+  //         console.log("save");
+  //       } else {
+  //         MySwal.fire({
+  //           text: "Error",
+  //           icon: "error",
+  //           showConfirmButton: true,
+  //           timer: 2000,
+  //         });
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // };
+
+  const AddToPL = (e,) => {
     e.preventDefault();
-    const updatedMovie = {
-      name: title,
-      synopsis: synopsis,
-      pic: img,
-      title_type: title_type,
-      netflix_id: netflix_id,
-      title_date: title_date,
-      year: year,
-    };
-    setState(updatedMovie);
-    console.log(state);
+    console.log(PlaylistId, movieId);
+    const isMovieExist = playlist.some((item) => item._id === movieId);
 
-    const requestOptions = {
-      method: "POST",
+    fetch(`http://localhost:5000/addMovieToPlaylist/${PlaylistId}`, {
+      method: "PUT",
+      crossDomain: true,
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify(updatedMovie),
-    };
-
-    fetch("http://localhost:5000/movies", requestOptions)
+      }
+      , body: JSON.stringify({
+        movieId: movieId,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log(data, "Playlist");
         if (data) {
-          console.log("save");
+          MySwal.fire({
+            text: "Error",
+            icon: "success",
+            showConfirmButton: true,
+            //timer: 2000,
+          });
         } else {
           MySwal.fire({
             text: "Error",
             icon: "error",
             showConfirmButton: true,
-            timer: 2000,
+            //timer: 2000,
           });
         }
       })
       .catch((error) => {
         console.error("Error:", error);
       });
+
   };
 
   useEffect(() => {
     //GetMovie();
+    GetPlaylist();
     GetMovies();
   }, []);
 
@@ -150,16 +221,10 @@ const Movie = () => {
     <div>
       <Navbar />
       <div className="container">
-        <br />
-        <h2>Movie</h2>
+        <h2 className="p-3" >Movie</h2>
 
         <form className="grid align-items-center col-4 p-3">
-          <input
-            className=" form-control"
-            placeholder="Search for Movie ... "
-            onChange={handleChange}
-            value={word}
-          />
+          <input className=" form-control" placeholder="Search for Movie ... " onChange={handleChange} value={word} />
         </form>
 
         <div className="row card-group">
@@ -188,41 +253,61 @@ const Movie = () => {
                     </div>
 
                     <div className="dropdown">
-                      <button
-                        className="btn"
-                        type="button"
-                        id={`dropdownMenu${item.id}`}
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        ...
+
+                      {/* {Like ? (
+                        <button type="button" className="btn" onClick={handleFollowToggle}>
+                          <IconContext.Provider value={{ color: "red", size: "20px" }}> <BsHeartFill /></IconContext.Provider>
+                        </button>)
+                        : (<button type="button" className="btn" onClick={handleFollowToggle} >
+                          <IconContext.Provider value={{ size: "20px" }}> <BsHeart /></IconContext.Provider>
+                        </button>
+                        )
+                      } */}
+
+                      <button className="btn" data-bs-toggle="modal" data-bs-target="#ATP" onClick={(e) => setMovieId(item._id)}>
+                        <IconContext.Provider value={{ color: "black", size: "20px" }}>
+                          <BsPlusCircle />
+                        </IconContext.Provider>
                       </button>
-                      <ul className="dropdown-menu">
-                        <li>
-                          <a className="dropdown-item" href="#">
-                            Add To Playlist
-                          </a>
-                        </li>
-                        <li>
-                          <a className="dropdown-item" href="#">
-                            view
-                          </a>
-                        </li>
-                        <li>
-                          <a className="dropdown-item" href="#">
-                            Like
-                          </a>
-                        </li>
-                      </ul>
+
                     </div>
                   </div>
                 </div>
               </div>
             );
           })}
+
+          <div className="modal fade" id="ATP" tabIndex="-1" aria-labelledby="UserModalLabel" aria-hidden="true">
+            <div className="modal-dialog justify-content-center">
+              <div className="modal-content" >
+
+                <div className="modal-header">
+                  <h5 className="modal-title" id="UserModalLabel">Choose Playlist </h5>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div className="modal-body">
+                  <div className="form-group">
+                    <select className="custom-select" onChange={handleChangePlaylist} >
+                      <option value="">Choose</option>
+                      {playlist.map((playlist) => (
+                        <option key={playlist._id} value={playlist._id}>{playlist.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" > Close </button>
+                  <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={AddToPL}> Save </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

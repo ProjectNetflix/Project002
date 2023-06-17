@@ -165,7 +165,7 @@ const Follow = () => {
                     {isFollowed ? (
                         <button className="btn btn-outline-primary mb-3 " onClick={handleFollowToggle}>Unfollow</button>
                     ) : (
-                        <button className="btn btn-outline-primary mb-3 " onClick={handleFollowToggle}>Follow</button>
+                        <button className="btn btn-primary mb-3 " onClick={handleFollowToggle}>Follow</button>
                     )}
 
                 </div>

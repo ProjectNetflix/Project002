@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './style.css'
+import './Style.css'
 import './SignIn.css'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -33,12 +33,12 @@ const SignIn = () => {
         console.log(data, "userRegister");
         if (data.status === "ok") {
 
-          MySwal.fire({
-            icon: 'success',
-            text: 'Success',
-            showConfirmButton: true,
-           // timer: 2500
-          })
+          // MySwal.fire({
+          //   icon: 'success',
+          //   text: 'Success',
+          //   showConfirmButton: true,
+          //   // timer: 2500
+          // })
 
           window.localStorage.setItem("token", data.data);
           window.localStorage.setItem("userId", data.userId);
@@ -87,19 +87,23 @@ const SignIn = () => {
           </div>
 
           <div className="mb-3">
-            <div className="custom-control custom-checkbox">
-              <input
+            {/* <div className="custom-control custom-checkbox">
+               <input
                 type="checkbox"
                 className="custom-control-input"
                 id="customCheck1"
               />
               <label className="custom-control-label" htmlFor="customCheck1">
                 Remember me
-              </label>
+              </label> *
 
-            </div>
-            <p className="forgot-password text-right">
+            </div> */}
+            {/* <p className="forgot-password text-right">
               <a href="/resetpass">Forgot Password</a>
+            </p> */}
+
+            <p className="forgot-password text-right">
+              Have not an account yet? <a href="/signup">Sign Up</a>
             </p>
           </div>
 
@@ -108,9 +112,6 @@ const SignIn = () => {
           </button>
 
 
-          <p className="forgot-password text-right">
-            Have not an account yet? <a href="/signup">Sign Up</a>
-          </p>
 
         </div>
 

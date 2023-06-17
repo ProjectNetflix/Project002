@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+
 const MySwal = withReactContent(Swal);
 
 const EditProfile = (props) => {
-    const [playlist, setPlaylist] = useState([]);
+
     const [userData, setUserData] = useState([]);
-    const [follower, setFollower] = useState([]);
-    const [following, setFollowing] = useState([]);
     const [success, setSuccess] = useState(Boolean);
 
     const [state, setState] = useState({
@@ -48,11 +47,8 @@ const EditProfile = (props) => {
                     window.location.href = "./signin";
                 } else {
                     setUserData(data.data);
-                    setFollower(data.data.follower);
-                    setFollowing(data.data.following);
                     setState({
                         ...state,
-
                         fname: data.data.fname,
                         lname: data.data.lname,
 
@@ -105,32 +101,15 @@ const EditProfile = (props) => {
 
     return (
         <div>
-            <button
-                className="btn btn-outline-warning mt-3"
-                data-bs-toggle="modal"
-                data-bs-target="#EditUser"
-            >
+            <button className="btn btn-warning mt-3" data-bs-toggle="modal" data-bs-target="#EditUser">
                 Edit Profile
             </button>
-            <div
-                className="modal fade"
-                id="EditUser"
-                tabIndex="-1"
-                aria-labelledby="UserModalLabel"
-                aria-hidden="true"
-            >
+            <div className="modal fade"id="EditUser" tabIndex="-1" aria-labelledby="UserModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="UserModalLabel">
-                                Edit Profile
-                            </h5>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                            ></button>
+                            <h5 className="modal-title" id="UserModalLabel"> Edit Profile</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
                         <div className="modal-body">

@@ -15,7 +15,6 @@ export default function Navbar() {
     const [dataFilter] = useState(["lname", "fname"])
     const [search, setSearch] = useState([]);
 
-
     const searchFollow = (search) => {
         return search.filter((item) => {
             return dataFilter.some((filter) => {
