@@ -7,6 +7,8 @@ import Navbar from "./Navbar";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { IconContext } from "react-icons";
+import { Link } from "react-router-dom";
+
 
 const MySwal = withReactContent(Swal);
 
@@ -174,43 +176,50 @@ const Movie = () => {
   const AddToPL = (e,) => {
     e.preventDefault();
     console.log(PlaylistId, movieId);
-    const isMovieExist = playlist.some((item) => item._id === movieId);
-
-    fetch(`http://localhost:5000/addMovieToPlaylist/${PlaylistId}`, {
-      method: "PUT",
-      crossDomain: true,
-      headers: {
-        "Content-Type": "application/json",
-      }
-      , body: JSON.stringify({
-        movieId: movieId,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        //console.log(data, "Playlist");
-        if (data.status === "error") {
-          MySwal.fire({
-            text: "Error",
-            icon: "error",
-            showConfirmButton: true,
-            //timer: 2000,
-          });
-        } else {
-          MySwal.fire({
-            text: "Success",
-            icon: "success",
-            showConfirmButton: true,
-            timer: 3000,
-          });
-          window.location.reload();
-
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+    if (PlaylistId === "") {
+      MySwal.fire({
+        text: "Please choose playlist !!!",
+        icon: "warning",
+        showConfirmButton: true,
+        timer: 3000,
       });
 
+    } else {
+      fetch(`http://localhost:5000/addMovieToPlaylist/${PlaylistId}`, {
+        method: "PUT",
+        crossDomain: true,
+        headers: {
+          "Content-Type": "application/json",
+        }
+        , body: JSON.stringify({
+          movieId: movieId,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          //console.log(data, "Playlist");
+          if (data.status === "error") {
+            MySwal.fire({
+              text: "Error",
+              icon: "error",
+              showConfirmButton: true,
+              //timer: 2000,
+            });
+          } else {
+            MySwal.fire({
+              text: "Success",
+              icon: "success",
+              showConfirmButton: true,
+              timer: 3000,
+            });
+            window.location.reload();
+
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
   };
 
   useEffect(() => {
@@ -234,47 +243,57 @@ const Movie = () => {
             return (
               <div className="col" key={item.netflix_id}>
                 <div className="card">
-                  <div className="card-body  d-flex flex-column justify-content-between">
-                    <img
-                      src={item.pic}
-                      className="card-img-top playlist-image"
-                      alt="Playlist Image"
-                      style={{ height: "250px" }}
-                    />
+                  <Link
+                    to={{
+                      pathname: `/movies/${item._id}`,
+                      state: { Movieid: item._id },
+                    }}
+                    className="link-no-underline"
+                  >
+                    <div className="card-body  d-flex flex-column justify-content-between">
+                      <img
+                        src={item.pic}
+                        className="card-img-top playlist-image"
+                        alt="Playlist Image"
+                        style={{ height: "250px" }}
+                      />
 
-                    <div className="card-title">
-                      <h6>{item.name}</h6>
-                    </div>
+                      <div className="card-title">
+                        <h6>{item.name}</h6>
+                      </div>
 
-                    <div className="card-text">
-                      <p>{item.synopsis}</p>
-                      {/* <span>{item.title_type}</span>
+                      <div className="card-text">
+                        <p>{item.synopsis}</p>
+                        {/* <span>{item.title_type}</span>
                         <span>{item.netflix_id}</span>
                         <span>{item.title_date}</span>
                         <span>{item.year}</span> */}
+                      </div>
                     </div>
 
-                    <div className="dropdown">
+                  </Link>
 
-                      {/* {Like ? (
-                        <button type="button" className="btn" onClick={handleFollowToggle}>
-                          <IconContext.Provider value={{ color: "red", size: "20px" }}> <BsHeartFill /></IconContext.Provider>
-                        </button>)
-                        : (<button type="button" className="btn" onClick={handleFollowToggle} >
-                          <IconContext.Provider value={{ size: "20px" }}> <BsHeart /></IconContext.Provider>
-                        </button>
-                        )
-                      } */}
+                  <div className="mt-auto m-3">
 
-                      <button className="btn" data-bs-toggle="modal" data-bs-target="#ATP" onClick={(e) => setMovieId(item._id)}>
-                        <IconContext.Provider value={{ color: "black", size: "20px" }}>
-                          <BsPlusCircle />
-                        </IconContext.Provider>
+                    {Like ? (
+                      <button type="button" className="btn" onClick={handleFollowToggle}>
+                        <IconContext.Provider value={{ color: "red", size: "20px" }}> <BsHeartFill /></IconContext.Provider>
+                      </button>)
+                      : (<button type="button" className="btn" onClick={handleFollowToggle} >
+                        <IconContext.Provider value={{ size: "20px" }}> <BsHeart /></IconContext.Provider>
                       </button>
+                      )
+                    }
 
-                    </div>
+                    <button className="btn" data-bs-toggle="modal" data-bs-target="#ATP" onClick={(e) => setMovieId(item._id)}>
+                      <IconContext.Provider value={{ color: "black", size: "20px" }}>
+                        <BsPlusCircle />
+                      </IconContext.Provider>
+                    </button>
+
                   </div>
                 </div>
+
               </div>
             );
           })}

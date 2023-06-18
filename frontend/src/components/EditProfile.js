@@ -5,10 +5,8 @@ import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
 const EditProfile = (props) => {
-
+    
     const [userData, setUserData] = useState([]);
-    const [success, setSuccess] = useState(Boolean);
-
     const [state, setState] = useState({
         pic: "",
         fname: "",
@@ -82,7 +80,6 @@ const EditProfile = (props) => {
                         showConfirmButton: false,
                         timer: 2000,
                     });
-                    setSuccess(true);
                     window.location.reload();
                 } else {
                     alert(data.status);
@@ -96,14 +93,11 @@ const EditProfile = (props) => {
 
     useEffect(() => {
         getUser();
-    }, [success]);
+    }, []);
 
 
     return (
         <div>
-            <button className="btn btn-warning mt-3" data-bs-toggle="modal" data-bs-target="#EditUser">
-                Edit Profile
-            </button>
             <div className="modal fade"id="EditUser" tabIndex="-1" aria-labelledby="UserModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">

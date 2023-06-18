@@ -224,14 +224,6 @@ const PlaylistList = () => {
 
   return (
     <div className="container">
-      <button
-        className="btn btn-primary m-3"
-        data-bs-toggle="modal"
-        data-bs-target="#CreatePlaylist"
-      >
-        Create Playlist
-      </button>
-
       <div
         className="modal fade"
         id="CreatePlaylist"
@@ -302,22 +294,15 @@ const PlaylistList = () => {
       </div>
 
       <h5> My Playlist Movie </h5>
-      <div className="row card-group">
+      <div className="row ">
         {playlist.map((item) => {
           return (
             <div className="col" key={item._id}>
-              <div className="card mx-3">
-                <Link
-                  to={{
-                    pathname: `/playlist/${item._id}`,
-                    state: { plid: item._id },
-                  }}
-                  className="link-no-underline"
-                >
+              <div className="card">
+                <Link to={{ pathname: `/playlist/${item._id}`, state: { plid: item._id },}} className="link-no-underline">
                   <div className="card-body text-black ">
                     <img
                       src={item.imageUrl ? `http://localhost:5000/${item.imageUrl}` : DefaultPic}
-                      // src={`http://localhost:5000/${item.imageUrl}`}
                       className="card-img-top playlist-image"
                       alt="Playlist Image"
                       style={{ height: "200px" }}
@@ -331,12 +316,12 @@ const PlaylistList = () => {
                 
                 <div>
                   <button
-                    className="btn btn-outline-primary m-3"
+                    className="btn  m-3"
                     data-bs-toggle="modal"
                     data-bs-target="#EditPlaylist"
                     onClick={(e) => CurrentPlaylist(item._id)}
                   >
-                    Edit
+                    ...
                   </button>
                 </div>
 

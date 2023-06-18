@@ -8,7 +8,6 @@ import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
 const Playlist = () => {
-
   const [playlist, setPlaylist] = useState([]);
   const [movie, setMovie] = useState([]);
   const location = useLocation();
@@ -102,20 +101,6 @@ const Playlist = () => {
                           <span>{item.netflix_id}</span>
                           <span>{item.title_date}</span>
                           <span>{item.year}</span> */}
-                      </div>
-
-                      <div className="dropdown">
-
-                        {/* {Like ? (
-                          <button type="button" className="btn" onClick={handleFollowToggle}>
-                            <IconContext.Provider value={{ color: "red", size: "20px" }}> <BsHeartFill /></IconContext.Provider>
-                          </button>)
-                          : (<button type="button" className="btn" onClick={handleFollowToggle} >
-                            <IconContext.Provider value={{ size: "20px" }}> <BsHeart /></IconContext.Provider>
-                          </button>
-                          )
-                        } */}
-
                       </div>
                     </div>
                   </div>
