@@ -94,7 +94,7 @@ export default function Navbar() {
   useEffect(() => {
     getUserData();
     getUser();
-  }, [word]);
+  }, []);
 
   const logOut = () => {
     window.localStorage.clear();
@@ -132,13 +132,13 @@ export default function Navbar() {
           <form className="grid align-items-center col-4 px-3">
             <input
               className=" form-control"
-              placeholder="Search..."
+              placeholder="Search for follow ..."
               label="Search"
               onChange={handleChange}
               value={word}
             />
             <div
-              className="list-group position-absolute  "
+              className="list-group position-absolute"
               onChange={handleChange}
             >
               {word &&

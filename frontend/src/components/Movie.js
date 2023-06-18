@@ -188,21 +188,23 @@ const Movie = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "Playlist");
-        if (data) {
-          MySwal.fire({
-            text: "Error",
-            icon: "success",
-            showConfirmButton: true,
-            //timer: 2000,
-          });
-        } else {
+        //console.log(data, "Playlist");
+        if (data.status === "error") {
           MySwal.fire({
             text: "Error",
             icon: "error",
             showConfirmButton: true,
             //timer: 2000,
           });
+        } else {
+          MySwal.fire({
+            text: "Success",
+            icon: "success",
+            showConfirmButton: true,
+            timer: 3000,
+          });
+          window.location.reload();
+
         }
       })
       .catch((error) => {

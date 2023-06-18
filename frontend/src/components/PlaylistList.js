@@ -310,7 +310,7 @@ const PlaylistList = () => {
                 <Link
                   to={{
                     pathname: `/playlist/${item._id}`,
-                    state: { title: item.title },
+                    state: { plid: item._id },
                   }}
                   className="link-no-underline"
                 >
@@ -323,28 +323,20 @@ const PlaylistList = () => {
                       style={{ height: "200px" }}
                     />
 
-                    <div className="card-title p-2">
-                      <h6>{item.title}</h6>
-                    </div>
-
-                    <div className="card-text">
-                      <p>{item.desc}</p>
-                      {/* <span>{item.title_type}</span>
-                        <span>{item.netflix_id}</span>
-                        <span>{item.title_date}</span>
-                        <span>{item.year}</span> */}
-                    </div>
+                    <h6 className="card-title p-2">{item.title}</h6>
+                    <p className="card-text">{item.desc}</p>
 
                   </div>
                 </Link>
-                <div className="footer">
+                
+                <div>
                   <button
-                    className="btn btn-outline-secondary m-3"
+                    className="btn btn-outline-primary m-3"
                     data-bs-toggle="modal"
                     data-bs-target="#EditPlaylist"
                     onClick={(e) => CurrentPlaylist(item._id)}
                   >
-                    Edit Playlist
+                    Edit
                   </button>
                 </div>
 

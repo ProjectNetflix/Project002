@@ -234,7 +234,9 @@ app.put("/:id/unfollow", async (req, res) => {
         await user.updateOne({ $pull: { follower: req.body.userId } });
         await currentUser.updateOne({ $pull: { following: req.params.id } });
         res.status(200).json("เลิกติดตามแล้ว");
+        
       } else {
+        //res.send({ status: 'error', data: "Movie already exists in the playlist" });
         res.status(403).json("คุณไม่ได้ติดตาม");
       }
     } catch (err) {
@@ -424,7 +426,8 @@ app.put("/addMovieToPlaylist/:playlistId", async (req, res) => {
     // ตรวจสอบว่าหนังอยู่ในเพลย์ลิสต์แล้วหรือไม่
     const movieIndex = playlist.movie.findIndex((m) => m._id.toString() === movieId);
     if (movieIndex !== -1) {
-      return res.status(400).json({ message: "Movie already exists in the playlist" });
+      return res.send({ status: 'error', data: "Movie already exists in the playlist" });
+      //return res.status(400).json({ message: "Movie already exists in the playlist" });
     }
 
     const movie = await movieInfo.findById(movieId);    // ค้นหาหนังด้วย ID

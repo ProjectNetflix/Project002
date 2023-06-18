@@ -7,7 +7,6 @@ import withReactContent from 'sweetalert2-react-content'
 
 const MySwal = withReactContent(Swal)
 
-
 const Follow = () => {
 
     console.log();
@@ -50,7 +49,6 @@ const Follow = () => {
             console.log("Unfollow");
             setIsFollowed(false);
             window.location.reload();
-
 
         } else {
 
