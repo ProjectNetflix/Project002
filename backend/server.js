@@ -14,6 +14,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 const { userInfo } = require("os");
+const checkAuthorization = require("./checkAuthorization");
 
 const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 const mongoUrl = "mongodb+srv://Maprang6224:3gfksnMxGlIVQ6uq@project-workshop.isbh5gk.mongodb.net/?retryWrites=true&w=majority"
@@ -390,6 +391,22 @@ app.delete("/playlists/:id", async (req, res) => {
 
 const movieInfo = mongoose.model("movieIn")
 
+app.get("/movie/:id", async (req, res) => {
+  try {
+    const movieId = req.params.id;
+    const movie = await movieInfo.findById(movieId);
+
+    if (!movie) {
+      return res.status(404).json({ error: "ไม่พบข้อมูล" });
+    }
+
+    res.status(200).json(movie);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
 app.post("/movies", async (req, res) => {
   const { name, synopsis, pic, title_type, netflix_id, title_date, year } = req.body;
   console.log(req.body);
@@ -469,6 +486,78 @@ app.put("/removeMovieFromPlaylist/:playlistId", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
+  }
+});
+
+require("./Favlist");
+const FavListInfo = mongoose.model("FavList")
+
+app.post("/addtofavlist", async (req, res) => {
+  const { userId, movieId } = req.body;
+  try {
+    const user = await UserInfo.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "ไม่พบผู้ใช้" });
+    }
+
+    const movie = await movieInfo.findById(movieId);
+    if (!movie) {
+      return res.status(404).json({ message: "ไม่พบหนัง" });
+    }
+
+    const existingFav = await FavListInfo.findOne({ user: user._id, movie: movie._id });
+    if (existingFav) {
+      return res.status(400).json({ message: "หนังนี้ถูกใจอยู่แล้ว" });
+    }
+
+    const favList = new FavListInfo({
+      user: user._id,
+      movie: movie._id
+    });
+
+    await favList.save();
+    res.status(200).json(favList);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "ข้อผิดพลาดของเซิร์ฟเวอร์" });
+  }
+});
+
+app.get("/favlist/:userId", checkAuthorization ,async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const favList = await FavListInfo.find({ user: userId }).populate("movie");
+    res.status(200).json(favList);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "ข้อผิดพลาดของเซิร์ฟเวอร์" });
+  }
+});
+
+app.delete("/removefromfavlist", async (req, res) => {
+  const { userId, movieId } = req.body;
+
+  try {
+    const user = await UserInfo.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "ไม่พบผู้ใช้" });
+    }
+
+    const movie = await movieInfo.findById(movieId);
+    if (!movie) {
+      return res.status(404).json({ message: "ไม่พบหนัง" });
+    }
+
+    const existingFav = await FavListInfo.findOne({ user: user._id, movie: movie._id });
+    if (!existingFav) {
+      return res.status(400).json({ message: "หนังนี้ไม่ได้ถูกใจ" });
+    }
+
+    await FavListInfo.findByIdAndRemove(existingFav._id);
+    res.status(200).json({ message: "ลบหนังออกจากการถูกใจสำเร็จ" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "ข้อผิดพลาดของเซิร์ฟเวอร์" });
   }
 });
 
