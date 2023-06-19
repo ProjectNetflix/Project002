@@ -12,7 +12,7 @@ const PlaylistsSchema = new mongoose.Schema(
             type: Array,
             default: [],
         },
-        user: {
+        owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'UserInfo',
         },

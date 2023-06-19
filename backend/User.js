@@ -16,6 +16,11 @@ const UserDetailsSchema = new mongoose.Schema(
             type: Array,
             default: [],
         },
+
+        favPlaylist:{
+            type:Array,
+            default: [],
+        }
     },
     {
         collection: "UserInfo",

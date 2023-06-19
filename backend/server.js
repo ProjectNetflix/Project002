@@ -30,7 +30,7 @@ mongoose.connect(mongoUrl, {
 
 
 require("./User");
-require("./Playlist");
+require("./playlist");
 require("./Movie");
 
 
@@ -261,12 +261,12 @@ app.post('/search-users', (req, res) => {
 })
 
 //---------
-require("./Playlist");
+require("./playlist");
 const PlaylistInfo = mongoose.model("PlaylistInfo")
 
 app.get('/playlists', async (req, res) => {
   try {
-    const playlists = await PlaylistInfo.find().populate('user', 'fname');
+    const playlists = await PlaylistInfo.find().populate('owner', 'fname');
     res.json(playlists);
   } catch (error) {
     console.error(error);
@@ -295,7 +295,7 @@ app.post('/createPlaylist', upload.single('image'), async (req, res) => {
       title,
       desc,
       movie,
-      user: user._id,
+      owner: user._id,
       imageUrl: imageURL  // เพิ่มส่วนนี้เพื่อเก็บที่อยู่ของรูปภาพ
     });
 
@@ -315,7 +315,7 @@ app.post('/createPlaylist', upload.single('image'), async (req, res) => {
 
 app.get('/playlists-user/:id', async (req, res) => {
   try {
-    const playlists = await PlaylistInfo.find({ user: req.params.id }).populate('user');
+    const playlists = await PlaylistInfo.find({ owner: req.params.id }).populate('owner');
     res.json(playlists);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -388,6 +388,7 @@ app.delete("/playlists/:id", async (req, res) => {
     res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
   }
 });
+
 
 const movieInfo = mongoose.model("movieIn")
 
