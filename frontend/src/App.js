@@ -22,7 +22,7 @@ function App() {
 
     <Router>
       <Switch>
-        <Route path="/signin" component={isLoggedIn ? SignIn : Home } />
+        <Route path="/signin" component={isLoggedIn === false ? Home : SignIn } />
         <Route path="/signup" component={SignUp} />
         <Route path="/" component={Home} exact />
         <Route path="/profile" component={Profile} />
