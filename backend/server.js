@@ -135,7 +135,10 @@ app.post("/userData", async (req, res) => {
       .catch((error) => {
         res.send({ status: "error", data: error });
       });
-  } catch (error) { }
+
+  } catch (error) {
+    res.send({ status: "error", data: error });
+  }
 });
 
 app.get('/userData/:id', async (req, res) => {
@@ -236,7 +239,7 @@ app.put("/:id/unfollow", async (req, res) => {
         await user.updateOne({ $pull: { follower: req.body.userId } });
         await currentUser.updateOne({ $pull: { following: req.params.id } });
         res.status(200).json("เลิกติดตามแล้ว");
-        
+
       } else {
         //res.send({ status: 'error', data: "Movie already exists in the playlist" });
         res.status(403).json("คุณไม่ได้ติดตาม");
@@ -525,7 +528,7 @@ app.post("/addtofavlist", async (req, res) => {
   }
 });
 
-app.get("/favlist/:userId", checkAuthorization ,async (req, res) => {
+app.get("/favlist/:userId", checkAuthorization, async (req, res) => {
   try {
     const userId = req.params.userId;
     const favList = await FavListInfo.find({ user: userId }).populate("movie");
@@ -565,12 +568,16 @@ app.delete("/removefromfavlist", async (req, res) => {
 
 //----- fav playlist ของ user อื่น
 app.post("/copyPlaylist/:playlistId", async (req, res) => {
+
   try {
     const { playlistId } = req.params;
-    const { userId } = req.body; // รับ userId ของผู้ใช้ที่ต้องการคัดลอก playlist
+    const { userId, ownerplId } = req.body; // รับ userId ของผู้ใช้ที่ต้องการคัดลอก playlist
 
     // ตรวจสอบว่าผู้ใช้เป็นคนที่เราติดตามหรือไม่
     const currentUser = await UserInfo.findById(userId);
+    const checkAuthorization = currentUser.following.includes(ownerplId);
+    console.log(checkAuthorization, userId, ownerplId);
+
     if (!currentUser) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -580,24 +587,26 @@ app.post("/copyPlaylist/:playlistId", async (req, res) => {
     if (!playlistToCopy) {
       return res.status(404).json({ error: "Playlist not found" });
     }
-    
-    // คัดลอกข้อมูล playlist
-    const newPlaylist = new PlaylistInfo({
-      title: playlistToCopy.title,
-      desc: playlistToCopy.desc,
-      imageUrl: playlistToCopy.imageUrl,
-      movie: playlistToCopy.movie,
-      owner: currentUser._id,
-    });
 
-    // เพิ่ม playlist ใหม่เข้าใน copyPlaylists ของผู้ใช้
-    currentUser.copyPlaylists.push(newPlaylist);
+    if (checkAuthorization) {
 
-    // บันทึกการเปลี่ยนแปลงในฐานข้อมูล
-    await newPlaylist.save();
-    await currentUser.save();
+      // คัดลอกข้อมูล playlist
+      const newPlaylist = new PlaylistInfo({
+        title: playlistToCopy.title,
+        desc: playlistToCopy.desc,
+        imageUrl: playlistToCopy.imageUrl,
+        movie: playlistToCopy.movie,
+        owner: currentUser._id,
+      });
 
-    res.json({ message: "Playlist copied" });
+      await newPlaylist.save();
+      res.json({ status: "ok", message: "Playlist copied" });
+
+    } else {
+      res.json({ status: "error", message: "You don't have permission to access" });
+
+    }
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Something went wrong" });

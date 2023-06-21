@@ -5,13 +5,11 @@ import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
 const EditProfile = (props) => {
-    
-    const [userData, setUserData] = useState([]);
     const [state, setState] = useState({
         pic: "",
         fname: "",
         lname: "",
-    })
+    });
 
     const { pic, fname, lname } = state;
 
@@ -22,7 +20,8 @@ const EditProfile = (props) => {
             setState({ ...state, [name]: event.target.value });
         }
     };
-    const getUser = async () => {
+
+    const GetUser = async () => {
         let uid = localStorage.getItem("userId");
 
         const requestOptions = {
@@ -44,12 +43,10 @@ const EditProfile = (props) => {
                     window.localStorage.clear();
                     window.location.href = "./signin";
                 } else {
-                    setUserData(data.data);
                     setState({
                         ...state,
                         fname: data.data.fname,
                         lname: data.data.lname,
-
                     });
                 }
             });
@@ -58,7 +55,7 @@ const EditProfile = (props) => {
     const EditUserData = (e) => {
         e.preventDefault();
         let uid = localStorage.getItem("userId");
-        console.log(state.pic)
+        console.log(state.pic);
 
         const formData = new FormData();
         formData.append("image", pic);
@@ -92,23 +89,35 @@ const EditProfile = (props) => {
     };
 
     useEffect(() => {
-        getUser();
+        GetUser();
     }, []);
-
 
     return (
         <div>
-            <div className="modal fade"id="EditUser" tabIndex="-1" aria-labelledby="UserModalLabel" aria-hidden="true">
+            <div
+                className="modal fade"
+                id="EditUser"
+                tabIndex="-1"
+                aria-labelledby="UserModalLabel"
+                aria-hidden="true"
+            >
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="UserModalLabel"> Edit Profile</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 className="modal-title" id="UserModalLabel">
+                                {" "}
+                                Edit Profile
+                            </h5>
+                            <button
+                                type="button"
+                                className="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
                         </div>
 
                         <div className="modal-body">
                             <form className="container w-100 h-50">
-
                                 <div className="form-content ">
                                     <div className="form-group mt-2">
                                         <label>Picture</label>
@@ -163,6 +172,6 @@ const EditProfile = (props) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 export default EditProfile;

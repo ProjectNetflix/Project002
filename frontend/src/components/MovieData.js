@@ -12,6 +12,7 @@ const MovieData = () => {
     const [Moviedata, setMoviedata] = useState([]);
 
     const GetMovie = async () => {
+        
         console.log(Movieid);
 
         const requestOptions = {

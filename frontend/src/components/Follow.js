@@ -13,7 +13,7 @@ const Follow = () => {
     const [follower, setFollower] = useState([]);
     const [following, setFollowing] = useState([]);
     const location = useLocation();
-    const { userid } = location.state;
+    const { followid } = location.state;
     const [playlist, setPlaylist] = useState([]);
     const [follow, setFollow] = useState([]);
     const [isFollowed, setIsFollowed] = useState(Boolean);
@@ -39,7 +39,7 @@ const Follow = () => {
         };
 
         if (isFollowed) {
-            fetch(`http://localhost:5000/${userid}/unfollow`, requestOptionsPost)  //id user
+            fetch(`http://localhost:5000/${followid}/unfollow`, requestOptionsPost)  //id user
                 .then((response) => response.json())
                 .then((res) => {
                     if (res.data) {
@@ -55,7 +55,7 @@ const Follow = () => {
 
         } else {
 
-            fetch(`http://localhost:5000/${userid}/follow`, requestOptionsPost)  //id user
+            fetch(`http://localhost:5000/${followid}/follow`, requestOptionsPost)  //id user
                 .then((response) => response.json())
                 .then((res) => {
                     if (res.data) {
@@ -85,9 +85,9 @@ const Follow = () => {
         },
     };
 
-    const getFollowData = async () => {
+    const GetFollowData = async () => {
 
-        fetch(`http://localhost:5000/userData/${userid}`, requestOptions)
+        fetch(`http://localhost:5000/userData/${followid}`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
                 console.log(data, "follow");
@@ -95,7 +95,6 @@ const Follow = () => {
                     setFollow(data.data);
                     setFollower(data.data.follower);
                     setFollowing(data.data.following);
-
                     let uid = localStorage.getItem("userId");
                     const checkFollow = data.data.follower.includes(uid);
                     setIsFollowed(checkFollow);
@@ -108,7 +107,7 @@ const Follow = () => {
 
     };
 
-    const getPlaylist = async () => {
+    const GetPlaylist = async () => {
         const requestOptions = {
             method: "GET",
             crossDomain: true,
@@ -120,7 +119,7 @@ const Follow = () => {
             },
         };
 
-        fetch(`http://localhost:5000/playlists-user/${userid}`, requestOptions)
+        fetch(`http://localhost:5000/playlists-user/${followid}`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
                 if (data) {
@@ -139,51 +138,52 @@ const Follow = () => {
     const CopyPlaylists = (e, playlistId) => {
         e.preventDefault();
         const userId = localStorage.getItem("userId");
-        const body = { userId };
-      
+        const ownerplId = followid;
+        const body = { userId, ownerplId };
+
         fetch(`http://localhost:5000/copyPlaylist/${playlistId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
         })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data) {
-              console.log(data); // แสดงผลลัพธ์ที่ได้จาก backend
-              Swal.fire({
-                title: 'Success',
-                text: 'Playlist copied successfully!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-              });
-            } else {
-              console.error(data); // แสดงข้อผิดพลาด (ถ้ามี)
-              Swal.fire({
-                title: 'Error',
-                text: 'Failed to copy playlist.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-              });
-            }
-          })
-          .catch((error) => {
-            console.error(error); // แสดงข้อผิดพลาด (ถ้ามี)
-            Swal.fire({
-              title: 'Error',
-              text: 'An error occurred while copying the playlist.',
-              icon: 'error',
-              confirmButtonText: 'OK'
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "ok") {
+                    console.log(data); // แสดงผลลัพธ์ที่ได้จาก backend
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Playlist copied successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    console.error(data); // แสดงข้อผิดพลาด (ถ้ามี)
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to copy playlist.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error(error); // แสดงข้อผิดพลาด (ถ้ามี)
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while copying the playlist.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             });
-          });
-      };
+    };
 
     useEffect(() => {
-        getFollowData();
-        getPlaylist();
+        GetFollowData();
+        GetPlaylist();
 
-    }, [userid]);
+    }, [followid]);
 
     return (
         <div>
@@ -221,7 +221,7 @@ const Follow = () => {
                             <div className="col" key={item._id}>
                                 <div className="card">
 
-                                    <Link to={{ pathname: `/playlist/${item._id}`, state: { title: item.title }, }} className="link-no-underline" >
+                                    <Link to={{ pathname: `/playlist/${item._id}`, state: { plid: item._id }, }} className="link-no-underline" >
 
                                         <div className="card-body text-black">
                                             <img

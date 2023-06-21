@@ -38,7 +38,7 @@ const Playlist = () => {
     userId: window.localStorage.getItem("userId"),
   });
 
-  const getPlaylist = async () => {
+  const GetPlaylist = async () => {
     console.log(plid);
     const requestOptions = {
       method: "GET",
@@ -67,7 +67,7 @@ const Playlist = () => {
   };
 
   useEffect(() => {
-    getPlaylist();
+    GetPlaylist();
     //GetMovie();
   }, []);
 

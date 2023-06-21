@@ -43,7 +43,7 @@ const PlaylistList = () => {
     console.log(state);
   };
 
-  const getPlaylist = async () => {
+  const GetPlaylist = async () => {
     const requestOptions = {
       method: "GET",
       crossDomain: true,
@@ -219,7 +219,7 @@ const PlaylistList = () => {
   };
 
   useEffect(() => {
-    getPlaylist();
+    GetPlaylist();
   }, []);
 
   return (

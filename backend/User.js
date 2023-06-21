@@ -16,11 +16,6 @@ const UserDetailsSchema = new mongoose.Schema(
             type: Array,
             default: [],
         },
-
-        copyPlaylists: {
-            type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PlaylistInfo' }],
-            default: [],
-        }
              
     },
     {

@@ -14,7 +14,7 @@ const Profile = () => {
   const [following, setFollowing] = useState([]);
   const DefaultPic = "https://xn--72czjvzci0ftdsfvb.com/images/2022/12/22/xn--72czjvzci0ftdsfvb.com_f9cb000afb0aeb014f735bcfd3551282.png";
 
-  const getPlaylist = async () => {
+  const GetPlaylist = async () => {
     const requestOptions = {
       method: "GET",
       crossDomain: true,
@@ -44,7 +44,7 @@ const Profile = () => {
       });
   };
 
-  const getUser = async () => {
+  const GetUser = async () => {
     let uid = localStorage.getItem("userId");
 
     const requestOptions = {
@@ -74,8 +74,8 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    getUser();
-    getPlaylist();
+    GetUser();
+    GetPlaylist();
   }, []);
 
 
@@ -123,7 +123,7 @@ const Profile = () => {
 
         <EditProfile />
         <PlaylistList />
-        
+
       </div>
 
       {/* <div className="container">

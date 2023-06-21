@@ -37,7 +37,7 @@ const Playlist = () => {
     userId: window.localStorage.getItem("userId"),
   });
 
-  const getPlaylist = async () => {
+  const GetPlaylist = async () => {
     console.log(plid);
     const requestOptions = {
       method: "GET",
@@ -66,7 +66,7 @@ const Playlist = () => {
   };
 
   useEffect(() => {
-    getPlaylist();
+    GetPlaylist();
     //GetMovie();
   }, []);
 
@@ -82,27 +82,33 @@ const Playlist = () => {
             {movie.map((item) => {
               return (
                 <div className="col" key={item.netflix_id}>
+
                   <div className="card">
-                    <div className="card-body">
-                      <img
-                        src={item.pic}
-                        className="card-img-top playlist-image"
-                        alt="Playlist Image"
-                        style={{ height: "250px" }}
-                      />
+                    <Link to={{ pathname: `/movies/${item._id}`, state: { Movieid: item._id }, }} className="link-no-underline">
 
-                      <div className="card-title">
-                        <h6>{item.name}</h6>
-                      </div>
+                      <div className="card-body">
+                        <img
+                          src={item.pic}
+                          className="card-img-top playlist-image"
+                          alt="Playlist Image"
+                          style={{ height: "250px" }}
+                        />
 
-                      <div className="card-text">
-                        <p>{item.synopsis}</p>
-                        {/* <span>{item.title_type}</span>
+                        <div className="card-title">
+                          <h6>{item.name}</h6>
+                        </div>
+
+                        <div className="card-text">
+                          <p>{item.synopsis}</p>
+                          {/* <span>{item.title_type}</span>
                           <span>{item.netflix_id}</span>
                           <span>{item.title_date}</span>
                           <span>{item.year}</span> */}
+                        </div>
+
                       </div>
-                    </div>
+                    </Link>
+
                   </div>
                 </div>
               );

@@ -20,8 +20,7 @@ export default function Navbar() {
         if (item[filter]) {
           //check ค่าว่าง
           return (
-            item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) >
-            -1
+            item[filter].toString().toLowerCase().indexOf(word.toLowerCase()) > -1
           );
         }
       });
@@ -33,9 +32,8 @@ export default function Navbar() {
 
   const handleChange = (e) => {
     e.preventDefault();
-
     setWord(e.target.value);
-    getUser();
+
   };
 
   const requestOptions = {
@@ -51,7 +49,7 @@ export default function Navbar() {
     }),
   };
 
-  const getUser = async () => {
+  const GetAllUser = async () => {
     const requestOptions = {
       method: "GET",
       crossDomain: true,
@@ -75,7 +73,7 @@ export default function Navbar() {
       });
   };
 
-  const getUserData = async () => {
+  const GetUserData = async () => {
     // let uid = localStorage.getItem("userid");
     fetch(`http://localhost:5000/userData`, requestOptions)
       .then((res) => res.json())
@@ -92,17 +90,18 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    getUserData();
-    getUser();
+    GetUserData();
+    GetAllUser();
   }, []);
 
   const logOut = () => {
     window.localStorage.clear();
-    MySwal.fire({
-      icon: "success",
-      text: "Sign Out success",
-      showConfirmButton: true,
-    });
+    // MySwal.fire({
+    //   icon: "success",
+    //   text: "Sign Out success",
+    //   showConfirmButton: false,
+    //   timer: 3000,
+    // });
     window.location.href = "/signin";
   };
 
@@ -140,6 +139,7 @@ export default function Navbar() {
             <div
               className="list-group position-absolute"
               onChange={handleChange}
+            // onClick={setWord("")}
             >
               {word &&
                 searchFollow(search).map((item, index) => {
@@ -147,8 +147,11 @@ export default function Navbar() {
                     <Link
                       to={{
                         pathname: `/follow/${item._id}`,
-                        state: { userid: item._id } ,
+                        // state: { userid: item._id } ,
+                        state: { followid: item._id },
+
                       }}
+
                       className=" list-group-item align-items-center "
                       key={index}
                     >
@@ -166,10 +169,9 @@ export default function Navbar() {
             {userData.fname} {userData.lname}
           </a>
 
-          <div className="">
-            <Link to="/signin">
-              <button className="btn btn-outline-primary">Sign Out</button>
-            </Link>
+          <button className="btn btn-outline-primary" onClick={logOut}>Sign Out</button>
+
+          <div>
           </div>
         </div>
       </div>
