@@ -613,6 +613,37 @@ app.post("/copyPlaylist/:playlistId", async (req, res) => {
   }
 });
 
+require("./post");
+const PostInfo = mongoose.model('PostInfo');
+
+app.post("/createPost", async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const { content, movieId, rating } = req.body;
+
+    const movie = await movieInfo.findById(movieId);
+    const user = await UserInfo.findById(userId);
+
+    if (!movie) {
+      return res.status(404).json({ error: "หนังไม่พบ" });
+    }
+
+    const post = new PostInfo({
+      content,
+      movie,
+      rating,
+      owner: user._id,
+    });
+
+    const savedPost = await post.save();
+
+    res.status(201).json(savedPost);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "ไม่สามารถสร้างโพสต์ได้" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server Started");
 });
