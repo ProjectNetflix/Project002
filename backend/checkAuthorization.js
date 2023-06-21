@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
 
 const checkAuthorization = (req, res, next) => {
     // ตรวจสอบว่าผู้ใช้เป็นติดตามหรือไม่
+
     if (req.user && req.user.isFollower) {
       // ผู้ใช้เป็นติดตาม ดำเนินการต่อไป
       next();
@@ -12,3 +12,4 @@ const checkAuthorization = (req, res, next) => {
   };
   
   module.exports = checkAuthorization;
+

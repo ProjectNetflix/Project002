@@ -17,10 +17,11 @@ const UserDetailsSchema = new mongoose.Schema(
             default: [],
         },
 
-        favPlaylist:{
-            type:Array,
+        copyPlaylists: {
+            type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PlaylistInfo' }],
             default: [],
         }
+             
     },
     {
         collection: "UserInfo",

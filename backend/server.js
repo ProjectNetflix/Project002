@@ -14,6 +14,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 const { userInfo } = require("os");
+
 const checkAuthorization = require("./checkAuthorization");
 
 const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
@@ -559,6 +560,47 @@ app.delete("/removefromfavlist", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "ข้อผิดพลาดของเซิร์ฟเวอร์" });
+  }
+});
+
+//----- fav playlist ของ user อื่น
+app.post("/copyPlaylist/:playlistId", async (req, res) => {
+  try {
+    const { playlistId } = req.params;
+    const { userId } = req.body; // รับ userId ของผู้ใช้ที่ต้องการคัดลอก playlist
+
+    // ตรวจสอบว่าผู้ใช้เป็นคนที่เราติดตามหรือไม่
+    const currentUser = await UserInfo.findById(userId);
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // หา playlist ที่ต้องการคัดลอก
+    const playlistToCopy = await PlaylistInfo.findById(playlistId);
+    if (!playlistToCopy) {
+      return res.status(404).json({ error: "Playlist not found" });
+    }
+    
+    // คัดลอกข้อมูล playlist
+    const newPlaylist = new PlaylistInfo({
+      title: playlistToCopy.title,
+      desc: playlistToCopy.desc,
+      imageUrl: playlistToCopy.imageUrl,
+      movie: playlistToCopy.movie,
+      owner: currentUser._id,
+    });
+
+    // เพิ่ม playlist ใหม่เข้าใน copyPlaylists ของผู้ใช้
+    currentUser.copyPlaylists.push(newPlaylist);
+
+    // บันทึกการเปลี่ยนแปลงในฐานข้อมูล
+    await newPlaylist.save();
+    await currentUser.save();
+
+    res.json({ message: "Playlist copied" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 

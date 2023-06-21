@@ -17,6 +17,9 @@ const Follow = () => {
     const [playlist, setPlaylist] = useState([]);
     const [follow, setFollow] = useState([]);
     const [isFollowed, setIsFollowed] = useState(Boolean);
+    // const userId = '...'; // รหัสผู้ใช้ที่ต้องการคัดลอก playlist
+    // const playlistId = '...'; // รหัส playlist ที่ต้องการคัดลอก
+    // const body = { userid };
 
     const DefaultPic = "https://xn--72czjvzci0ftdsfvb.com/images/2022/12/22/xn--72czjvzci0ftdsfvb.com_f9cb000afb0aeb014f735bcfd3551282.png";
 
@@ -133,6 +136,49 @@ const Follow = () => {
             });
     };
 
+    const CopyPlaylists = (e, playlistId) => {
+        e.preventDefault();
+        const userId = localStorage.getItem("userId");
+        const body = { userId };
+      
+        fetch(`http://localhost:5000/copyPlaylist/${playlistId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data) {
+              console.log(data); // แสดงผลลัพธ์ที่ได้จาก backend
+              Swal.fire({
+                title: 'Success',
+                text: 'Playlist copied successfully!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              });
+            } else {
+              console.error(data); // แสดงข้อผิดพลาด (ถ้ามี)
+              Swal.fire({
+                title: 'Error',
+                text: 'Failed to copy playlist.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            }
+          })
+          .catch((error) => {
+            console.error(error); // แสดงข้อผิดพลาด (ถ้ามี)
+            Swal.fire({
+              title: 'Error',
+              text: 'An error occurred while copying the playlist.',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          });
+      };
+
     useEffect(() => {
         getFollowData();
         getPlaylist();
@@ -188,7 +234,7 @@ const Follow = () => {
                                             <h5 className="card-title">{item.title}</h5>
                                             <p className="card-text">{item.desc}</p>
                                         </div>
-                                        <button className="btn btn-outline-primary m-3">Favorite</button>
+                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id)}>Copy</button>
                                     </Link>
                                 </div>
                             </div>
