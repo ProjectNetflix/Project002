@@ -494,6 +494,8 @@ app.put("/removeMovieFromPlaylist/:playlistId", async (req, res) => {
   }
 });
 
+
+// fav playlist ที่คิดจะทำ
 require("./Favlist");
 const FavListInfo = mongoose.model("FavList")
 
@@ -566,7 +568,7 @@ app.delete("/removefromfavlist", async (req, res) => {
   }
 });
 
-//----- fav playlist ของ user อื่น
+// copy playlist ของ user อื่น
 app.post("/copyPlaylist/:playlistId", async (req, res) => {
 
   try {
@@ -613,6 +615,7 @@ app.post("/copyPlaylist/:playlistId", async (req, res) => {
   }
 });
 
+// post
 require("./post");
 const PostInfo = mongoose.model('PostInfo');
 
@@ -643,6 +646,100 @@ app.post("/createPost", async (req, res) => {
     res.status(500).json({ error: "ไม่สามารถสร้างโพสต์ได้" });
   }
 });
+
+app.delete("/deletePost/:postId", async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // ตรวจสอบว่าโพสต์มีอยู่หรือไม่
+    const post = await PostInfo.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: "ไม่พบโพสต์" });
+    }
+
+    // ตรวจสอบสิทธิ์การลบโพสต์
+    // if (req.user.id !== post.owner.toString()) {
+    //   return res.status(403).json({ error: "ไม่ได้รับอนุญาตให้ลบโพสต์" });
+    // }
+
+    // ลบโพสต์
+    await post.deleteOne({ _id: postId });
+
+    res.status(200).json({ message: "ลบโพสต์เรียบร้อยแล้ว" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "ไม่สามารถลบโพสต์ได้" });
+  }
+});
+
+app.put("/editPost/:postId", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { content, rating } = req.body;
+
+    // ตรวจสอบว่าโพสต์มีอยู่หรือไม่
+    const post = await PostInfo.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: "ไม่พบโพสต์" });
+    }
+
+    // ตรวจสอบสิทธิ์การแก้ไขโพสต์
+    // เช่นตรวจสอบว่าผู้ใช้ที่แก้ไขเป็นเจ้าของโพสต์หรือไม่
+
+    // อัปเดตข้อมูลโพสต์
+    post.content = content;
+    post.rating = rating;
+
+    // บันทึกการเปลี่ยนแปลง
+    const updatedPost = await post.save();
+
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "ไม่สามารถแก้ไขโพสต์ได้" });
+  }
+});
+
+//--- get ด้วย id 
+app.get("/posts/:id", async (req, res) => {
+  try {
+    const postId = req.params.id;
+
+    // ค้นหาโพสต์ด้วย ID
+    const post = await PostInfo.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: "ไม่พบโพสต์" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
+// ============ get ว่า user คนนี้ มี post อะไรบ้าง===========
+app.get("/userPosts/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // ค้นหาผู้ใช้งานด้วย ID
+    const user = await UserInfo.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "ไม่พบผู้ใช้งาน" });
+    }
+
+    // ค้นหาโพสต์ที่เกี่ยวข้องกับผู้ใช้งาน
+    const posts = await PostInfo.find({ owner: userId });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
 
 app.listen(5000, () => {
   console.log("Server Started");
