@@ -625,7 +625,7 @@ app.post("/createPost", async (req, res) => {
     const { content, movieId, rating } = req.body;
 
     const movie = await movieInfo.findById(movieId);
-    const user = await UserInfo.findById(userId);
+    const owner = await UserInfo.findById(userId);
 
     if (!movie) {
       return res.status(404).json({ error: "หนังไม่พบ" });
@@ -633,9 +633,9 @@ app.post("/createPost", async (req, res) => {
 
     const post = new PostInfo({
       content,
+      owner,
       movie,
       rating,
-      owner: user._id,
     });
 
     const savedPost = await post.save();
@@ -701,9 +701,9 @@ app.put("/editPost/:postId", async (req, res) => {
 });
 
 //--- get ด้วย id 
-app.get("/posts/:id", async (req, res) => {
+app.get("/posts/:postid", async (req, res) => {
   try {
-    const postId = req.params.id;
+    const postId = req.params.postid;
 
     // ค้นหาโพสต์ด้วย ID
     const post = await PostInfo.findById(postId);
@@ -716,6 +716,24 @@ app.get("/posts/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
+app.get('/postsmovie/:id', async (req, res) => {
+  try {
+    const movieId = req.params.id;
+    const movie = await movieInfo.findById(movieId);
+
+    if (!movie) {
+      return res.status(404).json({ error: "ไม่พบหนัง" });
+    }
+
+    const posts = await PostInfo.find({ movie: movieId }).populate('owner').populate("movie");
+    res.json(posts);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 

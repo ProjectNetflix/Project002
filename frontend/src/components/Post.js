@@ -4,24 +4,10 @@ import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
 
-const EditProfile = (props) => {
-    const [state, setState] = useState({
-        pic: "",
-        fname: "",
-        lname: "",
-    });
+const Post = () => {
 
-    const { pic, fname, lname } = state;
-
-    const inputValue = (name) => (event) => {
-        if (name === "pic") {
-            setState({ ...state, [name]: event.target.files[0] });
-        } else {
-            setState({ ...state, [name]: event.target.value });
-        }
-    };
-
-    const GetUser = async () => {
+    const [post, setPost] = useState([]);
+    const GetPost = async () => {
         let uid = localStorage.getItem("userId");
 
         const requestOptions = {
@@ -34,20 +20,16 @@ const EditProfile = (props) => {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         };
+        fetch(`http://localhost:5000/postsmovie/6489d2493b4eed21b7392a0`, requestOptions)
 
-        fetch(`http://localhost:5000/userData/${uid}`, requestOptions)
+            //fetch(`http://localhost:5000/postsmovie/${6489d2493b4eed21b739c2a0}`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
-                if (data.data === "token expired") {
-                    alert("Token expired, sign in again");
-                    window.localStorage.clear();
-                    window.location.href = "./signin";
+                if (data.data) {
+                    setPost(data.data);
+                    console.log(data.data);
                 } else {
-                    setState({
-                        ...state,
-                        fname: data.data.fname,
-                        lname: data.data.lname,
-                    });
+                    alert("Token expired, sign in again");
                 }
             });
     };
@@ -89,7 +71,7 @@ const EditProfile = (props) => {
     };
 
     useEffect(() => {
-        GetUser();
+        GetPost();
     }, []);
 
     return (
@@ -105,6 +87,7 @@ const EditProfile = (props) => {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="UserModalLabel">
+                                {" "}
                                 Edit Profile
                             </h5>
                             <button
@@ -173,4 +156,4 @@ const EditProfile = (props) => {
         </div>
     );
 };
-export default EditProfile;
+export default Post;

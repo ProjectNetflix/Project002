@@ -4,8 +4,8 @@ const PostSchema = new mongoose.Schema(
 
         content: String,
         movie: {
-            type: Array,
-            default: [],
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'movieIn',
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
