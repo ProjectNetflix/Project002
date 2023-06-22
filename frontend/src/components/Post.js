@@ -6,7 +6,27 @@ const MySwal = withReactContent(Swal);
 
 const Post = () => {
 
+    const [movielist, setMovie] = useState([]);
     const [post, setPost] = useState([]);
+
+    const [state, setState] = useState({
+        movie: "",
+        content: "",
+        owner: localStorage.getItem("userId"),
+        rating: "",
+    });
+
+    const { movie, content, owner, rating } = state;
+
+    const inputValue = (name) => (event) => {
+        setState({ ...state, [name]: event.target.value });
+    };
+
+    const handleChangeMovie = (e) => {
+        //setPlaylistId(e.target.value);
+    };
+
+
     const GetPost = async () => {
         let uid = localStorage.getItem("userId");
 
@@ -34,22 +54,21 @@ const Post = () => {
             });
     };
 
-    const EditUserData = (e) => {
-        e.preventDefault();
-        let uid = localStorage.getItem("userId");
-        console.log(state.pic);
+    const EditPost = (e) => {
 
+        e.preventDefault();
         const formData = new FormData();
-        formData.append("image", pic);
-        formData.append("fname", fname);
-        formData.append("lname", lname);
+        formData.append("content", content);
+        formData.append("movie", movie);
+        formData.append("owner", owner);
+        formData.append("rating", rating);
 
         const requestOptions = {
             method: "PUT",
             body: formData,
         };
 
-        fetch(`http://localhost:5000/updateUser/${uid}`, requestOptions)
+        fetch(`http://localhost:5000/updateUser/`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
                 if (data) {
@@ -70,15 +89,106 @@ const Post = () => {
             });
     };
 
+    const GetMovies = async () => {
+        const requestOptions = {
+            method: "GET",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        };
+        fetch(`http://localhost:5000/movies`, requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data) {
+                    console.log(data, "Playlist User");
+                    setMovie(data);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("เกิดข้อผิดพลาด");
+            });
+    };
+
+    const CreatePost = (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("content", content);
+        formData.append("movie", movie);
+        formData.append("owner", owner);
+        formData.append("rating", rating);
+
+        const form = {
+            content: content,
+            movie: movie,
+            owner: owner,
+            rating: rating,
+        };
+
+        console.log(form, formData);
+        //console.log(content, movie, rating);
+
+        if (movie === "" || owner === "" || content === "" || rating === "") {
+            MySwal.fire({
+                text: "Please enter data",
+                icon: "warning",
+                showConfirmButton: true,
+                timer: 5000,
+            });
+        }
+        else {
+            fetch("http://localhost:5000/createPost", {
+                method: "POST",
+                crossDomain: true,
+                // headers: {
+                //   "Content-Type": "application/json",
+                //   Accept: "application/json",
+                //   "Access-Control-Allow-Origin": "*",
+                // },
+
+                body: form,
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data, "Post");
+
+                    if (data) {
+                        MySwal.fire({
+                            text: "Success",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 3000,
+                        });
+                        //window.location.reload();
+
+                    } else {
+                        MySwal.fire({
+                            text: "Error",
+                            icon: "error",
+                            showConfirmButton: true,
+                            timer: 3000,
+                        });
+                    }
+                });
+        }
+    };
+
     useEffect(() => {
-        GetPost();
+        // GetPost();
+        GetMovies();
+
     }, []);
 
     return (
         <div>
             <div
                 className="modal fade"
-                id="EditUser"
+                id="CreatePost"
                 tabIndex="-1"
                 aria-labelledby="UserModalLabel"
                 aria-hidden="true"
@@ -87,8 +197,7 @@ const Post = () => {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="UserModalLabel">
-                                {" "}
-                                Edit Profile
+                                Post Review
                             </h5>
                             <button
                                 type="button"
@@ -101,32 +210,35 @@ const Post = () => {
                         <div className="modal-body">
                             <form className="container w-100 h-50">
                                 <div className="form-content ">
+
                                     <div className="form-group mt-2">
-                                        <label>Picture</label>
-                                        <input
-                                            type="file"
+                                        <label>Moive</label>
+
+                                        <select className="custom-select" onChange={inputValue("movie")} >
+                                            <option value="">Choose</option>
+                                            {movielist.map((item) => (
+                                                <option key={item._id} value={item._id}>{item.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group mt-2">
+                                        <label>Content</label>
+                                        <textarea
+                                            type="text"
                                             className="form-control mt-1"
-                                            onChange={inputValue("pic")}
+                                            // value={content}
+                                            onChange={inputValue("content")}
                                         />
                                     </div>
 
                                     <div className="form-group mt-2">
-                                        <label>First Name</label>
+                                        <label>Rating</label>
                                         <input
                                             type="text"
                                             className="form-control mt-1"
-                                            value={fname}
-                                            onChange={inputValue("fname")}
-                                        />
-                                    </div>
-
-                                    <div className="form-group mt-2">
-                                        <label>Last Name</label>
-                                        <input
-                                            type="text"
-                                            className="form-control mt-1"
-                                            value={lname}
-                                            onChange={inputValue("lname")}
+                                            // value={rating}
+                                            onChange={inputValue("rating")}
                                         />
                                     </div>
                                 </div>
@@ -141,11 +253,12 @@ const Post = () => {
                             >
                                 Close
                             </button>
+
                             <button
                                 type="button"
                                 className="btn btn-primary"
                                 data-bs-dismiss="modal"
-                                onClick={EditUserData}
+                                onClick={CreatePost}
                             >
                                 Save
                             </button>

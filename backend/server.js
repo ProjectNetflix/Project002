@@ -620,10 +620,10 @@ require("./post");
 const PostInfo = mongoose.model('PostInfo');
 
 app.post("/createPost", async (req, res) => {
-  const { userId } = req.body;
+  console.log(req.body);
   try {
     const { content, movieId, rating } = req.body;
-
+    const { userId } = req.body;
     const movie = await movieInfo.findById(movieId);
     const owner = await UserInfo.findById(userId);
 
