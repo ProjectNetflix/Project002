@@ -4,7 +4,9 @@ import { useState, useEffect } from "react"
 import { useLocation, Link } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
+import { BsSignpost2, BsPostcardHeart } from "react-icons/bs";
+import { IconContext } from "react-icons";
+import { RiPlayList2Line } from "react-icons/ri";
 const MySwal = withReactContent(Swal)
 
 const Follow = () => {
@@ -199,7 +201,7 @@ const Follow = () => {
                             width={100}
                             height={100}
                         />
-                        <h4 >{follow.fname} {follow.lname}</h4>
+                        <h4 className="m-2">{follow.fname} {follow.lname}</h4>
                         <span >Following {following.length} </span>
                         <span >Followers {follower.length} </span>
                         <span >Playlist  {playlist.length}</span>
@@ -214,7 +216,12 @@ const Follow = () => {
 
                 </div>
 
-                <h5> {follow.fname} {follow.lname}'s Playlist Movie </h5>
+                <br/>
+                <h4><IconContext.Provider value={{ color: "green", size: "35px" }}>
+                    <RiPlayList2Line /> <span> </span> {follow.fname} {follow.lname}'s PLAYLIST MOVIE
+                </IconContext.Provider></h4>
+                <br/>
+
                 <div className="row card-group">
                     {playlist.map((item) => {
                         return (
