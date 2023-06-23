@@ -89,21 +89,13 @@ const PostList = () => {
   const EditPost = (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("content", content);
-    formData.append("movieId", movie);
-    formData.append("userId", owner);
-    formData.append("rating", rating);
-    console.log("form", formData);
-
-    console.log(content, movie, owner, rating);
-
     const requestOptions = {
       method: "PUT",
-      body: JSON.stringify({
-        content: content,
-        rating: rating,
-      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ content, rating }),
     };
 
     fetch(`http://localhost:5000/editPost/${postId}`, requestOptions)
@@ -116,17 +108,13 @@ const PostList = () => {
             showConfirmButton: false,
             timer: 2000,
           });
-          //window.location.reload();
-        } else {
-          alert(data.status);
+           window.location.reload();
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาดในการแก้ไข");
-      });
-
-  };
+        console.log(error);
+        });
+    };
 
   const GetMovies = async () => {
     const requestOptions = {

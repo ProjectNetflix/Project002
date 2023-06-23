@@ -675,29 +675,23 @@ app.delete("/deletePost/:postId", async (req, res) => {
 
 app.put("/editPost/:postId", async (req, res) => {
   try {
-    const { postId } = req.params;
     const { content, rating } = req.body;
+    const { postId } = req.params;
 
-    // ตรวจสอบว่าโพสต์มีอยู่หรือไม่
-    const post = await PostInfo.findById(postId);
-    if (!post) {
-      return res.status(404).json({ error: "ไม่พบโพสต์" });
+    const updatedPost = await PostInfo.findByIdAndUpdate(
+      postId,
+      { content, rating },
+      { new: true }
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({ error: "โพสต์ไม่พบ" });
     }
-
-    // ตรวจสอบสิทธิ์การแก้ไขโพสต์
-    // เช่นตรวจสอบว่าผู้ใช้ที่แก้ไขเป็นเจ้าของโพสต์หรือไม่
-
-    // อัปเดตข้อมูลโพสต์
-    post.content = content;
-    post.rating = rating;
-
-    // บันทึกการเปลี่ยนแปลง
-    const updatedPost = await post.save();
 
     res.status(200).json(updatedPost);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "ไม่สามารถแก้ไขโพสต์ได้" });
+    res.status(500).json({ error: "ไม่สามารถอัปเดตโพสต์ได้" });
   }
 });
 
