@@ -12,7 +12,7 @@ const PostSchema = new mongoose.Schema(
             ref: 'UserInfo',
         },
 
-        rating: {
+        score: {
             type: Number,
             min: 0,
             max: 5,

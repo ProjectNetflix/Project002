@@ -4,13 +4,13 @@ import PlaylistList from "./PlaylistList";
 import EditProfile from "./EditProfile";
 import "./Profile.css"
 import PostList from "./PostList";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 
-//import Swal from "sweetalert2";
-//import withReactContent from "sweetalert2-react-content";
 
 const Profile = () => {
-  //const MySwal = withReactContent(Swal);
+  const MySwal = withReactContent(Swal);
   const [post, setPost] = useState([]);
   const [playlist, setPlaylist] = useState([]);
   const [userData, setUserData] = useState([]);
@@ -148,36 +148,7 @@ const Profile = () => {
         <EditProfile />
         <PlaylistList />
         <PostList />
-
-        {/* <div className="container">
-          <h5>MY POST</h5>
-          {post.map((item) => {
-            return (
-              <div className="post" key={item._id}>
-                <div className="card m-2 ">
-                  <div className="card-body d-flex">
-                    <div className=" img-post">
-                      <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
-                    </div>
-
-                    <div className=" post-info m-2 ">
-                      <h4>{item.movie.name}</h4>
-                      <p>{item.content}</p>
-                      <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.rating}/5</IconContext.Provider>
-                    </div>
-                  </div>
-
-                  <div className="post-action d-flex justify-content-end ">
-                    <button className="btn btn-outline-warning m-3 " data-bs-toggle="modal" data-bs-target="#EditPost"
-                      onClick={(e) => setPostId(item._id)} > Edit
-                    </button>
-                    <button className="btn btn-outline-danger m-3"> Delete </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div> */}
+        
       </div>
     </div >
   );

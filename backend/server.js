@@ -622,7 +622,7 @@ const PostInfo = mongoose.model('PostInfo');
 app.post("/createPost", async (req, res) => {
   console.log(req.body);
   try {
-    const { content, rating } = req.body;
+    const { content, score } = req.body;
     const { movieId } = req.body;
     const { userId } = req.body;
     const movie = await movieInfo.findById(movieId);
@@ -636,7 +636,7 @@ app.post("/createPost", async (req, res) => {
       content,
       owner,
       movie,
-      rating,
+      score,
     });
 
     const savedPost = await post.save();
@@ -675,12 +675,12 @@ app.delete("/deletePost/:postId", async (req, res) => {
 
 app.put("/editPost/:postId", async (req, res) => {
   try {
-    const { content, rating } = req.body;
+    const { content, score } = req.body;
     const { postId } = req.params;
 
     const updatedPost = await PostInfo.findByIdAndUpdate(
       postId,
-      { content, rating },
+      { content, score },
       { new: true }
     );
 
@@ -755,7 +755,7 @@ app.get("/userPosts/:userId", async (req, res) => {
 
 app.get('/allpost', async (req, res) => {
   try {
-    const post = await PostInfo.find().populate('owner', 'movie');
+    const post = await PostInfo.find().populate('owner').populate('movie');
     res.json(post);
   } catch (error) {
     console.error(error);
@@ -763,6 +763,19 @@ app.get('/allpost', async (req, res) => {
   }
 });
 
+app.get('/allpost/following/:userid', async (req, res) => {
+  try {
+    const currentUser = await UserInfo.findById(req.params.userid);
+    const userIds = currentUser.following; // หรือ req.params.userIds หากคุณต้องการใช้พารามิเตอร์จาก URL
+    const posts = await PostInfo.find({ owner: { $in: userIds } || {currentUser} }).populate('owner').populate('movie');
+    const postuser = await PostInfo.find({ owner: currentUser }).populate('owner').populate('movie');
+    posts.push(...postuser)
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
 
 app.listen(5000, () => {
   console.log("Server Started");

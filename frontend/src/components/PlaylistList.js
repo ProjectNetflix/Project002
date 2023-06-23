@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import "./PlaylistList.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { BsSignpost2 } from "react-icons/bs";
+import { BsSignpost2 , BsPostcardHeart} from "react-icons/bs";
 import { IconContext } from "react-icons";
+import { RiPlayList2Line } from "react-icons/ri";
 
 const MySwal = withReactContent(Swal);
 
@@ -239,7 +240,7 @@ const PlaylistList = () => {
             <div className="modal-header">
 
               <h5 className="modal-title" id="PlaylistModalLabel">
-                <IconContext.Provider value={{ color: "black", size: "25px" }}> <BsSignpost2 />  Create Playlist</IconContext.Provider>
+                <IconContext.Provider value={{ color: "navy", size: "35px" }}> <BsSignpost2 />  Create Playlist</IconContext.Provider>
               </h5>
               <button
                 type="button"
@@ -297,7 +298,14 @@ const PlaylistList = () => {
         </div>
       </div>
 
-      <h5> MY PLAYLIST MOVIE </h5>
+      <br/>
+      <h4>
+        <IconContext.Provider value={{ color: "green", size: "35px" }}>
+          <RiPlayList2Line /> <span> </span> MY PLAYLIST MOVIE
+        </IconContext.Provider>
+      </h4>
+      <br/>
+
       <div className="row ">
         {playlist.map((item) => {
           return (

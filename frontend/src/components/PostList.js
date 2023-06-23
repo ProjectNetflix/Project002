@@ -3,6 +3,9 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { IconContext } from "react-icons";
 import { AiTwotoneStar } from "react-icons/ai";
+import { MdRateReview } from "react-icons/md";
+import { BiDislike, BiLike } from "react-icons/bi";
+import { MdOutlineFeaturedPlayList, MdReviews } from "react-icons/md";
 const MySwal = withReactContent(Swal);
 
 const PostList = () => {
@@ -15,20 +18,20 @@ const PostList = () => {
     movie: "",
     content: "",
     owner: localStorage.getItem("userId"),
-    rating: "",
+    score: "",
   });
 
-  const { movie, content, owner, rating } = state;
+  const { movie, content, owner, score } = state;
 
   const CurrentPost = (e, postid) => {
     setPostId(postid);
     const selectedPost = allpost.find((item) => item._id === postid);
-    console.log("select",selectedPost);
+    console.log("select", selectedPost);
     setState({
       ...state,
       movie: selectedPost.movie,
       content: selectedPost.content,
-      rating: selectedPost.rating,
+      score: selectedPost.score,
     });
     console.log(state);
   };
@@ -95,7 +98,7 @@ const PostList = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ content, rating }),
+      body: JSON.stringify({ content, score }),
     };
 
     fetch(`http://localhost:5000/editPost/${postId}`, requestOptions)
@@ -108,13 +111,13 @@ const PostList = () => {
             showConfirmButton: false,
             timer: 2000,
           });
-           window.location.reload();
+          window.location.reload();
         }
       })
       .catch((error) => {
         console.log(error);
-        });
-    };
+      });
+  };
 
   const GetMovies = async () => {
     const requestOptions = {
@@ -144,14 +147,23 @@ const PostList = () => {
   const CreatePost = (e) => {
     e.preventDefault();
 
-    if (movie === "" || owner === "" || content === "" || rating === "") {
+    if (movie === "" || owner === "" || content === "" || score === "") {
       MySwal.fire({
         text: "Please enter data",
         icon: "warning",
         showConfirmButton: true,
         timer: 5000,
       });
-    } else {
+    }
+    else if (score < 0 || score > 5) {
+      MySwal.fire({
+        text: "Please enter score more than 0 or less than 5",
+        icon: "warning",
+        showConfirmButton: true,
+        timer: 5000,
+      });
+    }
+    else {
       fetch("http://localhost:5000/createPost", {
         method: "POST",
         headers: {
@@ -162,7 +174,7 @@ const PostList = () => {
           content: content,
           movieId: movie,
           userId: owner,
-          rating: rating,
+          score: score,
         }),
       })
         .then((res) => res.json())
@@ -189,6 +201,45 @@ const PostList = () => {
     }
   };
 
+  const DeletePost = (postId) => {
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const requestOptions = {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        };
+
+        fetch(`http://localhost:5000/deletePost/${postId}`, requestOptions)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data) {
+              MySwal.fire({
+                text: "Post deleted successfully",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+              });
+              window.location.reload();
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
+  };
+
   useEffect(() => {
     GetAllPost();
     GetMovies();
@@ -198,7 +249,13 @@ const PostList = () => {
   return (
     <div>
       <div className="container">
-        <h5>MY POST</h5>
+        <br />
+        <h4>
+          <IconContext.Provider value={{ color: "orange", size: "35px" }}>
+            <MdReviews /> <span /> MY POST
+          </IconContext.Provider>
+        </h4>
+        <br />
         {post.map((item) => {
           return (
             <div className="post" key={item._id}>
@@ -211,16 +268,19 @@ const PostList = () => {
                   <div className=" post-info m-2 ">
                     <h4>{item.movie.name}</h4>
                     <p>{item.content}</p>
-                    <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.rating}/5</IconContext.Provider>
+                    <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.score}/5</IconContext.Provider>
+
+                    <div className="post-action d-flex justify-content-center ">
+                      <button className="btn btn-outline-warning m-2 " data-bs-toggle="modal" data-bs-target="#EditPost"
+                        onClick={(e) => CurrentPost(e, item._id)} > Edit
+                      </button>
+                      <button className="btn btn-outline-danger m-2" onClick={() => DeletePost(item._id)} > Delete </button>
+                    </div>
+
                   </div>
                 </div>
 
-                <div className="post-action d-flex justify-content-end ">
-                  <button className="btn btn-outline-warning m-3 " data-bs-toggle="modal" data-bs-target="#EditPost"
-                    onClick={(e) => CurrentPost(e, item._id)} > Edit
-                  </button>
-                  <button className="btn btn-outline-danger m-3"> Delete </button>
-                </div>
+
               </div>
             </div>
           );
@@ -239,7 +299,9 @@ const PostList = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="UserModalLabel">
-                  Post Review
+                  <IconContext.Provider value={{ color: "red", size: "35px" }}>
+                    <MdRateReview /> Post Review
+                  </IconContext.Provider>
                 </h5>
                 <button
                   type="button"
@@ -254,6 +316,7 @@ const PostList = () => {
                   <div className="form-content ">
                     <div className="form-group mt-2">
                       <label>Moive</label>
+
 
                       <select
                         className="custom-select"
@@ -279,12 +342,12 @@ const PostList = () => {
                     </div>
 
                     <div className="form-group mt-2">
-                      <label>Rating</label>
+                      <label>Score</label>
                       <input
                         type="text"
                         className="form-control mt-1"
-                        value={rating}
-                        onChange={inputValue("rating")}
+                        value={score}
+                        onChange={inputValue("score")}
                       />
                     </div>
                   </div>
@@ -342,7 +405,7 @@ const PostList = () => {
                   <div className="form-group mt-2">
                     <label>Moive</label>
 
-                    <select className="custom-select" value={movie} onChange={inputValue("movie")} >
+                    <select className="custom-select" value={movie} onChange={inputValue("movie")} disabled={true}>
                       <option value="">Choose</option>
                       {movielist.map((item) => (
                         <option key={item._id} value={item._id}>{item.name}</option>
@@ -361,12 +424,12 @@ const PostList = () => {
                   </div>
 
                   <div className="form-group mt-2">
-                    <label>Rating</label>
+                    <label>Score</label>
                     <input
                       type="text"
                       className="form-control mt-1"
-                      value={rating}
-                      onChange={inputValue("rating")}
+                      value={score}
+                      onChange={inputValue("score")}
                     />
                   </div>
                 </div>
