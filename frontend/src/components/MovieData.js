@@ -3,6 +3,7 @@ import "./MovieData.css";
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { AiTwotoneStar } from "react-icons/ai";
+import { BsHeart } from "react-icons/bs";
 import { IconContext } from "react-icons";
 
 const MovieData = () => {
@@ -77,9 +78,9 @@ const MovieData = () => {
         <div>
             <Navbar />
             <div className="container">
-                <div className=" movie ">
+                <div className=" movie mr-3">
 
-                    <div className="img-movie mt-5">
+                    <div className="img-movie ">
                         <img src={Moviedata.pic} alt="Movie Image" style={{ height: "250px" }} />
                     </div>
 
@@ -90,27 +91,32 @@ const MovieData = () => {
                     </div>
 
                 </div>
+            </div >
+            <div className="container">
+                <h5>REVIEW</h5>
 
                 {post.map((item) => {
                     return (
-                        <div className="col" key={item._id}>
-                            <div>
-                                <Link to={{ pathname: `/playlist/${item._id}`, state: { plid: item._id }, }} className="link-no-underline" >
+                        <div className="post " >
+                            <div className="card m-2 ">
+                                <div className="card-body body-post">
+                                    <div className=" post-info m-2 ">
 
-                                    <div className="card-body text-black">
-                                        <h5 className="card-title">{item.content}</h5>
-                                        <p className="card-text">{item.ratng}</p>
-                                        <p className="card-text">{item.owner.fname} {item.owner.lname}</p>
-
+                                        <h5>{item.owner.fname} {item.owner.lname}</h5>
+                                        <p>{item.content}</p>
+                                        <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.rating}/5</IconContext.Provider>
                                     </div>
-                                </Link>
+                                    <div className="post-action d-flexed m-2">
+                                        <IconContext.Provider value={{ color: "red", size: "25px" }}> <BsHeart /></IconContext.Provider>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     );
                 })}
-
             </div>
-        </div >
+        </div>
+
     )
 }
 

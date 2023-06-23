@@ -13,7 +13,27 @@
 }
 
 .movie-info {
-    flex: 1;
-    margin-left: 10px;
+    margin-left: 5px;
     margin-top: 20px;
+}
+
+.post {
+    align-items: center;
+    
+}
+
+.body-post{
+    background-color: lightpink;
+
+}
+
+.post-info {
+    margin-left: 20px;
+}
+
+.post-action {
+    display: flex;
+    justify-content: center;
+
+
 }

@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import "./PlaylistList.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { BsSignpost2 } from "react-icons/bs";
+import { IconContext } from "react-icons";
+
 const MySwal = withReactContent(Swal);
 
 const PlaylistList = () => {
@@ -234,8 +237,9 @@ const PlaylistList = () => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
+
               <h5 className="modal-title" id="PlaylistModalLabel">
-                Create Playlist
+                <IconContext.Provider value={{ color: "black", size: "25px" }}> <BsSignpost2 />  Create Playlist</IconContext.Provider>
               </h5>
               <button
                 type="button"
@@ -293,13 +297,13 @@ const PlaylistList = () => {
         </div>
       </div>
 
-      <h5> My Playlist Movie </h5>
+      <h5> MY PLAYLIST MOVIE </h5>
       <div className="row ">
         {playlist.map((item) => {
           return (
             <div className="col" key={item._id}>
               <div className="card">
-                <Link to={{ pathname: `/playlist/${item._id}`, state: { plid: item._id },}} className="link-no-underline">
+                <Link to={{ pathname: `/playlist/${item._id}`, state: { plid: item._id }, }} className="link-no-underline">
                   <div className="card-body text-black ">
                     <img
                       src={item.imageUrl ? `http://localhost:5000/${item.imageUrl}` : DefaultPic}
@@ -313,7 +317,7 @@ const PlaylistList = () => {
 
                   </div>
                 </Link>
-                
+
                 <div>
                   <button
                     className="btn  m-3"

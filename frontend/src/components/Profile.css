@@ -14,7 +14,6 @@
 .user-info {
   display: flex;
   /* flex: 1; */
-  display: flex;
   align-items: center;
 }
 
@@ -30,16 +29,6 @@ li {
 .info {
   margin-top: 10px;
   text-align: center;
-}
-
-.info-post {
-  flex: 1;
-  /* height: 100%; */
-  width: 100%;
-  margin-top: 5px;
-  text-align: center;
-  justify-content: right;
-
 }
 
 .info-text {
@@ -60,10 +49,23 @@ li {
   height: 100%;
 }
 
-text {
-  height: 100%;
+.post {
+  display: flex;
+  align-items: center;
+
 }
 
-.user-action {
-  align-items: flex-start;
+.img-post {
+  flex: 0.5;
+  justify-content: center;
+}
+
+.post-info {
+  flex: 2;
+  margin-left: 20px;
+}
+
+.post-action {
+  display: flex;
+
 }

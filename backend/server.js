@@ -750,12 +750,22 @@ app.get("/userPosts/:userId", async (req, res) => {
     }
 
     // ค้นหาโพสต์ที่เกี่ยวข้องกับผู้ใช้งาน
-    const posts = await PostInfo.find({ owner: userId });
+    const posts = await PostInfo.find({ owner: userId }).populate('owner').populate("movie");
 
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
+app.get('/allpost', async (req, res) => {
+  try {
+    const post = await PostInfo.find().populate('owner', 'movie');
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 

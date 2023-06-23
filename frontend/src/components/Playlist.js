@@ -124,6 +124,35 @@ const Playlist = () => {
             })}
           </div>
         </div>
+
+        <div className="container">
+          <h5>MY POST</h5>
+          {post.map((item) => {
+            return (
+              <div className="post">
+                <div className="card m-2 ">
+                  <div className="card-body d-flex">
+                    <div className=" img-post">
+                      <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
+                    </div>
+
+                    <div className=" post-info m-2 ">
+                      <h4>{item.movie.name}</h4>
+                      <p>{item.content}</p>
+                      <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.rating}/5</IconContext.Provider>
+                    </div>
+                  </div>
+
+                  <div className="post-action d-flex justify-content-end ">
+                    <button className="btn btn-outline-warning m-2"> Edit </button>
+                    <button className="btn btn-outline-danger m-2"> Delete </button>
+                  </div>
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
