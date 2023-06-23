@@ -117,22 +117,6 @@ const Post = () => {
     const CreatePost = (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append("content", content);
-        formData.append("movie", movie);
-        formData.append("owner", owner);
-        formData.append("rating", rating);
-
-        const form = {
-            content: content,
-            movie: movie,
-            owner: owner,
-            rating: rating,
-        };
-
-        console.log(form, formData);
-        //console.log(content, movie, rating);
-
         if (movie === "" || owner === "" || content === "" || rating === "") {
             MySwal.fire({
                 text: "Please enter data",
@@ -144,14 +128,17 @@ const Post = () => {
         else {
             fetch("http://localhost:5000/createPost", {
                 method: "POST",
-                crossDomain: true,
-                // headers: {
-                //   "Content-Type": "application/json",
-                //   Accept: "application/json",
-                //   "Access-Control-Allow-Origin": "*",
-                // },
-
-                body: form,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                    content: content,
+                    movieId: movie,
+                    userId: owner,
+                    rating: rating,
+                }),
+                
             })
                 .then((res) => res.json())
                 .then((data) => {
