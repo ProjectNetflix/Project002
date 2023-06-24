@@ -17,9 +17,9 @@ const Movie = () => {
   const [word, setWord] = useState("");
   const [movie, setMovie] = useState([]);
   const [dataFilter] = useState(["name", "synopsis"]);
-  const [Like, setLike] = useState(true);
   const [movieId, setMovieId] = useState("");
   const [PlaylistId, setPlaylistId] = useState("");
+  const [like, setLike] = useState({});
 
   const GetMovie = () => {
     // const options = {
@@ -109,9 +109,32 @@ const Movie = () => {
       });
   };
 
-  const handleFollowToggle = () => {
-    setLike(!Like);
-  }
+  const handleLikeToggle = (movieId) => {
+    // โค้ดการส่งคำขอ PUT ไปยังเซิร์ฟเวอร์เพื่อกด like หรือ unlike หนัง
+    const action = like[movieId] ? "unlike" : "like";
+    const userId = localStorage.getItem("userId"); // รหัสผู้ใช้
+
+    fetch(`http://localhost:5000/users/${userId}/movies/${movieId}/${action}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ action }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setLike((prevLike) => ({
+          ...prevLike,
+          [movieId]: !prevLike[movieId],
+        }));
+        // ดำเนินการเพิ่มข้อมูลหรือแสดงผลตามที่ต้องการ
+      })
+      .catch((error) => {
+        console.error(error);
+        // จัดการข้อผิดพลาดที่เกิดขึ้น
+      });
+  };
 
   const handleChangePlaylist = (e) => {
     setPlaylistId(e.target.value);
@@ -175,7 +198,7 @@ const Movie = () => {
 
   const AddToPL = (e,) => {
     e.preventDefault();
-    console.log(PlaylistId, movieId);
+    console.log(PlaylistId);
     if (PlaylistId === "") {
       MySwal.fire({
         text: "Please choose playlist !!!",
@@ -275,15 +298,19 @@ const Movie = () => {
 
                   <div className="mt-auto m-3">
 
-                    {Like ? (
-                      <button type="button" className="btn" onClick={handleFollowToggle}>
-                        <IconContext.Provider value={{ color: "red", size: "20px" }}> <BsHeartFill /></IconContext.Provider>
-                      </button>)
-                      : (<button type="button" className="btn" onClick={handleFollowToggle} >
-                        <IconContext.Provider value={{ size: "20px" }}> <BsHeart /></IconContext.Provider>
+                    {like[movieId] ? (
+                      <button type="button" className="btn" onClick={handleLikeToggle}>
+                        <IconContext.Provider value={{ color: "red", size: "20px" }}>
+                          <BsHeartFill />
+                        </IconContext.Provider>
                       </button>
-                      )
-                    }
+                    ) : (
+                      <button type="button" className="btn" onClick={handleLikeToggle}>
+                        <IconContext.Provider value={{ size: "20px" }}>
+                          <BsHeart />
+                        </IconContext.Provider>
+                      </button>
+                    )}
 
                     <button className="btn" data-bs-toggle="modal" data-bs-target="#ATP" onClick={(e) => setMovieId(item._id)}>
                       <IconContext.Provider value={{ color: "black", size: "20px" }}>

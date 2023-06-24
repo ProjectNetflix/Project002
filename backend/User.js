@@ -15,8 +15,13 @@ const UserDetailsSchema = new mongoose.Schema(
         following: {
             type: Array,
             default: [],
-        },
-             
+        }, 
+
+        likesMovies: [{ 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'movieIn',
+        }],
+ 
     },
     {
         collection: "UserInfo",

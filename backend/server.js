@@ -494,80 +494,6 @@ app.put("/removeMovieFromPlaylist/:playlistId", async (req, res) => {
   }
 });
 
-
-// fav playlist ที่คิดจะทำ
-require("./Favlist");
-const FavListInfo = mongoose.model("FavList")
-
-app.post("/addtofavlist", async (req, res) => {
-  const { userId, movieId } = req.body;
-  try {
-    const user = await UserInfo.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "ไม่พบผู้ใช้" });
-    }
-
-    const movie = await movieInfo.findById(movieId);
-    if (!movie) {
-      return res.status(404).json({ message: "ไม่พบหนัง" });
-    }
-
-    const existingFav = await FavListInfo.findOne({ user: user._id, movie: movie._id });
-    if (existingFav) {
-      return res.status(400).json({ message: "หนังนี้ถูกใจอยู่แล้ว" });
-    }
-
-    const favList = new FavListInfo({
-      user: user._id,
-      movie: movie._id
-    });
-
-    await favList.save();
-    res.status(200).json(favList);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "ข้อผิดพลาดของเซิร์ฟเวอร์" });
-  }
-});
-
-app.get("/favlist/:userId", checkAuthorization, async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const favList = await FavListInfo.find({ user: userId }).populate("movie");
-    res.status(200).json(favList);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "ข้อผิดพลาดของเซิร์ฟเวอร์" });
-  }
-});
-
-app.delete("/removefromfavlist", async (req, res) => {
-  const { userId, movieId } = req.body;
-
-  try {
-    const user = await UserInfo.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "ไม่พบผู้ใช้" });
-    }
-
-    const movie = await movieInfo.findById(movieId);
-    if (!movie) {
-      return res.status(404).json({ message: "ไม่พบหนัง" });
-    }
-
-    const existingFav = await FavListInfo.findOne({ user: user._id, movie: movie._id });
-    if (!existingFav) {
-      return res.status(400).json({ message: "หนังนี้ไม่ได้ถูกใจ" });
-    }
-
-    await FavListInfo.findByIdAndRemove(existingFav._id);
-    res.status(200).json({ message: "ลบหนังออกจากการถูกใจสำเร็จ" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "ข้อผิดพลาดของเซิร์ฟเวอร์" });
-  }
-});
-
 // copy playlist ของ user อื่น
 app.post("/copyPlaylist/:playlistId", async (req, res) => {
 
@@ -812,63 +738,51 @@ app.put("/posts/:postId/like", async (req, res) => {
   }
 });
 
-// Controller สำหรับการกด like โพสต์
-// const likePost = async (req, res) => {
-//   const postId = req.params.postId;
-//   const userId = req.params.userId;
+app.put("/users/:userId/movies/:movieId/like", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const movieId = req.params.movieId;
+    const action = req.body.action; // 'like' หรือ 'unlike'
 
-//   try {
-//     // ค้นหาโพสต์ที่ต้องการกด like
-//     const post = await PostInfo.findById(postId);
+    // ตรวจสอบว่าผู้ใช้และเรื่องหนังที่ต้องการกด like/unlike มีอยู่ในระบบหรือไม่
+    const user = await UserInfo.findById(userId);
+    const movie = await movieInfo.findById(movieId);
+    if (!user || !movie) {
+      return res.status(404).json({ message: "User or movie not found" });
+    }
 
-//     // ตรวจสอบว่าผู้ใช้กด like แล้วหรือยัง
-//     const alreadyLiked = post.likes.includes(userId);
+    // ตรวจสอบว่าผู้ใช้ได้กด like หรือ unlike รายการนี้แล้วหรือยัง
+    const likedMovies = user.likesMovies;
+    const isLiked = likedMovies.includes(movieId);
 
-//     if (alreadyLiked) {
-//       return res.status(400).json({ message: "You already liked this post." });
-//     }
+    if (action === "like") {
+      if (!isLiked) {
+        // ถ้ายังไม่ได้กด like รายการนี้ ให้เพิ่ม ObjectID ของรายการเรื่องนี้ลงในฟิลด์ "likesMovies" ของผู้ใช้
+        user.likesMovies.push(movieId);
+        await user.save();
+        return res.status(200).json({ message: "Movie liked successfully" });
+      } else {
+        return res.status(400).json({ message: "Movie is already liked" });
+      }
+    } else if (action === "unlike") {
+      if (isLiked) {  
+        // ถ้าผู้ใช้ได้กด like รายการนี้แล้ว ให้ลบ ObjectID ของรายการเรื่องนี้ออกจากฟิลด์ "likesMovies" ของผู้ใช้
+        user.likesMovies = likedMovies.filter((movie) => movie.toString() !== movieId);
 
-//     // เพิ่ม userId ลงในฟิลด์ likes ของโพสต์
-//     post.likes.push(userId);
-//     await post.save();
-
-//     res.status(200).json({ message: "Post liked successfully." });
-//   } catch (error) {
-//     res.status(500).json({ message: "Failed to like the post." });
-//   }
-// };
-
-// // Controller สำหรับการกด unlike โพสต์
-// const unlikePost = async (req, res) => {
-//   const postId = req.params.postId;
-//   const userId = req.params.userId;
-
-//   try {
-//     // ค้นหาโพสต์ที่ต้องการกด unlike
-//     const post = await PostInfo.findById(postId);
-
-//     // ตรวจสอบว่าผู้ใช้กด like หรือยัง
-//     const alreadyLiked = post.likes.includes(userId);
-
-//     if (!alreadyLiked) {
-//       return res.status(400).json({ message: "You haven't liked this post." });
-//     }
-
-//     // ลบ userId ออกจากฟิลด์ likes ของโพสต์
-//     post.likes = post.likes.filter((id) => id !== userId);
-//     await post.save();
-
-//     res.status(200).json({ message: "Post unliked successfully." });
-//   } catch (error) {
-//     res.status(500).json({ message: "Failed to unlike the post." });
-//   }
-// };
-
-// // เรียกใช้งาน controller ในเส้นทางของเว็บแอปพลิเคชันของคุณ
-// app.post("/posts/:postId/like/:userId", likePost);
-// app.post("/posts/:postId/unlike/:userId", unlikePost);
-
-
+        await user.save();
+        return res.status(200).json({ message: "Movie unliked successfully" });
+      } else {
+        return res.status(400).json({ message: "Movie is not liked" });
+      }
+    } else {
+      return res.status(400).json({ message: "Invalid action" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+  
 app.listen(5000, () => {
   console.log("Server Started");
 });
