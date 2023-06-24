@@ -34,10 +34,41 @@ const Home = () => {
         }
       });
   };
+  
+  const handleLike = async (postId) => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response = await fetch(`http://localhost:5000/posts/${postId}/like`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (response.ok) {
+        const updatedPost = await response.json();
+        const updatedPosts = allpost.map((post) => {
+          if (post._id === updatedPost._id) {
+            return updatedPost;
+          }
+          return post;
+        });
+        setAllPost(updatedPosts);
+      } else {
+        console.error("Failed to update post");
+      }
+      GetAllPost();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   useEffect(() => {
     GetAllPost();
   }, []);
+
+  
 
   return (
     <div>
@@ -47,6 +78,10 @@ const Home = () => {
         <h3> <IconContext.Provider value={{ color: "blue", size: "50px" }}> <CgFeed /> <span /> Feed</IconContext.Provider></h3>
         <br />
         {allpost.map((item) => {
+          
+           const isLiked = item.likes.includes(localStorage.getItem("userId"));
+           const likeCount = item.likes.length;
+
           return (
             <div className="post" key={item._id}>
               <div className="card m-2 ">
@@ -61,8 +96,16 @@ const Home = () => {
                     <p>{item.content}</p>
                     <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.score}/5</IconContext.Provider>
                     <div className="post-action d-flex justify-content-center m-2 ">
-                      <div className="m-2"><IconContext.Provider value={{ color: "skyblue", size: "30px" }}> <AiTwotoneLike /></IconContext.Provider></div>
-                      <div className="m-2"> <IconContext.Provider value={{ color: "black", size: "30px" }}> <AiOutlineDislike /></IconContext.Provider> </div>
+
+                      <div className="m-2" onClick={() => handleLike(item._id)}>
+                        <IconContext.Provider value={{ color: isLiked ? "skyblue" : "black", size: "30px" }}> 
+                          <AiTwotoneLike />
+                        </IconContext.Provider>
+                      </div>
+                      <div className="m-2">
+                        {likeCount} คนถูกใจ
+                      </div>
+
                     </div>
                   </div>
                 </div>

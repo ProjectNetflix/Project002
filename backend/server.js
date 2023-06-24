@@ -31,7 +31,7 @@ mongoose.connect(mongoUrl, {
 
 
 require("./User");
-require("./playlist");
+require("./Playlist");
 require("./Movie");
 
 
@@ -265,7 +265,7 @@ app.post('/search-users', (req, res) => {
 })
 
 //---------
-require("./playlist");
+require("./Playlist");
 const PlaylistInfo = mongoose.model("PlaylistInfo")
 
 app.get('/playlists', async (req, res) => {
@@ -616,7 +616,7 @@ app.post("/copyPlaylist/:playlistId", async (req, res) => {
 });
 
 // post
-require("./post");
+require("./Post");
 const PostInfo = mongoose.model('PostInfo');
 
 app.post("/createPost", async (req, res) => {
@@ -776,6 +776,98 @@ app.get('/allpost/following/:userid', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
+app.put("/posts/:postId/like", async (req, res) => {
+  const { postId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    // Find the post by postId
+    const post = await PostInfo.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Check if the user has already liked the post
+    const isLiked = post.likes.includes(userId);
+
+    if (isLiked) {
+      // User has already liked the post, so unlike it
+      post.likes = post.likes.filter((like) => like.toString() !== userId);
+    } else {
+      // User has not liked the post, so like it
+      if (!post.likes.includes(userId)) {
+        post.likes.push(userId);
+      }
+    }
+
+    // Save the updated post
+    await post.save();
+
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Controller สำหรับการกด like โพสต์
+// const likePost = async (req, res) => {
+//   const postId = req.params.postId;
+//   const userId = req.params.userId;
+
+//   try {
+//     // ค้นหาโพสต์ที่ต้องการกด like
+//     const post = await PostInfo.findById(postId);
+
+//     // ตรวจสอบว่าผู้ใช้กด like แล้วหรือยัง
+//     const alreadyLiked = post.likes.includes(userId);
+
+//     if (alreadyLiked) {
+//       return res.status(400).json({ message: "You already liked this post." });
+//     }
+
+//     // เพิ่ม userId ลงในฟิลด์ likes ของโพสต์
+//     post.likes.push(userId);
+//     await post.save();
+
+//     res.status(200).json({ message: "Post liked successfully." });
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to like the post." });
+//   }
+// };
+
+// // Controller สำหรับการกด unlike โพสต์
+// const unlikePost = async (req, res) => {
+//   const postId = req.params.postId;
+//   const userId = req.params.userId;
+
+//   try {
+//     // ค้นหาโพสต์ที่ต้องการกด unlike
+//     const post = await PostInfo.findById(postId);
+
+//     // ตรวจสอบว่าผู้ใช้กด like หรือยัง
+//     const alreadyLiked = post.likes.includes(userId);
+
+//     if (!alreadyLiked) {
+//       return res.status(400).json({ message: "You haven't liked this post." });
+//     }
+
+//     // ลบ userId ออกจากฟิลด์ likes ของโพสต์
+//     post.likes = post.likes.filter((id) => id !== userId);
+//     await post.save();
+
+//     res.status(200).json({ message: "Post unliked successfully." });
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to unlike the post." });
+//   }
+// };
+
+// // เรียกใช้งาน controller ในเส้นทางของเว็บแอปพลิเคชันของคุณ
+// app.post("/posts/:postId/like/:userId", likePost);
+// app.post("/posts/:postId/unlike/:userId", unlikePost);
+
 
 app.listen(5000, () => {
   console.log("Server Started");

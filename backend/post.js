@@ -18,6 +18,15 @@ const PostSchema = new mongoose.Schema(
             max: 5,
             default: 0,
         },
+
+        likes: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'UserInfo',
+            }
+        ]
+
+       
     },
     {
         collection: "PostInfo",
