@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { AiFillGithub, AiFillHeart } from "react-icons/ai";
+import { BiCameraMovie } from "react-icons/bi";
 import { BsHeartFill, BsPlusCircle, BsHeart } from "react-icons/bs";
 import "./Movie.css";
 import Navbar from "./Navbar";
@@ -22,7 +23,7 @@ const Movie = () => {
   const [movieId, setMovieId] = useState("");
   const [PlaylistId, setPlaylistId] = useState("");
   const [like, setLike] = useState({});
-  const [success , setSuccess] = useState(Boolean);
+  const [success, setSuccess] = useState(Boolean);
   const GetMovie = () => {
     // const options = {
     //     method: 'GET',
@@ -139,7 +140,7 @@ const Movie = () => {
       });
   };
 
-  const handleLikeToggle = (movieId , action) => {
+  const handleLikeToggle = (movieId, action) => {
     // โค้ดการส่งคำขอ PUT ไปยังเซิร์ฟเวอร์เพื่อกด like หรือ unlike หนัง
     //const Action = action;
     //const action = like[movieId] ? "unlike" : "like";
@@ -155,7 +156,7 @@ const Movie = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("new" ,data);
+        console.log("new", data);
         setSuccess(true);
       })
       .catch((error) => {
@@ -285,7 +286,11 @@ const Movie = () => {
     <div>
       <Navbar />
       <div className="container">
-        <h2 className="p-3" >Movie</h2>
+
+        <h2 className="p-3" >
+          <IconContext.Provider value={{ color: "orange", size: "50px" }}>
+            <BiCameraMovie/> <span/> Movie
+          </IconContext.Provider></h2>
 
         <form className="grid align-items-center col-4 p-3">
           <input className=" form-control" placeholder="Search for Movie ... " onChange={handleChange} value={word} />
@@ -332,12 +337,12 @@ const Movie = () => {
                   <div className="mt-auto m-3">
 
                     {isLiked ? (
-                      <button type="button" className="btn" onClick={() => handleLikeToggle(item._id,"unlike")}>
+                      <button type="button" className="btn" onClick={() => handleLikeToggle(item._id, "unlike")}>
                         <IconContext.Provider value={{ color: "red", size: "20px" }}>
                           <BsHeartFill />
                         </IconContext.Provider>
                       </button>) : (
-                      <button type="button" className="btn" onClick={() => handleLikeToggle(item._id,"like")}>
+                      <button type="button" className="btn" onClick={() => handleLikeToggle(item._id, "like")}>
                         <IconContext.Provider value={{ size: "20px" }}>
                           <BsHeart />
                         </IconContext.Provider>
