@@ -124,6 +124,8 @@ const Playlist = () => {
       <div className="container">
         <h2 className="p-3"> {playlist.title} </h2>
         <h4 className="p-3"> {playlist.desc} </h4>
+        {playlist.originalOwner && <h4 className="p-3"> Original by: {playlist.originalOwner.fname} {playlist.originalOwner.lname} </h4>}
+        {/* <h4 className="p-3"> {playlist.originalOwner} </h4> */}
 
         <div className="row-12">
           <div className="row card-group ">

@@ -141,11 +141,11 @@ const Follow = () => {
             });
     };
 
-    const CopyPlaylists = (e, playlistId) => {
+    const CopyPlaylists = (e, playlistId, originalOwner) => {
         e.preventDefault();
         const userId = localStorage.getItem("userId");
         const ownerplId = followid;
-        const body = { userId, ownerplId };
+        const body = { userId, ownerplId, playlistId, originalOwner };
 
         fetch(`http://localhost:5000/copyPlaylist/${playlistId}`, {
             method: 'POST',
@@ -302,7 +302,7 @@ const Follow = () => {
                                             <h5 className="card-title">{item.title}</h5>
                                             <p className="card-text">{item.desc}</p>
                                         </div>
-                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id)}><p className="h6">Add To <br/>My Movie Playlist</p></button>
+                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id, item.originalOwner)}><p className="h6">Add To <br/>My Movie Playlist</p></button>
                                     </Link>
                                 </div>
                             </div>

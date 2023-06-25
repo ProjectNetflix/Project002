@@ -17,6 +17,11 @@ const PlaylistsSchema = new mongoose.Schema(
             ref: 'UserInfo',
         },
 
+        originalOwner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'UserInfo',
+        },
+
     },
     {
         collection: "PlaylistInfo",

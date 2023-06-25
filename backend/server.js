@@ -281,13 +281,7 @@ app.get('/playlists', async (req, res) => {
 //POST /api/playlists สร้าง playlist 
 app.post('/createPlaylist', upload.single('image'), async (req, res) => {
   const { userId, title, desc, movie } = req.body;
-  //const imageURL = req.file.path.replace(/\\/g, '/')
   const imageURL = req.file ? req.file.path.replace(/\\/g, '/') : null;
-
-  // if (!!imageURL) {
-  //   const imageURL = req.file.path.replace(/\\/g, '/')
-  //   console.log(req.file);
-  // };
 
   try {
     const user = await UserInfo.findById(userId);
@@ -300,13 +294,11 @@ app.post('/createPlaylist', upload.single('image'), async (req, res) => {
       desc,
       movie,
       owner: user._id,
-      imageUrl: imageURL  // เพิ่มส่วนนี้เพื่อเก็บที่อยู่ของรูปภาพ
+      imageUrl: imageURL,
+      originalOwner: null, // ให้ค่าเริ่มต้นของ originalOwner เป็น null เมื่อสร้าง playlist ด้วย createPlaylist
     });
 
     await playlist.save();
-
-    // Add the playlist ID to the user's playlists array
-    //user.playlists.push(playlist._id);
     await user.save();
 
     res.status(200).json(playlist);
@@ -315,7 +307,6 @@ app.post('/createPlaylist', upload.single('image'), async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
-
 
 app.get('/playlists-user/:id', async (req, res) => {
   try {
@@ -354,10 +345,11 @@ app.put('/updatePlaylist/:id', upload.single('image'), async (req, res) => {
 // ============ get by id ===========
 app.get("/playlists/:id", async (req, res) => {
   try {
+    // const originalOwner = await UserInfo.findById(userId);
     const playlistId = req.params.id;
 
     // ค้นหาเพลย์ลิสต์ด้วย ID
-    const playlist = await PlaylistInfo.findById(playlistId);
+    const playlist = await PlaylistInfo.findById(playlistId).populate('originalOwner');
 
     if (!playlist) {
       return res.status(404).json({ error: "ไม่พบเพลย์ลิสต์" });
@@ -495,49 +487,45 @@ app.put("/removeMovieFromPlaylist/:playlistId", async (req, res) => {
 });
 
 // copy playlist ของ user อื่น
-app.post("/copyPlaylist/:playlistId", async (req, res) => {
-
+app.post('/copyPlaylist/:playlistId', async (req, res) => {
   try {
     const { playlistId } = req.params;
-    const { userId, ownerplId } = req.body; // รับ userId ของผู้ใช้ที่ต้องการคัดลอก playlist
+    const { userId, ownerplId } = req.body;
 
-    // ตรวจสอบว่าผู้ใช้เป็นคนที่เราติดตามหรือไม่
     const currentUser = await UserInfo.findById(userId);
     const checkAuthorization = currentUser.following.includes(ownerplId);
-    console.log(checkAuthorization, userId, ownerplId);
 
     if (!currentUser) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    // หา playlist ที่ต้องการคัดลอก
     const playlistToCopy = await PlaylistInfo.findById(playlistId);
     if (!playlistToCopy) {
-      return res.status(404).json({ error: "Playlist not found" });
+      return res.status(404).json({ error: 'Playlist not found' });
     }
 
     if (checkAuthorization) {
-
-      // คัดลอกข้อมูล playlist
       const newPlaylist = new PlaylistInfo({
         title: playlistToCopy.title,
         desc: playlistToCopy.desc,
         imageUrl: playlistToCopy.imageUrl,
         movie: playlistToCopy.movie,
         owner: currentUser._id,
+        originalOwner: playlistToCopy.originalOwner || playlistToCopy.owner, // เก็บค่า originalOwner ของ playlist ที่ถูกคัดลอก ถ้าไม่มีค่าในฟิลด์ originalOwner ให้ใช้ค่า owner แทน
       });
 
       await newPlaylist.save();
-      res.json({ status: "ok", message: "Playlist copied" });
-
+      res.json({
+        status: 'ok',
+        message: 'Playlist copied',
+        originalOwner: newPlaylist.originalOwner,
+      });
     } else {
-      res.json({ status: "error", message: "You don't have permission to access" });
-
+      res.json({ status: 'error', message: "You don't have permission to access" });
     }
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: 'Something went wrong' });
   }
 });
 
