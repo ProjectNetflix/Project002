@@ -157,16 +157,9 @@ const Movie = () => {
       .then((data) => {
         console.log("new" ,data);
         setSuccess(true);
-        //setMovie(data.data);
-        // setLike((prevLike) => ({
-        //   ...prevLike,
-        //   [movieId]: !prevLike[movieId],
-        // }));
-        // ดำเนินการเพิ่มข้อมูลหรือแสดงผลตามที่ต้องการ
       })
       .catch((error) => {
         console.error(error);
-        // จัดการข้อผิดพลาดที่เกิดขึ้น
       });
   };
 

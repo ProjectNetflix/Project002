@@ -2,8 +2,8 @@ import Navbar from "./Navbar";
 import "./MovieData.css";
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { AiTwotoneStar, AiOutlineComment } from "react-icons/ai";
-import { BsHeart } from "react-icons/bs";
+import { AiTwotoneStar, AiOutlineComment, AiOutlineLike, AiFillLike } from "react-icons/ai";
+import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { RiAccountPinCircleFill } from "react-icons/ri";
 import { IconContext } from "react-icons";
 import { MdRateReview } from "react-icons/md";
@@ -17,6 +17,9 @@ const MovieData = () => {
     const { Movieid } = location.state;
     const [Moviedata, setMoviedata] = useState([]);
     const [movielist, setMovie] = useState([]);
+    const [userData, setUserData] = useState([]);
+    const [success, setSuccess] = useState(Boolean);
+    const [isLiked, setisLiked] = useState(Boolean);
     const [state, setState] = useState({
         movie: "",
         content: "",
@@ -166,14 +169,100 @@ const MovieData = () => {
         }
     };
 
+    const handleLikeToggle = (movieId, action) => {
+        // โค้ดการส่งคำขอ PUT ไปยังเซิร์ฟเวอร์เพื่อกด like หรือ unlike หนัง
+        //const Action = action;
+        //const action = like[movieId] ? "unlike" : "like";
+        const userId = localStorage.getItem("userId"); // รหัสผู้ใช้
+
+        console.log(action, movieId);
+        fetch(`http://localhost:5000/users/${userId}/movies/${movieId}/${action}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ action }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("new", data);
+                setSuccess(true);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+    const GetUser = async () => {
+        let uid = localStorage.getItem("userId");
+
+        const requestOptions = {
+            method: "GET",
+            crossDomain: true,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "*",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        };
+
+        fetch(`http://localhost:5000/userData/${uid}`, requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.data === "token expired") {
+                    alert("Token expired, sign in again");
+                    window.localStorage.clear();
+                    window.location.href = "./signin";
+                } else {
+                    console.log("jj", data.data);
+                    setUserData(data.data);
+                    const Liked = data.data.likesMovies.includes(Movieid);
+                    setisLiked(Liked);
+                }
+            });
+    };
+
+    const handleLike = async (postId) => {
+        try {
+            const userId = localStorage.getItem("userId");
+            const response = await fetch(`http://localhost:5000/posts/${postId}/like`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId }),
+            });
+
+            if (response.ok) {
+                const updatedPost = await response.json();
+                const updatedPosts = post.map((post) => {
+                    if (post._id === updatedPost._id) {
+                        return updatedPost;
+                    }
+                    return post;
+                });
+                // setAllPost(updatedPosts);
+            } else {
+                console.error("Failed to update post");
+            }
+            setSuccess(true);
+            //GetAllPost();
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
 
     useEffect(() => {
+        GetUser();
         GetMovie();
         GetPost();
         GetMovies();
-    }, []);
+        setSuccess(false);
+    }, [success]);
 
     return (
+
         <div>
             <Navbar />
             <div className="container">
@@ -189,10 +278,20 @@ const MovieData = () => {
                     <div className="movie-info mt-2">
                         <h4>{Moviedata.name}</h4>
                         <p>{Moviedata.synopsis}</p>
-                        <p><IconContext.Provider value={{ color: "pink", size: "30px" }}>
-                            <BsHeart />
-                        </IconContext.Provider>
-                        </p>
+                        <div>
+                            {isLiked ? (
+                                <button type="button" className="btn" onClick={() => handleLikeToggle(Movieid, "unlike")}>
+                                    <IconContext.Provider value={{ color: "red", size: "25px" }}>
+                                        <BsHeartFill />
+                                    </IconContext.Provider>
+                                </button>) : (
+                                <button type="button" className="btn" onClick={() => handleLikeToggle(Movieid, "like")}>
+                                    <IconContext.Provider value={{ size: "25px" }}>
+                                        <BsHeart />
+                                    </IconContext.Provider>
+                                </button>)}
+                        </div>
+
                         <button className="btn btn-outline-danger m-3" data-bs-toggle="modal" data-bs-target="#CreatePost">
                             Review
                         </button>
@@ -212,8 +311,12 @@ const MovieData = () => {
                 <br />
 
                 {post.map((item) => {
+
+                    const isLiked = item.likes.includes(localStorage.getItem("userId"));
+                    const likeCount = item.likes.length;
+
                     return (
-                        <div className="post ">
+                        <div className="post " key={item._id}>
                             <div className="card m-2 ">
                                 <div className="card-body body-post">
                                     <div className=" post-info m-2 ">
@@ -233,13 +336,13 @@ const MovieData = () => {
                                             <AiTwotoneStar /> {item.score}/5
                                         </IconContext.Provider>
                                     </div>
-                                    <div className="post-action d-flexed m-2">
-                                        <IconContext.Provider
-                                            value={{ color: "red", size: "25px" }}
-                                        >
 
-                                            <BsHeart />
-                                        </IconContext.Provider>
+                                    <div className="post-action d-flexed m-2" onClick={() => handleLike(item._id)}>
+                                        {isLiked ? (<IconContext.Provider value={{ color: "blue", size: "20px" }}>
+                                            <AiFillLike /> <span /> {likeCount} <span /> Like
+                                        </IconContext.Provider>) : (<IconContext.Provider value={{  size: "20px" }}>
+                                            <AiOutlineLike /> <span /> {likeCount} <span /> Like
+                                        </IconContext.Provider>)}
                                     </div>
                                 </div>
                             </div>

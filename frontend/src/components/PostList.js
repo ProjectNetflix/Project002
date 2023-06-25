@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { IconContext } from "react-icons";
-import { AiTwotoneStar } from "react-icons/ai";
+import { AiTwotoneStar,AiOutlineLike,AiFillLike } from "react-icons/ai";
 import { MdRateReview } from "react-icons/md";
 import { BsHeartFill, BsHeart } from "react-icons/bs";
 import { MdOutlineFeaturedPlayList, MdReviews } from "react-icons/md";
@@ -312,17 +312,11 @@ const PostList = () => {
                     <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.score}/5</IconContext.Provider>
 
                     <div className=" m-2" onClick={() => handleLike(item._id)}>
-                      {isLiked ? (
-                        <button className="btn"><IconContext.Provider value={{ color: "red", size: "20px" }}>
-                          <BsHeartFill /> <span /> {likeCount} <span /> Like
-                        </IconContext.Provider>
-                        </button>
-                      ) : (
-                        <button className="btn"><IconContext.Provider value={{ color: "red", size: "20px" }}>
-                          <BsHeart /> <span /> {likeCount} <span /> Like
-                        </IconContext.Provider>
-                        </button>
-                      )}
+                      {isLiked ? (<IconContext.Provider value={{ color: "blue", size: "20px" }}>
+                        <AiFillLike /> <span /> {likeCount} <span /> Like
+                      </IconContext.Provider>) : (<IconContext.Provider value={{ size: "20px" }}>
+                        <AiOutlineLike /> <span /> {likeCount} <span /> Like
+                      </IconContext.Provider>)}
 
                     </div>
                     <div className="post-action d-flex justify-content-end ">
