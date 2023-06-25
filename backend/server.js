@@ -474,7 +474,7 @@ app.put("/removeMovieFromPlaylist/:playlistId", async (req, res) => {
     const playlistId = req.params.playlistId;
     const movieId = req.body.movieId;
     const playlist = await PlaylistInfo.findById(playlistId);    // ค้นหา Playlist ด้วย ID
-    console.lod(movieId);
+    console.log(movieId);
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
     }

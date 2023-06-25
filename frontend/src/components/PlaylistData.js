@@ -5,6 +5,8 @@ import { Link, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 // import "./PlaylistList.css";
+import { TiDeleteOutline } from "react-icons/ti"
+import { IconContext } from "react-icons";
 const MySwal = withReactContent(Swal);
 
 const Playlist = () => {
@@ -12,7 +14,7 @@ const Playlist = () => {
   const [movie, setMovie] = useState([]);
   const location = useLocation();
   const { plid } = location.state;
-
+  const [success ,setSuccess] = useState(false);
   const GetMovie = () => {
     // const options = {
     //   method: 'GET',
@@ -65,10 +67,56 @@ const Playlist = () => {
       });
   };
 
+  const DeleteMovie = (e, movieid) => {
+    e.preventDefault();
+    console.log(movieid);
+
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:5000/removeMovieFromPlaylist/${plid}`, {
+          method: "PUT",
+          crossDomain: true,
+          headers: {
+            "Content-Type": "application/json",
+          }, body: JSON.stringify({ movieId: movieid }),
+        })
+
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data) {
+              setSuccess(true);
+              MySwal.fire({
+                text: "Remove Successful !",
+                icon: "success",
+                showConfirmButton: true,
+              });
+
+            } else {
+              MySwal.fire({
+                text: "error",
+                icon: "error",
+                showConfirmButton: true,
+              });
+            }
+          });
+      }
+    });
+  };
+
   useEffect(() => {
     GetPlaylist();
     //GetMovie();
-  }, []);
+    setSuccess(false);
+  }, [success]);
 
   return (
     <div>
@@ -84,9 +132,10 @@ const Playlist = () => {
                 <div className="col" key={item.netflix_id}>
 
                   <div className="card">
-                    <Link to={{ pathname: `/movies/${item._id}`, state: { Movieid: item._id }, }} className="link-no-underline">
 
-                      <div className="card-body">
+                    <div className="card-body">
+                      <Link to={{ pathname: `/movies/${item._id}`, state: { Movieid: item._id }, }} className="link-no-underline">
+
                         <img
                           src={item.pic}
                           className="card-img-top playlist-image"
@@ -105,10 +154,15 @@ const Playlist = () => {
                           <span>{item.title_date}</span>
                           <span>{item.year}</span> */}
                         </div>
+                      </Link>
+                    </div>
 
-                      </div>
-                    </Link>
+                    <div >
+                      <button className="btn btn-outline-danger mb-3" onClick={(e) => DeleteMovie(e, item._id)}>
+                        Remove
+                      </button>
 
+                    </div>
                   </div>
                 </div>
               );
