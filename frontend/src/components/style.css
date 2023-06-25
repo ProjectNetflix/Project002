@@ -97,10 +97,10 @@ html,
     text-align: center;
 }
 
-/* .form-content {
+.form-content {
     flex: 1;
     width: 50%;
-} */
+}
 
 .forgot-password,
 .forgot-password a {
