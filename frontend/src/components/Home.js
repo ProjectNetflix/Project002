@@ -1,5 +1,5 @@
 import Navbar from "./Navbar"
-import './Style.css'
+// import './Style.css'
 import { useState, useEffect } from "react"
 import { IconContext } from "react-icons";
 import { AiTwotoneStar, AiOutlineLike, AiFillLike } from "react-icons/ai";
@@ -183,7 +183,7 @@ const Home = () => {
         <h3> <IconContext.Provider value={{ color: "blue", size: "50px" }}> <CgFeed /> <span /> Feed</IconContext.Provider></h3>
         <br />
 
-        <form className="container d-flex">
+        <form className="container d-flex ">
 
           <div className="form-content ">
             <label>Movie Picture</label>
@@ -194,7 +194,7 @@ const Home = () => {
             )}
           </div>
 
-          <div className="form-content">
+          <div className="form-content w-50">
             <div className="form-group mt-2">
               <label>Moive</label>
               <select className="custom-select" onChange={inputValue("movie")} >

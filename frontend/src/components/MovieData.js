@@ -21,7 +21,7 @@ const MovieData = () => {
     const [success, setSuccess] = useState(Boolean);
     const [isLiked, setisLiked] = useState(Boolean);
     const [state, setState] = useState({
-        movie: "",
+        movie: Movieid ,
         content: "",
         owner: localStorage.getItem("userId"),
         score: "",
@@ -114,7 +114,7 @@ const MovieData = () => {
 
     const CreatePost = (e) => {
         e.preventDefault();
-
+        console.log(state);
         if (movie === "" || owner === "" || content === "" || score === "") {
             MySwal.fire({
                 text: "Please enter data",
@@ -156,7 +156,7 @@ const MovieData = () => {
                             showConfirmButton: false,
                             timer: 3000,
                         });
-                        window.location.reload();
+                        //window.location.reload();
                     } else {
                         MySwal.fire({
                             text: "Error",
