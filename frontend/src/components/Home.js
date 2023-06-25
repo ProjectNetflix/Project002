@@ -217,11 +217,13 @@ const Home = () => {
             </div>
 
             <div className="form-group mt-2">
-              <label>Score</label>
+              <label>Score (0 - 5)</label>
               <input
-                type="text"
+                type="number"
                 className="form-control mt-1"
                 onChange={inputValue("score")}
+                min={0}
+                max={5}
               />
             </div>
 

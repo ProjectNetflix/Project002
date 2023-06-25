@@ -303,7 +303,7 @@ const PlaylistList = () => {
       <br/>
       <h4>
         <IconContext.Provider value={{ color: "green", size: "35px" }}>
-          <RiPlayList2Line /> <span> </span> MY PLAYLIST MOVIE
+          <RiPlayList2Line /> <span> </span> MY MOVIE PLAYLIST 
         </IconContext.Provider>
       </h4>
       <br/>

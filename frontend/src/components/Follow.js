@@ -277,7 +277,7 @@ const Follow = () => {
 
                 <br />
                 <h4><IconContext.Provider value={{ color: "green", size: "35px" }}>
-                    <RiPlayList2Line /> <span> </span> {follow.fname} {follow.lname}'s PLAYLIST MOVIE
+                    <RiPlayList2Line /> <span> </span> {follow.fname} {follow.lname}'s MOVIE PLAYLIST 
                 </IconContext.Provider></h4>
                 <br />
 
@@ -302,7 +302,7 @@ const Follow = () => {
                                             <h5 className="card-title">{item.title}</h5>
                                             <p className="card-text">{item.desc}</p>
                                         </div>
-                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id)}>Copy</button>
+                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id)}><p className="h6">Add To <br/>My Movie Playlist</p></button>
                                     </Link>
                                 </div>
                             </div>

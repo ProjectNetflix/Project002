@@ -20,8 +20,10 @@ const MovieData = () => {
     const [userData, setUserData] = useState([]);
     const [success, setSuccess] = useState(Boolean);
     const [isLiked, setisLiked] = useState(Boolean);
+    const [avgscore, setAvgscore] = useState();
+
     const [state, setState] = useState({
-        movie: Movieid ,
+        movie: Movieid,
         content: "",
         owner: localStorage.getItem("userId"),
         score: "",
@@ -48,7 +50,7 @@ const MovieData = () => {
             .then((res) => res.json())
             .then((data) => {
                 if (data) {
-                    console.log(data, "Playlist User");
+                    //console.log(data, "Playlist User");
                     setMovie(data);
                 }
             })
@@ -59,7 +61,7 @@ const MovieData = () => {
     };
 
     const GetMovie = async () => {
-        console.log(Movieid);
+        //console.log(Movieid);
 
         const requestOptions = {
             method: "GET",
@@ -74,7 +76,7 @@ const MovieData = () => {
         fetch(`http://localhost:5000/movie/${Movieid}`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
-                console.log("check", data);
+                //console.log("check", data);
                 if (data) {
                     //console.log(data, "Moive");
                     setMoviedata(data);
@@ -104,8 +106,17 @@ const MovieData = () => {
             .then((res) => res.json())
             .then((data) => {
                 if (data) {
-                    setPost(data);
-                    console.log(data);
+                    if (data === "" || data === null || data.length === 0) {
+                        setAvgscore(Number(0));
+                    } else {
+                        setPost(data);
+                        console.log(data);
+                        const scores = data.map((post) => Number(post.score));
+                        const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+                        setAvgscore(averageScore.toFixed(2));
+                        console.log("Average Score:", averageScore.toFixed(2));
+                    }
+
                 } else {
                     alert("Token expired, sign in again");
                 }
@@ -156,7 +167,7 @@ const MovieData = () => {
                             showConfirmButton: false,
                             timer: 3000,
                         });
-                        //window.location.reload();
+                        window.location.reload();
                     } else {
                         MySwal.fire({
                             text: "Error",
@@ -215,7 +226,7 @@ const MovieData = () => {
                     window.localStorage.clear();
                     window.location.href = "./signin";
                 } else {
-                    console.log("jj", data.data);
+                    //console.log("jj", data.data);
                     setUserData(data.data);
                     const Liked = data.data.likesMovies.includes(Movieid);
                     setisLiked(Liked);
@@ -290,6 +301,23 @@ const MovieData = () => {
                                         <BsHeart />
                                     </IconContext.Provider>
                                 </button>)}
+
+
+                        </div>
+
+                        <div className="m-2">
+                            <IconContext.Provider
+                                value={{ color: "yellow", size: "25px" }}
+                            >
+
+                                <AiTwotoneStar /> Average Score: {avgscore}/5
+                            </IconContext.Provider>
+                            <span />
+                            <IconContext.Provider
+                                value={{ color: "black", size: "25px" }}
+                            >
+                                <RiAccountPinCircleFill /> Number of user reviews: {post.length}
+                            </IconContext.Provider>
                         </div>
 
                         <button className="btn btn-outline-danger m-3" data-bs-toggle="modal" data-bs-target="#CreatePost">
@@ -324,8 +352,7 @@ const MovieData = () => {
                                             <IconContext.Provider
                                                 value={{ color: "white", size: "25px" }}
                                             >
-                                                <RiAccountPinCircleFill /> <span /> {item.owner.fname}
-                                                {item.owner.lname}
+                                                <RiAccountPinCircleFill /> <span /> {item.owner.fname} {item.owner.lname}
                                             </IconContext.Provider>
                                         </h5>
                                         <p>{item.content}</p>
@@ -340,7 +367,7 @@ const MovieData = () => {
                                     <div className="post-action d-flexed m-2" onClick={() => handleLike(item._id)}>
                                         {isLiked ? (<IconContext.Provider value={{ color: "blue", size: "20px" }}>
                                             <AiFillLike /> <span /> {likeCount} <span /> Like
-                                        </IconContext.Provider>) : (<IconContext.Provider value={{  size: "20px" }}>
+                                        </IconContext.Provider>) : (<IconContext.Provider value={{ size: "20px" }}>
                                             <AiOutlineLike /> <span /> {likeCount} <span /> Like
                                         </IconContext.Provider>)}
                                     </div>
@@ -401,12 +428,14 @@ const MovieData = () => {
                                         </div>
 
                                         <div className="form-group mt-2">
-                                            <label>Score</label>
+                                            <label>Score (0 - 5)</label>
                                             <input
-                                                type="text"
+                                                type="number"
                                                 className="form-control mt-1"
                                                 value={score}
                                                 onChange={inputValue("score")}
+                                                min={0}
+                                                max={5}
                                             />
                                         </div>
                                     </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { IconContext } from "react-icons";
-import { AiTwotoneStar,AiOutlineLike,AiFillLike } from "react-icons/ai";
+import { AiTwotoneStar, AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { MdRateReview } from "react-icons/md";
 import { BsHeartFill, BsHeart } from "react-icons/bs";
 import { MdOutlineFeaturedPlayList, MdReviews } from "react-icons/md";
@@ -390,12 +390,14 @@ const PostList = () => {
                     </div>
 
                     <div className="form-group mt-2">
-                      <label>Score</label>
+                      <label>Score (0 - 5)</label>
                       <input
-                        type="text"
+                        type="number"
                         className="form-control mt-1"
                         value={score}
                         onChange={inputValue("score")}
+                        min={0}
+                        max={5}
                       />
                     </div>
                   </div>
