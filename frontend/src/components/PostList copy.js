@@ -4,7 +4,7 @@ import withReactContent from "sweetalert2-react-content";
 import { IconContext } from "react-icons";
 import { AiTwotoneStar } from "react-icons/ai";
 import { MdRateReview } from "react-icons/md";
-import { BsHeartFill, BsHeart } from "react-icons/bs";
+import { BsHeartFill } from "react-icons/bs";
 import { MdOutlineFeaturedPlayList, MdReviews } from "react-icons/md";
 
 const PostList = () => {
@@ -27,16 +27,16 @@ const PostList = () => {
   const { movie, content, owner, score } = state;
 
   const CurrentPost = (e, postid) => {
-    //e.preventDefault();
+    e.preventDefault();
     setPostId(postid);
     const selectedPost = allpost.find((item) => item._id === postid);
     setState({
       ...state,
-      movie: selectedPost.movie._id,
+      movie: selectedPost.movie.name,
       content: selectedPost.content,
       score: selectedPost.score,
     });
-    console.log("gg", state);
+    console.log(state);
   };
 
   const inputValue = (name) => (event) => {
@@ -108,16 +108,14 @@ const PostList = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          setSuccess(true);
           MySwal.fire({
             text: "Post updated successfully",
             icon: "success",
             showConfirmButton: false,
             timer: 2000,
           });
-          //window.location.reload();
+          window.location.reload();
         }
-
       })
       .catch((error) => {
         console.log(error);
@@ -310,20 +308,11 @@ const PostList = () => {
                     <h4>{item.movie.name}</h4>
                     <p>{item.content}</p>
                     <IconContext.Provider value={{ color: "yellow", size: "25px" }}> <AiTwotoneStar /> {item.score}/5</IconContext.Provider>
-
+                    
                     <div className=" m-2" onClick={() => handleLike(item._id)}>
-                      {isLiked ? (
-                        <button className="btn"><IconContext.Provider value={{ color: "red", size: "20px" }}>
-                          <BsHeartFill /> <span /> {likeCount} <span /> Like
-                        </IconContext.Provider>
-                        </button>
-                      ) : (
-                        <button className="btn"><IconContext.Provider value={{ color: "red", size: "20px" }}>
-                          <BsHeart /> <span /> {likeCount} <span /> Like
-                        </IconContext.Provider>
-                        </button>
-                      )}
-
+                      <IconContext.Provider value={{ color: isLiked ? "red" : "black", size: "20px" }}>
+                        <BsHeartFill /> <span /> {likeCount} <span /> Like
+                      </IconContext.Provider>
                     </div>
                     <div className="post-action d-flex justify-content-end ">
 
@@ -335,6 +324,8 @@ const PostList = () => {
 
                   </div>
                 </div>
+
+
               </div>
             </div>
           );
@@ -376,7 +367,7 @@ const PostList = () => {
                         className="custom-select"
                         onChange={inputValue("movie")}
                       >
-                        <option value="">Choose</option>
+                        <option value="1">Choose</option>
                         {movielist.map((item) => (
                           <option key={item._id} value={item._id}>
                             {item.name}
@@ -461,9 +452,7 @@ const PostList = () => {
 
                     <select className="custom-select" value={movie} onChange={inputValue("movie")} disabled={true}>
                       {movielist.map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.name}
-                        </option>
+                        <option key={item._id} value={item._id}>{item.name}</option>
                       ))}
                     </select>
                   </div>

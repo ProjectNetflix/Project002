@@ -11,9 +11,7 @@ const MySwal = withReactContent(Swal);
 
 const PlaylistList = () => {
   const [playlist, setPlaylist] = useState([]);
-  // const [pic, setPic] = useState();
-  // const [title, setTitle] = useState();
-  // const [desc, setDesc] = useState();
+  const [success , setSuccess] = useState(false);
   const DefaultPic = "https://cdn.icon-icons.com/icons2/2632/PNG/512/movies_icon_159164.png";
 
   const [state, setState] = useState({
@@ -65,7 +63,7 @@ const PlaylistList = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          console.log(data, "Playlist User");
+          //console.log(data, "Playlist User");
           setPlaylist(data);
         }
       })
@@ -153,12 +151,13 @@ const PlaylistList = () => {
           .then((data) => {
             console.log(data);
             if (data.message) {
+              setSuccess(true);
               MySwal.fire({
                 text: "ลบเพลย์ลิสต์เรียบร้อยแล้ว",
                 icon: "success",
                 showConfirmButton: true,
               });
-              window.location.reload();
+              //window.location.reload();
 
             } else {
               MySwal.fire({
@@ -201,20 +200,21 @@ const PlaylistList = () => {
         .then((data) => {
           console.log(data, "Playlist");
           if (data) {
+            setSuccess(true);
             MySwal.fire({
               text: "Edit Success",
               icon: "success",
               showConfirmButton: false,
               timer: 3000,
             });
-            window.location.reload();
+            //window.location.reload();
 
           } else {
             MySwal.fire({
               text: "Error",
               icon: "error",
               timer: 3000,
-              //showConfirmButton: true,
+              showConfirmButton: true,
 
             });
           }
@@ -224,7 +224,8 @@ const PlaylistList = () => {
 
   useEffect(() => {
     GetPlaylist();
-  }, []);
+    setSuccess(false);
+  }, [success]);
 
   return (
     <div className="container">
@@ -289,6 +290,7 @@ const PlaylistList = () => {
               <button
                 type="submit"
                 className="btn btn-primary"
+                data-bs-dismiss="modal"
                 onClick={CreatePlaylist}
               >
                 Save

@@ -78,7 +78,7 @@ export default function Navbar() {
     fetch(`http://localhost:5000/userData`, requestOptions)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userData");
+        //console.log(data, "userData");
         if (data.data === "token expired") {
           alert("Token expired signin again");
           window.localStorage.clear();

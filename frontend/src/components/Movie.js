@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 const MySwal = withReactContent(Swal);
 
 const Movie = () => {
+
+  const [userData, setUserData] = useState([]);
   const [playlist, setPlaylist] = useState([]);
   const [word, setWord] = useState("");
   const [movie, setMovie] = useState([]);
@@ -20,7 +22,7 @@ const Movie = () => {
   const [movieId, setMovieId] = useState("");
   const [PlaylistId, setPlaylistId] = useState("");
   const [like, setLike] = useState({});
-
+  const [success , setSuccess] = useState(Boolean);
   const GetMovie = () => {
     // const options = {
     //     method: 'GET',
@@ -36,6 +38,34 @@ const Movie = () => {
     //         console.log(data.results);
     //     })
     //     .catch(err => console.error(err));
+  };
+
+  const GetUser = async () => {
+    let uid = localStorage.getItem("userId");
+
+    const requestOptions = {
+      method: "GET",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+
+    fetch(`http://localhost:5000/userData/${uid}`, requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data === "token expired") {
+          alert("Token expired, sign in again");
+          window.localStorage.clear();
+          window.location.href = "./signin";
+        } else {
+          console.log("joy", data.data);
+          setUserData(data.data);
+        }
+      });
   };
 
   const GetPlaylist = async () => {
@@ -109,11 +139,13 @@ const Movie = () => {
       });
   };
 
-  const handleLikeToggle = (movieId) => {
+  const handleLikeToggle = (movieId , action) => {
     // โค้ดการส่งคำขอ PUT ไปยังเซิร์ฟเวอร์เพื่อกด like หรือ unlike หนัง
-    const action = like[movieId] ? "unlike" : "like";
+    //const Action = action;
+    //const action = like[movieId] ? "unlike" : "like";
     const userId = localStorage.getItem("userId"); // รหัสผู้ใช้
 
+    console.log(action, movieId);
     fetch(`http://localhost:5000/users/${userId}/movies/${movieId}/${action}`, {
       method: "PUT",
       headers: {
@@ -123,11 +155,13 @@ const Movie = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        setLike((prevLike) => ({
-          ...prevLike,
-          [movieId]: !prevLike[movieId],
-        }));
+        console.log("new" ,data);
+        setSuccess(true);
+        //setMovie(data.data);
+        // setLike((prevLike) => ({
+        //   ...prevLike,
+        //   [movieId]: !prevLike[movieId],
+        // }));
         // ดำเนินการเพิ่มข้อมูลหรือแสดงผลตามที่ต้องการ
       })
       .catch((error) => {
@@ -229,13 +263,14 @@ const Movie = () => {
               //timer: 2000,
             });
           } else {
+            setSuccess(true);
             MySwal.fire({
               text: "Success",
               icon: "success",
               showConfirmButton: true,
               timer: 3000,
             });
-            window.location.reload();
+            //window.location.reload();
 
           }
         })
@@ -249,7 +284,9 @@ const Movie = () => {
     //GetMovie();
     GetPlaylist();
     GetMovies();
-  }, []);
+    GetUser();
+    setSuccess(false);
+  }, [success]);
 
   return (
     <div>
@@ -263,6 +300,9 @@ const Movie = () => {
 
         <div className="row card-group">
           {searchMovies(movie).map((item) => {
+
+            const isLiked = userData.likesMovies.includes(item._id);
+
             return (
               <div className="col" key={item.netflix_id}>
                 <div className="card">
@@ -298,19 +338,17 @@ const Movie = () => {
 
                   <div className="mt-auto m-3">
 
-                    {like[movieId] ? (
-                      <button type="button" className="btn" onClick={handleLikeToggle}>
+                    {isLiked ? (
+                      <button type="button" className="btn" onClick={() => handleLikeToggle(item._id,"unlike")}>
                         <IconContext.Provider value={{ color: "red", size: "20px" }}>
                           <BsHeartFill />
                         </IconContext.Provider>
-                      </button>
-                    ) : (
-                      <button type="button" className="btn" onClick={handleLikeToggle}>
+                      </button>) : (
+                      <button type="button" className="btn" onClick={() => handleLikeToggle(item._id,"like")}>
                         <IconContext.Provider value={{ size: "20px" }}>
                           <BsHeart />
                         </IconContext.Provider>
-                      </button>
-                    )}
+                      </button>)}
 
                     <button className="btn" data-bs-toggle="modal" data-bs-target="#ATP" onClick={(e) => setMovieId(item._id)}>
                       <IconContext.Provider value={{ color: "black", size: "20px" }}>

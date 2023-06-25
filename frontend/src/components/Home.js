@@ -5,12 +5,14 @@ import { IconContext } from "react-icons";
 import { AiTwotoneStar, AiTwotoneLike, AiTwotoneDislike, AiOutlineDislike } from "react-icons/ai";
 import { CgFeed } from "react-icons/cg";
 import { BiDislike, BiLike } from "react-icons/bi";
+import { BsHeartFill, BsPlusCircle, BsHeart } from "react-icons/bs";
 
 const Home = () => {
 
   const [allpost, setAllPost] = useState([]);
   const [postId, setPostId] = useState();
   const [post, setPost] = useState([]);
+  const [success , setSuccess] = useState(false);
 
   const GetAllPost = async () => {
     const requestOptions = {
@@ -58,7 +60,8 @@ const Home = () => {
       } else {
         console.error("Failed to update post");
       }
-      GetAllPost();
+      setSuccess(true);
+      //GetAllPost();
     } catch (error) {
       console.error("Error:", error);
     }
@@ -66,9 +69,8 @@ const Home = () => {
 
   useEffect(() => {
     GetAllPost();
-  }, []);
-
-  
+    setSuccess(false);
+  }, [success]);
 
   return (
     <div>
@@ -98,12 +100,9 @@ const Home = () => {
                     <div className="post-action d-flex justify-content-center m-2 ">
 
                       <div className="m-2" onClick={() => handleLike(item._id)}>
-                        <IconContext.Provider value={{ color: isLiked ? "skyblue" : "black", size: "30px" }}> 
-                          <AiTwotoneLike />
+                        <IconContext.Provider value={{ color: isLiked ? "red" : "black", size: "20px" }}> 
+                          <BsHeartFill /> <span/> {likeCount} <span/> Like
                         </IconContext.Provider>
-                      </div>
-                      <div className="m-2">
-                        {likeCount} คนถูกใจ
                       </div>
 
                     </div>
