@@ -53,7 +53,7 @@ const EditProfile = (props) => {
                     window.localStorage.clear();
                     window.location.href = "./signin";
                 } else {
-                    console.log(data.data);
+                    // console.log(data.data);
                     setUserData(data.data);
                     setFollower(data.data.follower);
                     setFollowing(data.data.following);
@@ -92,8 +92,8 @@ const EditProfile = (props) => {
                 }
             })
             .catch((error) => {
-                console.error(error);
-                alert("เกิดข้อผิดพลาดในการรับข้อมูล");
+                // console.error(error);
+                alert("user error");
             });
     };
 
@@ -101,7 +101,7 @@ const EditProfile = (props) => {
     const EditUserData = (e) => {
         e.preventDefault();
         let uid = localStorage.getItem("userId");
-        console.log(state.pic);
+        // console.log(state.pic);
 
         const formData = new FormData();
         formData.append("image", pic);
@@ -119,7 +119,7 @@ const EditProfile = (props) => {
                 if (data) {
                     MySwal.fire({
                         text: "Profile updated successfully",
-                        icon: "success",
+                        // icon: "success",
                         showConfirmButton: false,
                         timer: 2000,
                     });
@@ -129,8 +129,8 @@ const EditProfile = (props) => {
                 }
             })
             .catch((error) => {
-                console.error(error);
-                alert("เกิดข้อผิดพลาดในการแก้ไข");
+                // console.error(error);
+                alert("edit error");
             });
     };
 

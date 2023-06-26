@@ -14,7 +14,7 @@ const SignIn = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(email, password);
+    // console.log(email, password);
     fetch("http://localhost:5000/login", {
       method: "POST",
       crossDomain: true,
@@ -30,7 +30,7 @@ const SignIn = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userRegister");
+        // console.log(data, "userRegister");
         if (data.status === "ok") {
 
           // MySwal.fire({
@@ -47,7 +47,7 @@ const SignIn = () => {
 
         } else {
           MySwal.fire({
-            icon: "error",
+            // icon: "error",
             text: data.status,
             showConfirmButton: true,
           })

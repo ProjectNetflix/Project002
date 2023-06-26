@@ -70,11 +70,11 @@ app.post("/signup", async (req, res) => {
     const oldEmail = await UserInfo.findOne({ email });
 
     if (oldEmail) {
-      return res.json({ status: "อีเมลล์นี้ถูกใช้แล้ว" });
+      return res.json({ status: "Email already in use" });
     }
 
     if (password.length < 8) {
-      return res.json({ status: "กรุณากรอก Password ให้ถูกต้อง" });
+      return res.json({ status: "Please enter password correctly." });
     }
 
     await UserInfo.create({
@@ -96,7 +96,7 @@ app.post("/login", async (req, res) => {
 
   const user = await UserInfo.findOne({ email });
   if (!user) {
-    return res.json({ status: "ไม่พบผู้ใช้" });
+    return res.json({ status: "User not found" });
   }
   if (await bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ email: user.email, userId: user._id }, JWT_SECRET, {
@@ -109,7 +109,7 @@ app.post("/login", async (req, res) => {
       return res.json({ status: "error" });
     }
   }
-  res.json({ status: "รหัสผ่านไม่ถูกต้อง" });
+  res.json({ status: "Incorrect password" });
 });
 
 
@@ -166,7 +166,7 @@ app.put('/updateUser/:id', upload.single('image'), async (req, res) => {
   try {
     const user = await UserInfo.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: 'ไม่พบเพลย์ลิสต์' });
+      return res.status(404).json({ message: 'Playlist not found' });
     }
     user.imageUrl = imageURL || user.imageUrl;
     user.fname = fname || user.fname;
@@ -176,7 +176,7 @@ app.put('/updateUser/:id', upload.single('image'), async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'ข้อผิดพลาดของเซิร์ฟเวอร์' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -218,15 +218,15 @@ app.put("/:id/follow", async (req, res) => {
       if (!user.follower.includes(req.body.userId)) {
         await user.updateOne({ $push: { follower: req.body.userId } });
         await currentUser.updateOne({ $push: { following: req.params.id } });
-        res.status(200).json("กำลังติดตาม");
+        res.status(200).json("Is following");
       } else {
-        res.status(403).json("ติดตามอยู่แล้ว");
+        res.status(403).json("Already followed");
       }
     } catch (err) {
       res.status(500).json(err);
     }
   } else {
-    res.status(403).json("ติดตามตัวเองไม่ได้");
+    res.status(403).json("Server error");
   }
 });
 
@@ -238,17 +238,17 @@ app.put("/:id/unfollow", async (req, res) => {
       if (user.follower.includes(req.body.userId)) {
         await user.updateOne({ $pull: { follower: req.body.userId } });
         await currentUser.updateOne({ $pull: { following: req.params.id } });
-        res.status(200).json("เลิกติดตามแล้ว");
+        res.status(200).json("Unfollow");
 
       } else {
         //res.send({ status: 'error', data: "Movie already exists in the playlist" });
-        res.status(403).json("คุณไม่ได้ติดตาม");
+        res.status(403).json("You don't follow");
       }
     } catch (err) {
       res.status(500).json(err);
     }
   } else {
-    res.status(403).json("คุณไม่สามารถยกเลิกการติดตามตัวคุณเอง");
+    res.status(403).json("Server error");
   }
 });
 
@@ -325,7 +325,7 @@ app.put('/updatePlaylist/:id', upload.single('image'), async (req, res) => {
   try {
     const playlist = await PlaylistInfo.findById(req.params.id);
     if (!playlist) {
-      return res.status(404).json({ message: 'ไม่พบเพลย์ลิสต์' });
+      return res.status(404).json({ message: 'Playlist not found' });
     }
 
     playlist.title = title || playlist.title;
@@ -338,7 +338,7 @@ app.put('/updatePlaylist/:id', upload.single('image'), async (req, res) => {
     res.status(200).json(playlist);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'ข้อผิดพลาดของเซิร์ฟเวอร์' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -352,7 +352,7 @@ app.get("/playlists/:id", async (req, res) => {
     const playlist = await PlaylistInfo.findById(playlistId).populate('originalOwner');
 
     if (!playlist) {
-      return res.status(404).json({ error: "ไม่พบเพลย์ลิสต์" });
+      return res.status(404).json({ error: "Playlist not found" });
     }
 
     // await PlaylistInfo.deleteOne({ _id: playlistId });
@@ -360,7 +360,7 @@ app.get("/playlists/:id", async (req, res) => {
     //res.json({ message: "ลบเพลย์ลิสต์เรียบร้อยแล้ว" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -372,16 +372,16 @@ app.delete("/playlists/:id", async (req, res) => {
     const playlist = await PlaylistInfo.findById(playlistId);
 
     if (!playlist) {
-      return res.status(404).json({ error: "ไม่พบเพลย์ลิสต์" });
+      return res.status(404).json({ error: "Playlist not found" });
     }
 
     // ลบเพลย์ลิสต์
     await PlaylistInfo.deleteOne({ _id: playlistId });
 
-    res.json({ message: "ลบเพลย์ลิสต์เรียบร้อยแล้ว" });
+    res.json({ message: "Playlist deleted successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -394,13 +394,13 @@ app.get("/movie/:id", async (req, res) => {
     const movie = await movieInfo.findById(movieId);
 
     if (!movie) {
-      return res.status(404).json({ error: "ไม่พบข้อมูล" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     res.status(200).json(movie);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -421,7 +421,7 @@ app.get('/movies', async (req, res) => {
     res.json(movies);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -456,7 +456,7 @@ app.put("/addMovieToPlaylist/:playlistId", async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -482,7 +482,7 @@ app.put("/removeMovieFromPlaylist/:playlistId", async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -543,7 +543,7 @@ app.post("/createPost", async (req, res) => {
     const owner = await UserInfo.findById(userId);
 
     if (!movie) {
-      return res.status(404).json({ error: "หนังไม่พบ" });
+      return res.status(404).json({ error: "Movie not found" });
     }
 
     const post = new PostInfo({
@@ -558,7 +558,7 @@ app.post("/createPost", async (req, res) => {
     res.status(201).json(savedPost);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "ไม่สามารถสร้างโพสต์ได้" });
+    res.status(500).json({ error: "Cannot create posts" });
   }
 });
 
@@ -569,7 +569,7 @@ app.delete("/deletePost/:postId", async (req, res) => {
     // ตรวจสอบว่าโพสต์มีอยู่หรือไม่
     const post = await PostInfo.findById(postId);
     if (!post) {
-      return res.status(404).json({ error: "ไม่พบโพสต์" });
+      return res.status(404).json({ error: "Post not found" });
     }
 
     // ตรวจสอบสิทธิ์การลบโพสต์
@@ -580,10 +580,10 @@ app.delete("/deletePost/:postId", async (req, res) => {
     // ลบโพสต์
     await post.deleteOne({ _id: postId });
 
-    res.status(200).json({ message: "ลบโพสต์เรียบร้อยแล้ว" });
+    res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "ไม่สามารถลบโพสต์ได้" });
+    res.status(500).json({ error: "Cannot delete posts" });
   }
 });
 
@@ -599,13 +599,13 @@ app.put("/editPost/:postId", async (req, res) => {
     );
 
     if (!updatedPost) {
-      return res.status(404).json({ error: "โพสต์ไม่พบ" });
+      return res.status(404).json({ error: "Post not found" });
     }
 
     res.status(200).json(updatedPost);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "ไม่สามารถอัปเดตโพสต์ได้" });
+    res.status(500).json({ error: "Cannot update posts" });
   }
 });
 
@@ -618,13 +618,13 @@ app.get("/posts/:postid", async (req, res) => {
     const post = await PostInfo.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ error: "ไม่พบโพสต์" });
+      return res.status(404).json({ error: "Post not found" });
     }
 
     res.status(200).json(post);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -634,7 +634,7 @@ app.get('/postsmovie/:id', async (req, res) => {
     const movie = await movieInfo.findById(movieId);
 
     if (!movie) {
-      return res.status(404).json({ error: "ไม่พบหนัง" });
+      return res.status(404).json({ error: "Movie not found" });
     }
 
     const posts = await PostInfo.find({ movie: movieId }).populate('owner').populate("movie");
@@ -642,7 +642,7 @@ app.get('/postsmovie/:id', async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -654,7 +654,7 @@ app.get("/userPosts/:userId", async (req, res) => {
     // ค้นหาผู้ใช้งานด้วย ID
     const user = await UserInfo.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "ไม่พบผู้ใช้งาน" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     // ค้นหาโพสต์ที่เกี่ยวข้องกับผู้ใช้งาน
@@ -663,7 +663,7 @@ app.get("/userPosts/:userId", async (req, res) => {
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -673,7 +673,7 @@ app.get('/allpost', async (req, res) => {
     res.json(post);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -687,7 +687,7 @@ app.get('/allpost/following/:userid', async (req, res) => {
     res.json(posts);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

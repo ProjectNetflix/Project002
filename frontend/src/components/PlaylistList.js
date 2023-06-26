@@ -42,7 +42,7 @@ const PlaylistList = () => {
       pic: selectedPlaylist.imageUrl,
     });
 
-    console.log(state);
+    // console.log(state);
   };
 
   const GetPlaylist = async () => {
@@ -68,8 +68,8 @@ const PlaylistList = () => {
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
+        // console.error(error);
+        alert("failed to get Playlist data");
       });
   };
 
@@ -77,7 +77,7 @@ const PlaylistList = () => {
     e.preventDefault();
 
     const userId = window.localStorage.getItem("userId");
-    console.log(title, desc, userId, pic);
+    // console.log(title, desc, userId, pic);
     // console.log(pic.name)
 
     const formData = new FormData();
@@ -89,7 +89,7 @@ const PlaylistList = () => {
     if (title === "" || userId === "") {
       MySwal.fire({
         text: "Please enter data",
-        icon: "warning",
+        // icon: "warning",
         showConfirmButton: true,
         timer: 5000,
       });
@@ -100,12 +100,12 @@ const PlaylistList = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data, "Playlist");
+          // console.log(data, "Playlist");
 
           if (data) {
             MySwal.fire({
               text: "Success",
-              icon: "success",
+              // icon: "success",
               showConfirmButton: false,
               timer: 3000,
             });
@@ -114,7 +114,7 @@ const PlaylistList = () => {
           } else {
             MySwal.fire({
               text: "Error",
-              icon: "error",
+              // icon: "error",
               showConfirmButton: true,
               timer: 3000,
             });
@@ -125,14 +125,14 @@ const PlaylistList = () => {
 
   const DeletePlaylist = (e, playlistId) => {
     e.preventDefault();
-    console.log(playlistId);
+    // console.log(playlistId);
     const userId = window.localStorage.getItem("userId");
-    console.log(title, desc, userId, pic, playlistId);
+    // console.log(title, desc, userId, pic, playlistId);
 
     MySwal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: "warning",
+      // icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -149,12 +149,12 @@ const PlaylistList = () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
+            // console.log(data);
             if (data.message) {
               setSuccess(true);
               MySwal.fire({
-                text: "ลบเพลย์ลิสต์เรียบร้อยแล้ว",
-                icon: "success",
+                text: "Deleted!",
+                // icon: "success",
                 showConfirmButton: true,
               });
               //window.location.reload();
@@ -162,7 +162,7 @@ const PlaylistList = () => {
             } else {
               MySwal.fire({
                 text: "error",
-                icon: "error",
+                // icon: "error",
                 showConfirmButton: true,
               });
             }
@@ -173,9 +173,9 @@ const PlaylistList = () => {
 
   const EditPlaylist = (e, playlistId) => {
     e.preventDefault();
-    console.log(playlistId);
+    // console.log(playlistId);
     const userId = window.localStorage.getItem("userId");
-    console.log(pic);
+    // console.log(pic);
     //setCurrentPlaylist(playlistId);
 
     const formData = new FormData();
@@ -186,7 +186,7 @@ const PlaylistList = () => {
     if (title === "" && desc === "" && pic === "" && playlistId !== "") {
       MySwal.fire({
         text: "Please enter data",
-        icon: "error",
+        // icon: "error",
         showConfirmButton: true,
         timer: 3000,
       });
@@ -198,12 +198,12 @@ const PlaylistList = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data, "Playlist");
+          // console.log(data, "Playlist");
           if (data) {
             setSuccess(true);
             MySwal.fire({
               text: "Edit Success",
-              icon: "success",
+              // icon: "success",
               showConfirmButton: false,
               timer: 3000,
             });
@@ -212,7 +212,7 @@ const PlaylistList = () => {
           } else {
             MySwal.fire({
               text: "Error",
-              icon: "error",
+              // icon: "error",
               timer: 3000,
               showConfirmButton: true,
 

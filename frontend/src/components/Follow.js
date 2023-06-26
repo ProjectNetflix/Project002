@@ -50,12 +50,12 @@ const Follow = () => {
                 .then((res) => {
                     if (res.data) {
                         alert("follow")
-                        console.log("บันทึกได้")
+                        // console.log("บันทึกได้")
                     } else {
-                        console.log(res.error)
+                        // console.log(res.error)
                     }
                 });
-            console.log("Unfollow");
+            // console.log("Unfollow");
             setIsFollowed(false);
             window.location.reload();
 
@@ -66,14 +66,14 @@ const Follow = () => {
                 .then((res) => {
                     if (res.data) {
                         alert("follow")
-                        console.log("บันทึกได้")
+                        // console.log("บันทึกได้")
 
                     } else {
-                        console.log(res.error)
+                        // console.log(res.error)
                     }
                 });
 
-            console.log("Follow");
+            // console.log("Follow");
             setIsFollowed(true);
             window.location.reload();
 
@@ -96,7 +96,7 @@ const Follow = () => {
         fetch(`http://localhost:5000/userData/${followid}`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
-                console.log(data, "follow");
+                // console.log(data, "follow");
                 if (data) {
                     setFollow(data.data);
                     setFollower(data.data.follower);
@@ -104,7 +104,7 @@ const Follow = () => {
                     let uid = localStorage.getItem("userId");
                     const checkFollow = data.data.follower.includes(uid);
                     setIsFollowed(checkFollow);
-                    console.log("check", isFollowed);
+                    // console.log("check", isFollowed);
 
                 } else {
                     alert("data not found")
@@ -129,15 +129,15 @@ const Follow = () => {
             .then((res) => res.json())
             .then((data) => {
                 if (data) {
-                    console.log(data, "Playlist User");
+                    // console.log(data, "Playlist User");
                     setPlaylist(data);
                 } else {
                     alert(data.status);
                 }
             })
             .catch((error) => {
-                console.error(error);
-                alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
+                // console.error(error);
+                alert("playlist error");
             });
     };
 
@@ -157,29 +157,29 @@ const Follow = () => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === "ok") {
-                    console.log(data); // แสดงผลลัพธ์ที่ได้จาก backend
+                    // console.log(data); // แสดงผลลัพธ์ที่ได้จาก backend
                     Swal.fire({
                         title: 'Success',
-                        text: 'Playlist copied successfully!',
-                        icon: 'success',
+                        text: 'Playlist add successfully!',
+                        // icon: 'success',
                         confirmButtonText: 'OK'
                     });
                 } else {
-                    console.error(data); // แสดงข้อผิดพลาด (ถ้ามี)
+                    // console.error(data); // แสดงข้อผิดพลาด (ถ้ามี)
                     Swal.fire({
                         title: 'Error',
-                        text: 'Failed to copy playlist.',
-                        icon: 'error',
+                        text: 'Failed to add to my playlist.',
+                        // icon: 'error',
                         confirmButtonText: 'OK'
                     });
                 }
             })
             .catch((error) => {
-                console.error(error); // แสดงข้อผิดพลาด (ถ้ามี)
+                // console.error(error); // แสดงข้อผิดพลาด (ถ้ามี)
                 Swal.fire({
                     title: 'Error',
-                    text: 'An error occurred while copying the playlist.',
-                    icon: 'error',
+                    text: 'An error occurred while adding the playlist.',
+                    // icon: 'error',
                     confirmButtonText: 'OK'
                 });
             });
@@ -231,11 +231,11 @@ const Follow = () => {
                 });
                 setPost(updatedPosts);
             } else {
-                console.error("Failed to update post");
+                // console.error("Failed to update post");
             }
             GetPostFollow();
         } catch (error) {
-            console.error("Error:", error);
+            // console.error("Error:", error);
         }
     };
 
@@ -302,7 +302,7 @@ const Follow = () => {
                                             <h5 className="card-title">{item.title}</h5>
                                             <p className="card-text">{item.desc}</p>
                                         </div>
-                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id, item.originalOwner)}><p className="h6">Add To <br/>My Movie Playlist</p></button>
+                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id, item.originalOwner)}><p className="h6">Add To <br/>My Movie Playlists</p></button>
                                     </Link>
                                 </div>
                             </div>

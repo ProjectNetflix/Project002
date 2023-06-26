@@ -36,7 +36,7 @@ const PostList = () => {
       content: selectedPost.content,
       score: selectedPost.score,
     });
-    console.log(state);
+    // console.log(state);
   };
 
   const inputValue = (name) => (event) => {
@@ -110,7 +110,7 @@ const PostList = () => {
         if (data) {
           MySwal.fire({
             text: "Post updated successfully",
-            icon: "success",
+            // icon: "success",
             showConfirmButton: false,
             timer: 2000,
           });
@@ -118,7 +118,7 @@ const PostList = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -142,8 +142,8 @@ const PostList = () => {
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาด");
+        // console.error(error);
+        alert("error");
       });
   };
 
@@ -153,7 +153,7 @@ const PostList = () => {
     if (movie === "" || owner === "" || content === "" || score === "") {
       MySwal.fire({
         text: "Please enter data",
-        icon: "warning",
+        // icon: "warning",
         showConfirmButton: true,
         timer: 5000,
       });
@@ -161,7 +161,7 @@ const PostList = () => {
     else if (score < 0 || score > 5) {
       MySwal.fire({
         text: "Please enter score more than 0 or less than 5",
-        icon: "warning",
+        // icon: "warning",
         showConfirmButton: true,
         timer: 5000,
       });
@@ -185,7 +185,7 @@ const PostList = () => {
           if (data) {
             MySwal.fire({
               text: "Success",
-              icon: "success",
+              // icon: "success",
               showConfirmButton: true,
               timer: 3000,
             });
@@ -193,7 +193,7 @@ const PostList = () => {
           } else {
             MySwal.fire({
               text: "Error",
-              icon: "error",
+              // icon: "error",
               showConfirmButton: true,
               timer: 3000,
             });
@@ -207,7 +207,7 @@ const PostList = () => {
     MySwal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: "warning",
+      // icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
@@ -231,7 +231,7 @@ const PostList = () => {
 
               MySwal.fire({
                 text: "Post deleted successfully",
-                icon: "success",
+                // icon: "success",
                 showConfirmButton: false,
                 timer: 5000,
               });
@@ -239,7 +239,7 @@ const PostList = () => {
             }
           })
           .catch((error) => {
-            console.log(error);
+            // console.log(error);
           });
       }
     });
@@ -266,12 +266,12 @@ const PostList = () => {
         });
         setAllPost(updatedPosts);
       } else {
-        console.error("Failed to update post");
+        // console.error("Failed to update post");
       }
       setSuccess(true);
       //GetAllPost();
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
     }
   };
 

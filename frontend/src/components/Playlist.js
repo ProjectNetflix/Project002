@@ -39,7 +39,7 @@ const Playlist = () => {
   });
 
   const GetPlaylist = async () => {
-    console.log(plid);
+    // console.log(plid);
     const requestOptions = {
       method: "GET",
       crossDomain: true,
@@ -53,16 +53,16 @@ const Playlist = () => {
     fetch(`http://localhost:5000/playlists/${plid}`, requestOptions)
       .then((res) => res.json())
       .then((data) => {
-        console.log("check", data);
+        // console.log("check", data);
         if (data) {
-          console.log(data, "Playlist User");
+          // console.log(data, "Playlist User");
           setPlaylist(data);
           setMovie(data.movie);
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
+        // console.error(error);
+        alert("failed to get Playlist data");
       });
   };
 

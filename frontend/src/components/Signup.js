@@ -17,7 +17,7 @@ const SignUp = () => {
     e.preventDefault();
 
     //const { fname, lname, email, password } = this.state;
-    console.log(fname, lname, email, password);
+    // console.log(fname, lname, email, password);
 
     fetch("http://localhost:5000/signup", {
       method: "POST",
@@ -36,13 +36,13 @@ const SignUp = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userRegister");
+        // console.log(data, "userRegister");
         if (data.status === "ok") {
 
           // console.log(data)
           MySwal.fire({
             text: 'Success',
-            icon: 'success',
+            // icon: 'success',
             showConfirmButton: false,
             timer: 2000
           })
@@ -53,7 +53,7 @@ const SignUp = () => {
 
           MySwal.fire({
             text: data.status,
-            icon: 'error',
+            // icon: 'error',
             showConfirmButton: true,
             //timer: 2000
           })

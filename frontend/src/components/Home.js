@@ -51,7 +51,7 @@ const Home = () => {
       .then((data) => {
         if (data) {
           setAllPost(data);
-          console.log("allpost", data);
+          // console.log("allpost", data);
         } else {
           //alert("Token expired, sign in again");
         }
@@ -79,12 +79,12 @@ const Home = () => {
         });
         setAllPost(updatedPosts);
       } else {
-        console.error("Failed to update post");
+        // console.error("Failed to update post");
       }
       setSuccess(true);
       //GetAllPost();
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
     }
   };
 
@@ -108,8 +108,8 @@ const Home = () => {
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาด");
+        // console.error(error);
+        alert("error");
       });
   };
 
@@ -119,7 +119,7 @@ const Home = () => {
     if (movie === "" || owner === "" || content === "" || score === "") {
       MySwal.fire({
         text: "Please enter data",
-        icon: "warning",
+        // icon: "warning",
         showConfirmButton: true,
         timer: 5000,
       });
@@ -127,7 +127,7 @@ const Home = () => {
     else if (score < 0 || score > 5) {
       MySwal.fire({
         text: "Please enter score more than 0 or less than 5",
-        icon: "warning",
+        // icon: "warning",
         showConfirmButton: true,
         timer: 5000,
       });
@@ -151,7 +151,7 @@ const Home = () => {
           if (data) {
             MySwal.fire({
               text: "Success",
-              icon: "success",
+              // icon: "success",
               showConfirmButton: true,
               timer: 3000,
             });
@@ -159,7 +159,7 @@ const Home = () => {
           } else {
             MySwal.fire({
               text: "Error",
-              icon: "error",
+              // icon: "error",
               showConfirmButton: true,
               timer: 3000,
             });
@@ -198,7 +198,7 @@ const Home = () => {
             <div className="form-group mt-2">
               <label>Moive</label>
               <select className="custom-select" onChange={inputValue("movie")} >
-                <option value=""> Choose  </option>
+                <option value=""> Choose </option>
                 {movielist.map((item) => (
                   <option key={item._id} value={item._id}>
                     {item.name}

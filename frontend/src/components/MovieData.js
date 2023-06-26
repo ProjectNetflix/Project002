@@ -55,8 +55,8 @@ const MovieData = () => {
                 }
             })
             .catch((error) => {
-                console.error(error);
-                alert("เกิดข้อผิดพลาด");
+                // console.error(error);
+                alert("failed to get movie data");
             });
     };
 
@@ -83,8 +83,8 @@ const MovieData = () => {
                 }
             })
             .catch((error) => {
-                console.error(error);
-                alert("เกิดข้อผิดพลาด");
+                // console.error(error);
+                alert("error");
             });
     };
 
@@ -110,11 +110,11 @@ const MovieData = () => {
                         setAvgscore(Number(0));
                     } else {
                         setPost(data);
-                        console.log(data);
+                        // console.log(data);
                         const scores = data.map((post) => Number(post.score));
                         const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
                         setAvgscore(averageScore.toFixed(2));
-                        console.log("Average Score:", averageScore.toFixed(2));
+                        // console.log("Average Score:", averageScore.toFixed(2));
                     }
 
                 } else {
@@ -125,11 +125,11 @@ const MovieData = () => {
 
     const CreatePost = (e) => {
         e.preventDefault();
-        console.log(state);
+        // console.log(state);
         if (movie === "" || owner === "" || content === "" || score === "") {
             MySwal.fire({
                 text: "Please enter data",
-                icon: "warning",
+                // icon: "warning",
                 showConfirmButton: true,
                 timer: 5000,
             });
@@ -137,7 +137,7 @@ const MovieData = () => {
         else if (score < 0 || score > 5) {
             MySwal.fire({
                 text: "Please enter score more than 0 or less than 5",
-                icon: "warning",
+                // icon: "warning",
                 showConfirmButton: true,
                 timer: 5000,
             });
@@ -158,12 +158,12 @@ const MovieData = () => {
             })
                 .then((res) => res.json())
                 .then((data) => {
-                    console.log(data, "Post");
+                    // console.log(data, "Post");
 
                     if (data) {
                         MySwal.fire({
                             text: "Success",
-                            icon: "success",
+                            // icon: "success",
                             showConfirmButton: false,
                             timer: 3000,
                         });
@@ -171,7 +171,7 @@ const MovieData = () => {
                     } else {
                         MySwal.fire({
                             text: "Error",
-                            icon: "error",
+                            // icon: "error",
                             showConfirmButton: true,
                             timer: 3000,
                         });
@@ -186,7 +186,7 @@ const MovieData = () => {
         //const action = like[movieId] ? "unlike" : "like";
         const userId = localStorage.getItem("userId"); // รหัสผู้ใช้
 
-        console.log(action, movieId);
+        // console.log(action, movieId);
         fetch(`http://localhost:5000/users/${userId}/movies/${movieId}/${action}`, {
             method: "PUT",
             headers: {
@@ -196,11 +196,11 @@ const MovieData = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("new", data);
+                // console.log("new", data);
                 setSuccess(true);
             })
             .catch((error) => {
-                console.error(error);
+                // console.error(error);
             });
     };
 
@@ -255,12 +255,12 @@ const MovieData = () => {
                 });
                 // setAllPost(updatedPosts);
             } else {
-                console.error("Failed to update post");
+                // console.error("Failed to update post");
             }
             setSuccess(true);
             //GetAllPost();
         } catch (error) {
-            console.error("Error:", error);
+            // console.error("Error:", error);
         }
     };
 

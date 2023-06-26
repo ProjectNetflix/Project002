@@ -63,7 +63,7 @@ const Movie = () => {
           window.localStorage.clear();
           window.location.href = "./signin";
         } else {
-          console.log("joy", data.data);
+          // console.log("joy", data.data);
           setUserData(data.data);
         }
       });
@@ -87,13 +87,13 @@ const Movie = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          console.log(data, "Playlist User");
+          // console.log(data, "Playlist User");
           setPlaylist(data);
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาดในการรับข้อมูล Playlist");
+        // console.error(error);
+        alert("error to get playlist data");
       });
   };
 
@@ -130,13 +130,13 @@ const Movie = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          console.log(data, "Playlist User");
+          // console.log(data, "Playlist User");
           setMovie(data);
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("เกิดข้อผิดพลาด");
+        // console.error(error);
+        alert("error to get movie data");
       });
   };
 
@@ -146,7 +146,7 @@ const Movie = () => {
     //const action = like[movieId] ? "unlike" : "like";
     const userId = localStorage.getItem("userId"); // รหัสผู้ใช้
 
-    console.log(action, movieId);
+    // console.log(action, movieId);
     fetch(`http://localhost:5000/users/${userId}/movies/${movieId}/${action}`, {
       method: "PUT",
       headers: {
@@ -156,11 +156,11 @@ const Movie = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("new", data);
+        // console.log("new", data);
         setSuccess(true);
       })
       .catch((error) => {
-        console.error(error);
+        // console.error(error);
       });
   };
 
@@ -226,11 +226,11 @@ const Movie = () => {
 
   const AddToPL = (e,) => {
     e.preventDefault();
-    console.log(PlaylistId);
+    // console.log(PlaylistId);
     if (PlaylistId === "") {
       MySwal.fire({
         text: "Please choose playlist !!!",
-        icon: "warning",
+        // icon: "warning",
         showConfirmButton: true,
         timer: 3000,
       });
@@ -252,7 +252,7 @@ const Movie = () => {
           if (data.status === "error") {
             MySwal.fire({
               text: "Error",
-              icon: "error",
+              // icon: "error",
               showConfirmButton: true,
               //timer: 2000,
             });
@@ -260,7 +260,7 @@ const Movie = () => {
             setSuccess(true);
             MySwal.fire({
               text: "Success",
-              icon: "success",
+              // icon: "success",
               showConfirmButton: true,
               timer: 3000,
             });
@@ -269,7 +269,7 @@ const Movie = () => {
           }
         })
         .catch((error) => {
-          console.error("Error:", error);
+          // console.error("Error:", error);
         });
     }
   };
