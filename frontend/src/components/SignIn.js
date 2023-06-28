@@ -61,6 +61,8 @@ const SignIn = () => {
     <div className="signin-form-container">
       <div className='home-header'>
         <h1> Welcome </h1>
+        <h1> To </h1>
+        <h1> FilmFanatics </h1>
       </div>
 
       <form className="container-login" onSubmit={handleSubmit}>

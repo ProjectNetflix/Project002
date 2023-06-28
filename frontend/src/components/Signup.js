@@ -101,7 +101,7 @@ const SignUp = () => {
           </div>
 
           <div className="form-group mt-3">
-            <label>Password</label><small> (ระบุอย่างน้อย 8 ตัว)</small>
+            <label>Password</label><small> (at least 8 character)</small>
             <input
               type="password" required
               className="form-control mt-1"
