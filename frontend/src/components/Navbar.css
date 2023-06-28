@@ -8,6 +8,14 @@
     position: absolute;
 }
 
-.form-control{
+.form-control {
     width: 100%;
+}
+
+.centered-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 95px;
 }
