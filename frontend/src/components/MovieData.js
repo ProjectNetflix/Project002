@@ -1,4 +1,4 @@
-import Navbar from "./Navbar";
+import Navbar from "./NavbarFollow";
 import "./MovieData.css";
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
