@@ -8,7 +8,7 @@ import withReactContent from "sweetalert2-react-content";
 // import Movie from "./Movie.png";
 const MySwal = withReactContent(Swal);
 
-export default function Navbar() {
+export default function NavbarFollow() {
   const [userData, setUserData] = useState([]);
   const [word, setWord] = useState("");
   const [dataFilter] = useState(["lname", "fname"]);
@@ -110,9 +110,9 @@ export default function Navbar() {
       <div className="container">
         <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
           <ul className="nav col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <Link to={{ pathname: `/`}}>
-              <img src="3-wh.png" alt="3-wh" className="centered-image" />
-            </Link>
+            {/* <a href={{ pathname: `/`}}>
+              <img src="Movie.png" className="centered-image" />
+            </a> */}
             {MenuData.map((menu, index) => {
               return (
                 <li key={index}>

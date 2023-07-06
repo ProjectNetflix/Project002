@@ -15,9 +15,9 @@
   margin-right: -20px;
 }
 
-.friend-list li .friend-name a {
+.friend-list li .friend-name {
   font-weight: bold;
-  color: black;
+  color: black !important;
   text-decoration: none;
 }
 

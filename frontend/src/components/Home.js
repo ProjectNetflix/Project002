@@ -220,9 +220,10 @@ const Home = () => {
                     width={50}
                     height={50}
                   />
-                  <span className="friend-name  d-flex justify-content-center">
-                    <a>{user.fname} {user.lname}</a>
+                  <span className="friend-name text-black d-flex justify-content-center">
+                    {user.fname} {user.lname}
                   </span>
+
                 </Link>
               </li>
             ))}

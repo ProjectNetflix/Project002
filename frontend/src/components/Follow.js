@@ -1,4 +1,4 @@
-import Navbar from "./Navbar"
+import Navbar from "./NavbarFollow"
 import './Follow.css'
 import { useState, useEffect } from "react"
 import { useLocation, Link } from "react-router-dom";
@@ -249,6 +249,7 @@ const Follow = () => {
         
         <div>
             <Navbar />
+
             <div className=" container">
 
                 <div className="row-12 " >
