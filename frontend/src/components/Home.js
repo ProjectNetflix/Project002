@@ -1,6 +1,7 @@
 import Navbar from "./Navbar"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom";
+import './Home.css'
 import { IconContext } from "react-icons";
 import { AiTwotoneStar, AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { CgFeed } from "react-icons/cg";
@@ -18,6 +19,8 @@ const Home = () => {
   const [postId, setPostId] = useState();
   const [success, setSuccess] = useState(Boolean);
   const [selectedMovie, setSelectedMovie] = useState();
+  const [followingUsers, setFollowingUsers] = useState([]);
+  const DefaultPicProfile = "https://xn--72czjvzci0ftdsfvb.com/images/2022/12/22/xn--72czjvzci0ftdsfvb.com_f9cb000afb0aeb014f735bcfd3551282.png";
   const defaultpic = "https://icon-library.com/images/free-movies-icon/free-movies-icon-16.jpg";
   const [state, setState] = useState({
     movie: "",
@@ -168,7 +171,29 @@ const Home = () => {
     }
   };
 
+  const GetFollowingUsers = async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    fetch(`http://localhost:5000/following-users/${localStorage.getItem("userId")}`, requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          setFollowingUsers(data);
+        } else {
+          // Handle error case
+        }
+      });
+  };
+
   useEffect(() => {
+    GetFollowingUsers();
     GetAllPost();
     setSuccess(false);
     GetMovies();
@@ -182,6 +207,27 @@ const Home = () => {
         <br />
         <h3> <IconContext.Provider value={{ color: "blue", size: "50px" }}> <CgFeed /> <span /> Feed</IconContext.Provider></h3>
         <br />
+
+        <div>
+          <h4 >My Followings</h4>
+          <ul className="friend-list">
+            {followingUsers.map((user) => (
+              <li key={user._id}>
+                <Link to={{ pathname: `/follow/${user._id}`, state: { followid: user._id } }} className="link-no-underline">
+                  <img
+                    src={user.imageUrl ? `http://localhost:5000/${user.imageUrl}`: DefaultPicProfile}
+                    className="rounded-circle img-rounded"
+                    width={50}
+                    height={50}
+                  />
+                  <span className="friend-name  d-flex justify-content-center">
+                    <a>{user.fname} {user.lname}</a>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <button className="btn btn-danger m-3" data-bs-toggle="modal" data-bs-target="#CreatePost">
           Post Review

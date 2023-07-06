@@ -264,6 +264,17 @@ app.post('/search-users', (req, res) => {
 
 })
 
+app.get("/following-users/:userId", async (req, res) => {
+  try {
+    const user = await UserInfo.findById(req.params.userId);
+    const followingUsers = await UserInfo.find({ _id: { $in: user.following } }, { fname: 1, lname: 1, imageUrl: 1 });
+    res.status(200).json(followingUsers);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 //---------
 require("./Playlist");
 const PlaylistInfo = mongoose.model("PlaylistInfo")
