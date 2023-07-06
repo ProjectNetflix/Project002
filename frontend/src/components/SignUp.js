@@ -68,7 +68,7 @@ const SignUp = () => {
 
     <body className="signup-form-container">
       <div className="home-header-signup">
-        <img src="Movie2.png" />
+        <img src="3-bl.png" />
         {/* <h1> Welcome </h1> */}
       </div>
 
