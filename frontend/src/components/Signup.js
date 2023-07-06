@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './Style.css'
+import './SignUp.css'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
@@ -64,7 +65,13 @@ const SignUp = () => {
   }
 
   return (
+
     <div className="container-signup">
+
+      <div className="home-header">
+        <img src="3-bl.png" width={"200px"}/>
+        {/* <h1> Welcome </h1> */}
+      </div>
 
       <form className="signup-form" onSubmit={handleSubmit}>
         <div className="signup-form-content">

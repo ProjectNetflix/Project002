@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { IconContext } from "react-icons";
-import { MdManageAccounts } from "react-icons/md";
+import { BsFillPersonLinesFill } from "react-icons/bs";
 
 const MySwal = withReactContent(Swal);
 
@@ -183,7 +183,7 @@ const EditProfile = (props) => {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="UserModalLabel">
-                                <IconContext.Provider value={{ color: "blue", size: "35px" }}> <MdManageAccounts /> Edit Profile
+                                <IconContext.Provider value={{ color: "orange", size: "30px" }}> <BsFillPersonLinesFill /> Edit Profile
                                 </IconContext.Provider>
                             </h5>
                             <button

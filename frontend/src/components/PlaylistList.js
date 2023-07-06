@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import "./PlaylistList.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { BsSignpost2 , BsPostcardHeart} from "react-icons/bs";
+import { BsSignpost2 , BsCreditCard2FrontFill} from "react-icons/bs";
 import { IconContext } from "react-icons";
 import { RiPlayList2Line } from "react-icons/ri";
+import { BiMessageEdit } from "react-icons/bi";
 
 const MySwal = withReactContent(Swal);
 
@@ -355,7 +356,7 @@ const PlaylistList = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title " id="PlaylistModalLabel">
-                  Edit Playlist
+                <IconContext.Provider value={{ color: "orange", size: "35px" }}> <BiMessageEdit />  Edit Playlist</IconContext.Provider>
                 </h5>
                 <button
                   type="button"

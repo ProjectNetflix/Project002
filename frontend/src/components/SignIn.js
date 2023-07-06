@@ -58,18 +58,17 @@ const SignIn = () => {
 
   return (
 
-    <div className="signin-form-container">
-      <div className='home-header'>
-        <h1> Welcome </h1>
-        <h1> To </h1>
-        <h1> FilmFanatics </h1>
+    <body className="signin-form-container">
+      <div className="home-header-signin">
+        <img src="3-bl.png" />
+        {/* <h1> Welcome </h1> */}
       </div>
 
       <form className="container-login" onSubmit={handleSubmit}>
         <div className="signin-form-content">
           <h3 className="signin-form-title">Sign In</h3>
           <div className="form-group mt-3">
-            <label>Email</label>
+            <p>Email</p>
             <input
               type="email" required
               className="form-control mt-1"
@@ -79,7 +78,7 @@ const SignIn = () => {
           </div>
 
           <div className="form-group mt-3">
-            <label>Password</label>
+            <p>Password</p>
             <input
               type="password" required
               className="form-control mt-1"
@@ -113,12 +112,10 @@ const SignIn = () => {
             Sign In
           </button>
 
-
-
         </div>
 
       </form>
-    </div>
+    </body>
 
   );
 }

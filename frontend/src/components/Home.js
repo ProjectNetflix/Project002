@@ -1,10 +1,10 @@
 import Navbar from "./Navbar"
-// import './Style.css'
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom";
 import { IconContext } from "react-icons";
 import { AiTwotoneStar, AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { CgFeed } from "react-icons/cg";
-import { BiDislike, BiLike } from "react-icons/bi";
+import { MdRateReview } from "react-icons/md";
 import { BsHeartFill, BsPlusCircle, BsHeart } from "react-icons/bs";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -183,57 +183,99 @@ const Home = () => {
         <h3> <IconContext.Provider value={{ color: "blue", size: "50px" }}> <CgFeed /> <span /> Feed</IconContext.Provider></h3>
         <br />
 
-        <form className="container d-flex ">
+        <button className="btn btn-danger m-3" data-bs-toggle="modal" data-bs-target="#CreatePost">
+          Post Review
+        </button>
 
-          <div className="form-content ">
-            <label>Movie Picture</label>
-            {selectedMovie && (
-              <div className="m-2 justify-content-center">
-                <img src={selectedMovie.pic} style={{ height: "200px" }} alt="Movie Image" />
+        <div>
+          <div
+            className="modal fade"
+            id="CreatePost"
+            tabIndex="-1"
+            aria-labelledby="PostModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="PostModalLabel">
+                    <IconContext.Provider value={{ color: "red", size: "35px" }}>
+                      <MdRateReview /> Post Review
+                    </IconContext.Provider>
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+
+                <div className="modal-body">
+                  <form className="container">
+                    <div className="form-content ">
+                      <div className="form-group mt-2">
+                        <label>Moive</label>
+                        <select
+                          className="custom-select"
+                          onChange={inputValue("movie")}
+                        >
+                          <option value="">Choose</option>
+                          {movielist.map((item) => (
+                            <option key={item._id} value={item._id}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="form-group mt-2">
+                        <label>Content</label>
+                        <textarea
+                          type="text"
+                          className="form-control mt-1"
+                          value={content}
+                          onChange={inputValue("content")}
+                        />
+                      </div>
+
+                      <div className="form-group mt-2">
+                        <label>Score (0 - 5)</label>
+                        <input
+                          type="number"
+                          className="form-control mt-1"
+                          value={score}
+                          onChange={inputValue("score")}
+                          min={0}
+                          max={5}
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    data-bs-dismiss="modal"
+                    onClick={CreatePost}
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
-            )}
+            </div>
           </div>
-
-          <div className="form-content w-50">
-            <div className="form-group mt-2">
-              <label>Moive</label>
-              <select className="custom-select" onChange={inputValue("movie")} >
-                <option value=""> Choose </option>
-                {movielist.map((item) => (
-                  <option key={item._id} value={item._id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group mt-2">
-              <label>Content</label>
-              <textarea
-                type="text"
-                className="form-control mt-1"
-                onChange={inputValue("content")}
-              />
-            </div>
-
-            <div className="form-group mt-2">
-              <label>Score (0 - 5)</label>
-              <input
-                type="number"
-                className="form-control mt-1"
-                onChange={inputValue("score")}
-                min={0}
-                max={5}
-              />
-            </div>
-
-            <button className="btn btn-outline-danger m-3" onClick={CreatePost}>
-              Post
-            </button>
-          </div>
-
-        </form>
-
+        </div>
 
         {allpost.map((item) => {
 
@@ -244,9 +286,18 @@ const Home = () => {
             <div className="post" key={item._id}>
               <div className="card m-2 ">
                 <div className="card-body d-flex">
-                  <div className=" img-post">
-                    <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
-                  </div>
+
+                  <Link
+                    to={{
+                      pathname: `/movies/${item.movie._id}`,
+                      state: { Movieid: item.movie._id },
+                    }}
+                    className="link-no-underline"
+                  >
+                    <div className="img-post">
+                      <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
+                    </div>
+                  </Link>
 
                   <div className=" post-info m-2 ">
                     <h5>{item.owner.fname} {item.owner.lname}</h5>
@@ -259,7 +310,7 @@ const Home = () => {
                         {isLiked ? (<IconContext.Provider value={{ color: "blue", size: "20px" }}>
                           <AiFillLike /> <span /> {likeCount} <span /> Like
                         </IconContext.Provider>) : (<IconContext.Provider value={{ size: "20px" }}>
-                          <AiOutlineLike /> <span /> {likeCount} <span /> Like
+                          <AiFillLike /> <span /> {likeCount} <span /> Like
                         </IconContext.Provider>)}
                       </div>
 

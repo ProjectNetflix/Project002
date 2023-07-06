@@ -1,5 +1,13 @@
-
 /* login css */
+body {
+    /* background: white !important; */
+    color: black ;
+    min-height: 100vh;
+    display: flex;
+    font-weight: 400;
+    font-family: 'Prompt', sans-serif;
+}
+
 .container {
     color: black;
     width: 96%;
@@ -15,9 +23,9 @@
     width: 96%;
     max-width: 500px;
     /* margin:120px 100px 0 auto; */
-    margin: 80px auto;
+    margin-top: 250px;
+    margin-left: 240px;
     padding: 20px;
-
 }
 
 .card-login {
@@ -37,4 +45,11 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     grid-gap: 48px;
+}
+
+.home-header-signin {
+    text-align: center;
+    justify-content: center;
+    margin-top: 250px;
+    margin-left: 250px;
 }

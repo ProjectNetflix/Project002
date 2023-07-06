@@ -368,7 +368,7 @@ const MovieData = () => {
                                         {isLiked ? (<IconContext.Provider value={{ color: "blue", size: "20px" }}>
                                             <AiFillLike /> <span /> {likeCount} <span /> Like
                                         </IconContext.Provider>) : (<IconContext.Provider value={{ size: "20px" }}>
-                                            <AiOutlineLike /> <span /> {likeCount} <span /> Like
+                                            <AiFillLike /> <span /> {likeCount} <span /> Like
                                         </IconContext.Provider>)}
                                     </div>
                                 </div>

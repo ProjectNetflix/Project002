@@ -4,7 +4,8 @@ import withReactContent from "sweetalert2-react-content";
 import { IconContext } from "react-icons";
 import { AiTwotoneStar, AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { MdRateReview } from "react-icons/md";
-import { BsHeartFill, BsHeart } from "react-icons/bs";
+import { FaEdit } from "react-icons/fa";
+import { RiDeleteBinFill } from "react-icons/ri";
 import { MdOutlineFeaturedPlayList, MdReviews } from "react-icons/md";
 
 const PostList = () => {
@@ -315,16 +316,23 @@ const PostList = () => {
                       {isLiked ? (<IconContext.Provider value={{ color: "blue", size: "20px" }}>
                         <AiFillLike /> <span /> {likeCount} <span /> Like
                       </IconContext.Provider>) : (<IconContext.Provider value={{ size: "20px" }}>
-                        <AiOutlineLike /> <span /> {likeCount} <span /> Like
+                        <AiFillLike /> <span /> {likeCount} <span /> Like
                       </IconContext.Provider>)}
 
                     </div>
                     <div className="post-action d-flex justify-content-end ">
 
-                      <button type="button" className="btn btn-outline-warning m-2 " data-bs-toggle="modal" data-bs-target="#EditPost"
-                        onClick={(e) => CurrentPost(e, item._id)} > Edit
+                      <button type="button" className="btn m-2 " data-bs-toggle="modal" data-bs-target="#EditPost"
+                        onClick={(e) => CurrentPost(e, item._id)} >
+                        <IconContext.Provider value={{ color: "gray", size: "20px" }}>
+                          <FaEdit />
+                        </IconContext.Provider>
                       </button>
-                      <button type="button" id="swal2-checkbox" className="btn btn-outline-danger m-2" onClick={() => DeletePost(item._id)} > Delete </button>
+                      <button type="button" id="swal2-checkbox" className="btn m-2 mr-1" onClick={() => DeletePost(item._id)} >
+                        <IconContext.Provider value={{ color: "red", size: "20px" }}>
+                          <RiDeleteBinFill />
+                        </IconContext.Provider>
+                      </button>
                     </div>
 
                   </div>
@@ -438,7 +446,9 @@ const PostList = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" >
-                Edit Post Review
+                <IconContext.Provider value={{ color: "purple", size: "35px" }}>
+                  <FaEdit /> Edit Post Review
+                </IconContext.Provider>
               </h5>
               <button
                 type="button"
