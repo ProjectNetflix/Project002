@@ -111,7 +111,7 @@ export default function Navbar() {
         <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
           <ul className="nav col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
             <a href="/">
-              <img src="Movie.png" alt="Movie" className="centered-image" />
+              <img src="3-wh.png" alt="Movie" className="centered-image" />
             </a>
             {MenuData.map((menu, index) => {
               return (
