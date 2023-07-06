@@ -1,0 +1,23 @@
+.friend-list {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  padding: 0;
+}
+
+.friend-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.friend-list li img {
+  margin-right: -20px;
+}
+
+.friend-list li .friend-name a {
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+}
+
