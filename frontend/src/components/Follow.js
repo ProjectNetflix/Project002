@@ -28,6 +28,7 @@ const Follow = () => {
     // const body = { userid };
 
     const DefaultPic = "https://xn--72czjvzci0ftdsfvb.com/images/2022/12/22/xn--72czjvzci0ftdsfvb.com_f9cb000afb0aeb014f735bcfd3551282.png";
+    const DefaultPic1 = "https://cdn.icon-icons.com/icons2/2632/PNG/512/movies_icon_159164.png";
 
     const handleFollowToggle = () => {
 
@@ -294,7 +295,7 @@ const Follow = () => {
 
                                         <div className="card-body text-black">
                                             <img
-                                                src={`http://localhost:5000/${item.imageUrl}`}
+                                                src={item.imageUrl ? `http://localhost:5000/${item.imageUrl}` : DefaultPic1}
                                                 className="card-img-top playlist-image"
                                                 alt="Playlist Image"
                                                 style={{ height: '150px' }}
