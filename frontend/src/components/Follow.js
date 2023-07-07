@@ -247,7 +247,7 @@ const Follow = () => {
     }, [followid]);
 
     return (
-        
+
         <div>
             <Navbar />
 
@@ -279,7 +279,7 @@ const Follow = () => {
 
                 <br />
                 <h4><IconContext.Provider value={{ color: "green", size: "35px" }}>
-                    <RiPlayList2Line /> <span> </span> {follow.fname} {follow.lname}'s MOVIE PLAYLIST 
+                    <RiPlayList2Line /> <span> </span> {follow.fname} {follow.lname}'s MOVIE PLAYLIST
                 </IconContext.Provider></h4>
                 <br />
 
@@ -304,7 +304,7 @@ const Follow = () => {
                                             <h5 className="card-title">{item.title}</h5>
                                             <p className="card-text">{item.desc}</p>
                                         </div>
-                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id, item.originalOwner)}><p className="h6">Add To <br/>My Movie Playlists</p></button>
+                                        <button className="btn btn-outline-primary m-3" onClick={(e) => CopyPlaylists(e, item._id, item.originalOwner)}><p className="h6">Add To <br />My Movie Playlists</p></button>
                                     </Link>
                                 </div>
                             </div>
@@ -327,9 +327,14 @@ const Follow = () => {
                         <div className="post" key={item._id}>
                             <div className="card m-2 ">
                                 <div className="card-body d-flex">
-                                    <div className=" img-post">
-                                        <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
-                                    </div>
+                                    <Link to={{
+                                        pathname: `/movies/${item.movie._id}`,
+                                        state: { Movieid: item.movie._id },
+                                    }}>
+                                        <div className=" img-post">
+                                            <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
+                                        </div>
+                                    </Link>
 
                                     <div className=" post-info m-2 ">
                                         <h4>{item.movie.name}</h4>

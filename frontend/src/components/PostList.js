@@ -7,6 +7,7 @@ import { MdRateReview } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { MdOutlineFeaturedPlayList, MdReviews } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const PostList = () => {
 
@@ -304,7 +305,13 @@ const PostList = () => {
               <div className="card m-2 ">
                 <div className="card-body d-flex">
                   <div className=" img-post">
-                    <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
+                    <Link to={{
+                      pathname: `/movies/${item.movie._id}`,
+                      state: { Movieid: item.movie._id },
+                    }}>
+                      <img src={item.movie.pic} alt="Movie Image" style={{ height: "200px" }} />
+
+                    </Link>
                   </div>
 
                   <div className=" post-info m-2 ">
